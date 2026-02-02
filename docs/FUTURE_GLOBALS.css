@@ -1,0 +1,252 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================
+   1. DESIGN TOKENS (Based on Architecture Blueprint)
+   Format: HSL without units (for Tailwind opacity usage)
+========================================= */
+:root {
+    /* BRAND: BMT Green */
+    /* #15803d (green-700) -> 142 72% 29% */
+    --primary: 142 72% 29%;
+    /* #166534 (green-800) -> 145 63% 24% */
+    --primary-dark: 145 63% 24%;
+    --primary-foreground: 0 0% 100%;
+    /* Text on primary */
+
+    /* BRAND: Prosperity Gold */
+    /* #FACC15 (yellow-400) -> 48 96% 53% */
+    --secondary: 48 96% 53%;
+    /* #EAB308 (yellow-500) -> 42 87% 55% */
+    --secondary-dark: 42 87% 55%;
+    --secondary-foreground: 222 47% 11%;
+
+    /* NEUTRALS */
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    /* slate-900 */
+    --muted: 210 40% 96.1%;
+    /* slate-50 */
+    --muted-foreground: 215.4 16.3% 46.9%;
+    /* slate-500 */
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    /* STATES */
+    --border: 214.3 31.8% 91.4%;
+    /* slate-200 */
+    --input: 214.3 31.8% 91.4%;
+    /* Form Borders */
+    --ring: 142 72% 29%;
+    /* Pimary Focus Ring */
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    /* LAYOUT */
+    --header-height: 5rem;
+    --radius: 0.75rem;
+    /* rounded-xl */
+}
+
+/* =========================================
+   2. BASE STYLES
+========================================= */
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-background text-foreground font-sans antialiased;
+        /* Selection Color: Green tint */
+        selection: bg-green-100 selection:text-green-900;
+    }
+
+    /* Typography Scale from Architecture */
+    h1 {
+        @apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight;
+    }
+
+    h2 {
+        @apply text-3xl md:text-4xl font-bold tracking-tight;
+    }
+
+    h3 {
+        @apply text-2xl md:text-3xl font-semibold;
+    }
+}
+
+/* =========================================
+   3. COMPONENT DEFINITIONS (Future Stitched Components)
+========================================= */
+@layer components {
+
+    /* --- ATOMS: Buttons & Badges --- */
+    .btn {
+        @apply inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+    }
+
+    .btn-primary {
+        @apply bg-[hsl(var(--primary))] text-white hover:bg-[hsl(var(--primary-dark))] shadow-lg shadow-green-900/20;
+    }
+
+    .btn-gold {
+        @apply bg-[hsl(var(--secondary))] text-slate-900 hover:bg-[hsl(var(--secondary-dark))] shadow-lg shadow-yellow-500/20;
+    }
+
+    .btn-outline {
+        @apply border-2 border-[hsl(var(--primary))] text-[hsl(var(--primary))] hover:bg-green-50;
+    }
+
+    .btn-ghost {
+        @apply hover:bg-slate-100 hover:text-slate-900;
+    }
+
+    .btn-destructive {
+        @apply bg-[hsl(var(--destructive))] text-[hsl(var(--destructive-foreground))] hover:bg-red-600;
+    }
+
+    .badge {
+        @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+    }
+
+    .badge-primary {
+        @apply border-transparent bg-primary text-primary-foreground hover:bg-primary/80;
+    }
+
+    .badge-secondary {
+        @apply border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80;
+    }
+
+    .badge-outline {
+        @apply text-foreground;
+    }
+
+    /* --- ATOMS: Form Inputs --- */
+    .input-base {
+        @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+    }
+
+    .input-textarea {
+        @apply input-base min-h-[80px] resize-y;
+    }
+
+    .checkbox-root {
+        @apply h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-white;
+    }
+
+    .switch-root {
+        @apply peer inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=unchecked]:bg-slate-200;
+    }
+
+    .switch-thumb {
+        @apply pointer-events-none block h-5 w-5 rounded-full bg-background shadow-lg ring-0 transition-transform data-[state=checked]:translate-x-5 data-[state=unchecked]:translate-x-0;
+    }
+
+    /* --- MOLECULES: Disclosures --- */
+
+    /* Accordion */
+    .accordion-item {
+        @apply border-b border-border;
+    }
+
+    .accordion-trigger {
+        @apply flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline;
+    }
+
+    .accordion-trigger[data-state=open]>svg {
+        @apply rotate-180;
+    }
+
+    .accordion-content {
+        @apply overflow-hidden text-sm transition-all data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down;
+    }
+
+    /* Dialog / Modal */
+    .dialog-overlay {
+        @apply fixed inset-0 z-[1000] bg-black/50 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0;
+    }
+
+    .dialog-content {
+        @apply fixed left-[50%] top-[50%] z-[1001] grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg;
+    }
+
+    /* Alert */
+    .alert-root {
+        @apply relative w-full rounded-lg border p-4 [&>svg~*]:pl-7 [&>svg+div]:translate-y-[-3px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-4 [&>svg]:text-foreground;
+    }
+
+    .alert-destructive {
+        @apply border-destructive/50 text-destructive dark:border-destructive [&>svg]:text-destructive;
+    }
+
+    /* Toast */
+    .toast-root {
+        @apply group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full;
+    }
+
+
+    /* --- UTILITIES: Visuals --- */
+
+    /* Separator */
+    .separator {
+        @apply shrink-0 bg-border h-[1px] w-full;
+    }
+
+    /* Avatar */
+    .avatar-root {
+        @apply relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full;
+    }
+
+    .avatar-image {
+        @apply aspect-square h-full w-full;
+    }
+
+    .avatar-fallback {
+        @apply flex h-full w-full items-center justify-center rounded-full bg-muted text-muted-foreground;
+    }
+
+    /* Custom Cursor */
+    .cursor-dot {
+        @apply fixed top-0 left-0 w-3 h-3 bg-[hsl(var(--secondary))] rounded-full pointer-events-none z-[9999] mix-blend-difference;
+    }
+
+    .cursor-ring {
+        @apply fixed top-0 left-0 w-8 h-8 border border-[hsl(var(--secondary))] rounded-full pointer-events-none z-[9998] mix-blend-difference transition-all duration-300 ease-out;
+    }
+
+    .hero-gradient {
+        background: linear-gradient(135deg, hsl(142 72% 29%) 0%, hsl(145 63% 24%) 100%);
+    }
+}
+
+/* =========================================
+   4. ANIMATIONS
+========================================= */
+@theme {
+    --animate-accordion-down: accordion-down 0.2s ease-out;
+    --animate-accordion-up: accordion-up 0.2s ease-out;
+}
+
+@keyframes accordion-down {
+    from {
+        height: 0;
+    }
+
+    to {
+        height: var(--radix-accordion-content-height);
+    }
+}
+
+@keyframes accordion-up {
+    from {
+        height: var(--radix-accordion-content-height);
+    }
+
+    to {
+        height: 0;
+    }
+}

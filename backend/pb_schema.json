@@ -1,0 +1,594 @@
+[
+    {
+        "id": "pbc_site_config",
+        "name": "site_config",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "field_company",
+                "name": "company_name",
+                "type": "text",
+                "required": true,
+                "presentable": true,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "field_nib",
+                "name": "nib",
+                "type": "text",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "field_address",
+                "name": "address",
+                "type": "text",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "field_phone_wa",
+                "name": "phone_wa",
+                "type": "text",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "field_email",
+                "name": "email_official",
+                "type": "email",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "exceptDomains": [],
+                    "onlyDomains": []
+                }
+            },
+            {
+                "system": false,
+                "id": "field_hero_title",
+                "name": "hero_title",
+                "type": "text",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "field_welcome",
+                "name": "welcome_text",
+                "type": "editor",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "convertUrls": false
+                }
+            },
+            {
+                "system": false,
+                "id": "field_vid_profile",
+                "name": "video_profile_url",
+                "type": "url",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "exceptDomains": [],
+                    "onlyDomains": []
+                }
+            },
+            {
+                "system": false,
+                "id": "field_maint_mode",
+                "name": "maintenance_mode",
+                "type": "bool",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {}
+            },
+            {
+                "system": false,
+                "id": "field_theme",
+                "name": "theme_config",
+                "type": "json",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "maxSize": 2000000
+                }
+            },
+            {
+                "system": false,
+                "id": "field_socials",
+                "name": "social_links",
+                "type": "json",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "maxSize": 2000000
+                }
+            }
+        ],
+        "indexes": [],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": null,
+        "updateRule": "@request.auth.id != ''",
+        "deleteRule": null,
+        "options": {}
+    },
+    {
+        "id": "pbc_social_feeds",
+        "name": "social_feeds",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "field_platform",
+                "name": "platform",
+                "type": "select",
+                "required": true,
+                "presentable": true,
+                "unique": false,
+                "options": {
+                    "maxSelect": 1,
+                    "values": [
+                        "tiktok",
+                        "instagram",
+                        "youtube",
+                        "facebook"
+                    ]
+                }
+            },
+            {
+                "system": false,
+                "id": "field_url",
+                "name": "url",
+                "type": "url",
+                "required": true,
+                "presentable": true,
+                "unique": false,
+                "options": {
+                    "exceptDomains": [],
+                    "onlyDomains": []
+                }
+            },
+            {
+                "system": false,
+                "id": "field_embed",
+                "name": "embed_code",
+                "type": "text",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "field_caption",
+                "name": "caption",
+                "type": "text",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "field_active",
+                "name": "is_active",
+                "type": "bool",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {}
+            }
+        ],
+        "indexes": [],
+        "listRule": "is_active = true",
+        "viewRule": "is_active = true",
+        "createRule": "@request.auth.id != ''",
+        "updateRule": "@request.auth.id != ''",
+        "deleteRule": "@request.auth.id != ''",
+        "options": {}
+    },
+    {
+        "id": "pbc_products",
+        "name": "products",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "field_name",
+                "name": "name",
+                "type": "text",
+                "required": true,
+                "presentable": true,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "field_slug",
+                "name": "slug",
+                "type": "text",
+                "required": true,
+                "presentable": true,
+                "unique": true,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "field_type",
+                "name": "type",
+                "type": "select",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "maxSelect": 1,
+                    "values": [
+                        "saving",
+                        "financing",
+                        "gold"
+                    ]
+                }
+            },
+            {
+                "system": false,
+                "id": "field_desc",
+                "name": "description",
+                "type": "editor",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "convertUrls": false
+                }
+            },
+            {
+                "system": false,
+                "id": "field_icon",
+                "name": "icon",
+                "type": "file",
+                "required": false,
+                "presentable": true,
+                "unique": false,
+                "options": {
+                    "mimeTypes": [
+                        "image/png",
+                        "image/jpeg",
+                        "image/svg+xml"
+                    ],
+                    "thumbs": [],
+                    "maxSelect": 1,
+                    "maxSize": 5242880,
+                    "protected": false
+                }
+            },
+            {
+                "system": false,
+                "id": "field_featured",
+                "name": "is_featured",
+                "type": "bool",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {}
+            }
+        ],
+        "indexes": [
+            "CREATE UNIQUE INDEX `idx_product_slug` ON `products` (`slug`)"
+        ],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "@request.auth.id != ''",
+        "updateRule": "@request.auth.id != ''",
+        "deleteRule": "@request.auth.id != ''",
+        "options": {}
+    },
+    {
+        "id": "pbc_news",
+        "name": "news",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "field_title",
+                "name": "title",
+                "type": "text",
+                "required": true,
+                "presentable": true,
+                "unique": false,
+                "options": {
+                    "min": 5,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "field_slug",
+                "name": "slug",
+                "type": "text",
+                "required": true,
+                "presentable": false,
+                "unique": true,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "field_content",
+                "name": "content",
+                "type": "editor",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "convertUrls": false
+                }
+            },
+            {
+                "system": false,
+                "id": "field_thumb",
+                "name": "thumbnail",
+                "type": "file",
+                "required": false,
+                "presentable": true,
+                "unique": false,
+                "options": {
+                    "mimeTypes": [
+                        "image/jpeg",
+                        "image/png",
+                        "image/webp"
+                    ],
+                    "thumbs": [
+                        "400x300"
+                    ],
+                    "maxSelect": 1,
+                    "maxSize": 5242880,
+                    "protected": false
+                }
+            },
+            {
+                "system": false,
+                "id": "field_published",
+                "name": "published",
+                "type": "bool",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {}
+            }
+        ],
+        "indexes": [
+            "CREATE UNIQUE INDEX `idx_news_slug` ON `news` (`slug`)"
+        ],
+        "listRule": "published = true",
+        "viewRule": "published = true",
+        "createRule": "@request.auth.id != ''",
+        "updateRule": "@request.auth.id != ''",
+        "deleteRule": "@request.auth.id != ''",
+        "options": {}
+    },
+    {
+        "id": "pbc_hero",
+        "name": "hero_banners",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "field_title",
+                "name": "title",
+                "type": "text",
+                "required": true,
+                "presentable": true,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "field_subtitle",
+                "name": "subtitle",
+                "type": "text",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "field_image",
+                "name": "image_desktop",
+                "type": "file",
+                "required": true,
+                "presentable": true,
+                "unique": false,
+                "options": {
+                    "mimeTypes": [
+                        "image/jpeg",
+                        "image/png",
+                        "image/webp"
+                    ],
+                    "thumbs": [],
+                    "maxSelect": 1,
+                    "maxSize": 5242880,
+                    "protected": false
+                }
+            },
+            {
+                "system": false,
+                "id": "field_active",
+                "name": "active",
+                "type": "bool",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {}
+            },
+            {
+                "system": false,
+                "id": "field_order",
+                "name": "order",
+                "type": "number",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "noDecimal": true
+                }
+            }
+        ],
+        "indexes": [],
+        "listRule": "active = true",
+        "viewRule": "active = true",
+        "createRule": "@request.auth.id != ''",
+        "updateRule": "@request.auth.id != ''",
+        "deleteRule": "@request.auth.id != ''",
+        "options": {}
+    },
+    {
+        "id": "pbc_analytics",
+        "name": "analytics_events",
+        "type": "base",
+        "system": false,
+        "schema": [
+            {
+                "system": false,
+                "id": "field_session",
+                "name": "session_id",
+                "type": "text",
+                "required": true,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "field_event",
+                "name": "event_type",
+                "type": "text",
+                "required": true,
+                "presentable": true,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "field_path",
+                "name": "path",
+                "type": "text",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "pattern": ""
+                }
+            },
+            {
+                "system": false,
+                "id": "field_duration",
+                "name": "duration",
+                "type": "number",
+                "required": false,
+                "presentable": false,
+                "unique": false,
+                "options": {
+                    "min": null,
+                    "max": null,
+                    "noDecimal": true
+                }
+            }
+        ],
+        "indexes": [],
+        "listRule": "@request.auth.id != ''",
+        "viewRule": "@request.auth.id != ''",
+        "createRule": "",
+        "updateRule": null,
+        "deleteRule": null,
+        "options": {}
+    }
+]
