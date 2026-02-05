@@ -75,7 +75,7 @@ This document is the **Execution Bible** for the project. It details every step 
 
 ## 🗄️ Phase 2: PocketBase Architecture (Backend)
 
-**Goal:** Configure the Data Vault.
+**Goal:** Configure the Data Vault with specific fields for BMT products.
 
 ### 2.1 Collections Setup (Schema)
 
@@ -88,21 +88,36 @@ This document is the **Execution Bible** for the project. It details every step 
     - `thumbnail` (File)
     - `category` (Select: "Berita", "Edukasi", "Promo")
     - `published` (Bool)
+    - `seo_title` (Text)
+    - `seo_desc` (Text)
 2. **`products`**:
     - `name` (Text)
     - `slug` (Text, Unique)
-    - `type` (Select: "Simpanan", "Pembiayaan", "Emas")
+    - `product_type` (Text: "Simpanan", "Pembiayaan")
     - `description` (Editor)
+    - `min_deposit` (Text) -> e.g. "Rp 20.000"
+    - `requirements` (Text/Editor) -> e.g. "KTP, KK"
     - `brochure` (File)
     - `icon` (File)
     - `is_featured` (Bool)
+    - `published` (Bool)
+    - `schema_type` (Text)
 3. **`hero_banners`**:
     - `title` (Text)
     - `image` (File)
     - `cta_link` (Text)
     - `active` (Bool)
-4. **`meta_config`** (Singleton):
-    - `site_name`, `whatsapp_phone`, `address`, `nib_number`, `social_links` (JSON).
+4. **`site_config`** (Singleton):
+    - `company_name`, `nib`, `legal_bh`, `address`, `phone_wa`, `email_official`
+    - `total_assets`, `total_members`, `total_branches`
+    - `social_links` (JSON)
+5. **`branches`**:
+    - `name` (Text)
+    - `address` (Text)
+    - `phone_wa` (Text)
+    - `map_link` (Text)
+    - `type` (Select: Pusat, Cabang)
+    - `is_active` (Bool)
 
 ### 2.2 API Security Rules
 
@@ -121,9 +136,10 @@ This document is the **Execution Bible** for the project. It details every step 
 - [x] **`Button.tsx`**:
   - Implementation: `cva` variants (`default`, `gold`, `outline`).
   - Interaction: Hover scale effect, loading state spinner.
-- [x] **`Card.tsx`**:
+- [x] **`Card.tsx`** / `ArabesqueCard.tsx`:
   - Style: `bg-white rounded-2xl shadow-sm hover:shadow-green-900/5 transition-all`.
-- [ ] **`SectionHeading.tsx`**:
+  - Variants: Simple, GoldBorder, Interactive.
+- [x] **`SectionHeading.tsx`**:
   - Style: `font-bold text-3xl text-slate-800` with Gold underline accent.
 
 ### 3.2 Layout Components (`components/layout`)
@@ -133,139 +149,146 @@ This document is the **Execution Bible** for the project. It details every step 
   - Mobile: Hamburger Menu with Framer Motion slide-in.
   - Behavior: Sticky with glassmorphism on scroll.
 - [x] **`Footer.tsx`**:
-  - Dynamic: Fetch Address/Contacts from `meta_config`.
+  - Dynamic: Fetch Address/Contacts from `site_config`.
   - Grid: 4 Columns (Brand, Links, Services, Contact).
 
 ---
 
 ## 🚀 Phase 4: Feature Implementation (Public)
 
-**Goal:** user-facing pages.
+**Goal:** user-facing pages conforming to BMT NU Lumajang Identity.
 
 ### 4.1 Subdomain Architecture (Refactor)
 
 **Goal:** Isolate Public vs. Admin environments.
 
-- [ ] **Folder Structure**:  
-  - `app/(public)/`: Contains Landing, Products, News.
-  - `app/(admin)/`: Contains Dashboard, Login.
-- [ ] **Middleware Logic (`middleware.ts`)**:
-  - Detect functionality based on `request.nextUrl.hostname`.
-  - **Case 1 (`cp.bmtnulmj.com` or `cp.localhost`)**:
-    - Rewrite URL to start with `/(admin)`.
-    - If path is `/`, redirect to `/dashboard` (or `/login`).
-  - **Case 2 (`www.` or root domain)**:
-    - Rewrite URL to start with `/(public)`.
-    - Block access to `/admin` or `/dashboard`.
+- [x] **Folder Structure**:  
+  - `app/ (root)`: Contains Landing, Products, News, About.
+  - `app/panel/`: Contains Dashboard, Login.
+- [x] **Middleware Logic**: Rewrite URLs to map domains/paths correctly.
 
-### 4.2 Home Page
+### 4.2 Home Page (`/`)
 
-- [ ] **Hero Section**:
-  - Carousel using `framer-motion` `AnimatePresence`.
-  - Fetch `hero_banners` from PB.
-- [ ] **Services Preview**:
-  - Map through "Highlighted Products".
-- [ ] **Bento Grid**:
-  - Grid Layout (CSS Grid).
-  - Cards: TikTok Embed, YouTube Embed, Instagram Link.
+- [x] **Hero Slider Strategy**:
+  - **Slide 1 (Branding)**: "Mitra Keuangan Syariah Terpercaya" + Kantor Pusat Image.
+  - **Slide 2 (Product)**: "Tabungan Sirela - Suka Rela" + Service Image.
+  - **Slide 3 (Tech)**: "Transaksi Aman dengan Notifikasi WA" + Mobile App Image.
+- [x] **Stats Widget**:
+  - Dynamic counters for Assets, Members, Offices.
+- [x] **Product Grid**:
+  - Highlight 3 items: Sirela, Haji, Pembiayaan UMKM.
 
-### 4.2 Products Page
+### 4.3 Products Page (`/produk`)
 
-- [ ] **Filter System**: Tabs for "Simpanan" vs "Pembiayaan".
-- [ ] **Detail Page (`/produk/[slug]`)**:
-  - "Download Brosur" Button.
-  - "Tanya via WA" Floating Action Button.
+- [x] **Tabbed Interface**:
+  - **Tab A**: Simpanan (Savings).
+  - **Tab B**: Pembiayaan (Financing).
+- [x] **Cards (ArabesqueCard)**:
+  - Display "Setoran Awal" or Key Terms.
 
-### 4.3 News & Content
+### 4.4 About Page (`/tentang-kami`)
 
-- [ ] **Blog List**: Pagination (10 per page).
-- [ ] **Blog Detail**:
-  - `dompurify` to sanitize HTML content.
-  - "Share" buttons (WA, FB).
+- [x] **History Section**: 2016 Mandate -> 2020 Establishment.
+- [x] **Trust & Legal Section**: Display NIB and No. Badan Hukum.
+- [x] **Dynamic Stats**: Connect "Total Assets/Members" to DB (Connected to `site_config`).
 
-### 4.4 Analytics Engine (NEW)
+### 4.5 News & Contact
+
+- [x] **News (`/berita`)**:
+  - Categories: Activities, CSR, Tips.
+- [x] **Contact (`/kontak`)**:
+  - Google Maps Embed.
+  - **Bento Grid Layout** for 16 Branches.
+
+### 4.6 Analytics Engine (NEW)
 
 **Goal**: Track visitor journey and timing.
 
-- [ ] **Backend Schema (`analytics_events`)**:
+- [x] **Backend Schema (`analytics_events`)**:
   - Fields: `event_type` (view, click), `path`, `duration` (int), `session_id`.
-  - Rule: `create` = public.
-- [ ] **Frontend Hook (`useAnalytics`)**:
-  - Create `components/analytics/AnalyticsTracker.tsx`.
-  - `useEffect`: Track mount time. On unmount, send `duration`.
-  - `useEffect`: Listen to `click` events on elements with `data-track-id`.
-- [ ] **Admin Dashboard Integration**:
-  - Query PB for `count(id)` grouped by `path`.
-  - Visualize with `recharts`.
+- [x] **Frontend Hook (`useAnalytics`)**:
+  - Track mount time/unmount duration.
 
 ---
 
 ## 🛡️ Phase 5: Admin & Logic
 
-**Goal:** CMS for BMT Staf.
+**Goal:** CMS for BMT Staf to update Assets/Members count.
 
 ### 5.1 Admin Shell
 
-- [ ] **Route**: `/admin`.
-- [ ] **Sidebar**: Navigation (Dashboard, Berita, Produk, Banner, Settings).
-- [ ] **Logout**: Clear AuthStore.
+- [x] **Route**: `/panel`.
+- [x] **Sidebar**: Navigation (Dashboard, Berita, Produk, Banner, Settings).
 
 ### 5.2 CRUD Forms
 
-- [ ] **Rich Text**: Integrate `TipTap` or `Quill` for writing news.
-- [ ] **Image Upload**: Drag & Drop zone with Preview.
-- [ ] **Feedback**: Toast notifications (Success/Error) using `sonner`.
+- [x] **Settings Page**: Input fields for `Total Aset`, `Total Anggota` to update `site_config`.
+- [x] **Rich Text**: Integrate `TipTap` for writing news.
+- [x] **News Editor**:
+  - Image Upload with Watermark & Compression.
+  - Auto-SEO Field Generation.
+  - AI Assistant Prompt Button.
 
 ---
 
-## 🔍 Phase 6: QA, Optimization & Security
+## 🔍 Phase 6: QA, Optimization & "AI-Ready" SEO
 
-**Goal:** Polish before launch.
+**Goal:** Create a "High-Resolution" Web Presence optimizing for Search Engines and AI Agents.
 
-### 6.1 Performance
+### 6.1 Performance & Core Vitals
 
-- [ ] **Images**: Use `next/image` with `placeholder="blur"`.
-- [ ] **Fonts**: Ensure `next/font` is correctly loading subsets.
-- [ ] **Lighthouse Score**: Target > 90 on all metrics.
+- [ ] **Images**: Use `next/image` with `placeholder="blur"` and WebP format.
+- [ ] **Lighthouse Score**: Target > 90 on all metrics (Performance, Accessibility, Best Practices, SEO).
+- [ ] **Font Loading**: Optimize `next/font` subsets (Latin) to zero CLS.
 
-### 6.2 Security Audit
+### 6.2 "AI-Ready" SEO Architecture (The Promise)
 
-- [ ] **Middleware**: Verify `User-Agent` blocking for AI Bots.
-- [ ] **Rate Limit**: Test `/api/contact` flood protection.
-- [ ] **Headers**: Check `Content-Security-Policy` and `X-Frame-Options`.
+**Objective**: Ensure every piece of content (News, Products, Static Pages) is structured so LLMs/AI can perfectly "read" and "cite" the BMT.
 
-### 6.3 SEO
+- [ ] **Deep Schema.org (JSON-LD)**:
+  - **Global**: `Organization` schema with exact "SameAs" (Socials, Maps), NIB, and BH Number.
+  - **Products**: `FinancialProduct` schema for every item (e.g., "Sirela" as `SavingsAccount` with `interestRate` or `fee` properties if applicable).
+  - **News**: `NewsArticle` with strictly defined `headline`, `datePublished`, and `author`.
+- [ ] **Semantic HTML5**:
+  - Use `<article>`, `<section>`, `<nav>`, `<aside>` strictly.
+  - AI Agents prioritize content inside `<main>` and `<article>` tags.
+- [ ] **Entity Linking**:
+  - Ensure internal links clarify relationships (e.g., "Sirela" links to "Simpanan Page").
+  - Use `meta name="keywords"` (still relevant for some smaller bots) and OpenGraph tags.
 
-- [ ] **Robots.txt**: Allow Google, Block GPTBot.
-- [ ] **Sitemap.xml**: Auto-generate for dynamic routes.
-- [ ] **Metadata**: Dynamic `generateMetadata()` for News/Products.
+### 6.3 Security Audit
+
+- [ ] **Middleware**:
+  - Rate Limiting (`@upstash/ratelimit`) on API routes.
+  - Bot Detection (Block malicious scrapers, but ALLOW friendly AI Agents if desired for coverage).
+- [ ] **Content Security Policy**: Strict CSP for iframes (YouTube/Maps) and scripts.
 
 ---
 
 ## 🔮 Future Forecast & Analysis
 
-**Post-Launch Roadmap**
+**Post-Launch Roadmap for BMT NU Lumajang**
 
 ### 1. Mobile App (Flutter)
 
-- **Concept**: "BMT NU Mobile" for members to check balances.
-- **Integration**: Reuse PocketBase backend. Add `transactions` collection.
+- **Concept**: Dedicated "BMT NU Mobile" for members.
+- **Integration**: Reuse PocketBase backend via REST API. Add `transactions` collection.
 - **Timeline**: Q3 2026.
 
 ### 2. WhatsApp Bot Integration
 
-- **Concept**: Auto-reply for basic FAQs (Opening hours, Requirements).
-- **Tech**: Twilio or Waloop API connected to PocketBase Webhooks.
+- **Concept**: Auto-reply for basic FAQs (Alamat, Syarat Sirela, Jam Buka).
+- **Tech**: Integration with PocketBase Webhooks to query data and reply via WA Gateway.
 
 ### 3. Member Portal (Web)
 
-- **Concept**: Login area for members to view mutation history.
-- **Security**: Requires stricter KYC and Role-Based Access Control (RBAC).
+- **Concept**: Secure login area for members to check mutation history (Cek Saldo).
+- **Security**: Requires strict KYC verification and Role-Based Access Control (RBAC).
 
 ### 4. Analytics & BI
 
-- **Strategy**: Build a "Manager Dashboard" visualizing creating vs repayment trends.
-- **Tooling**: Self-hosted `Plausible` or Google Analytics 4.
+- **Strategy**: Advanced Manager Dashboard visualizing "Simpanan vs Pembiayaan" trends.
+- **Tooling**: Self-hosted Analytics (Plausible) to track "User Journey" from Home -> Product -> WA Contact.
 
 ---
 
@@ -273,9 +296,9 @@ This document is the **Execution Bible** for the project. It details every step 
 
 Application is "Finished" when:
 
-1. [ ] User can view all products and contact via WA.
-2. [ ] Admin can easily add/edit news and products without code.
-3. [ ] Site loads < 1.5s on 4G Mobile.
-4. [ ] Security Headers are active (A+ on Mozilla Observatory).
-5. [ ] No "Lorem Ipsum" remains.
-6. [ ] Backup system is verified working.
+1. [ ] User can view all products with correct nominals (Sirela Rp 20rb etc).
+2. [ ] Trust signals (NIB, BH) are visible on About page.
+3. [ ] Admin can update Assets/Members numbers.
+4. [ ] Site loads < 1.5s on 4G Mobile.
+5. [ ] **AI Test**: Page Metadata includes rich JSON-LD (Tested with Google Rich Results Test).
+6. [ ] No "Lorem Ipsum" remains.

@@ -12,7 +12,7 @@ export const TactileButton = React.forwardRef<HTMLButtonElement, TactileButtonPr
 
         // Tactile base: active:scale-95 for the "press" effect
         // Touch targets: h-10 (minimum) to h-12
-        const baseStyles = "btn-tactile group relative inline-flex items-center justify-center rounded-xl text-base font-bold transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:pointer-events-none overflow-hidden glass-shine";
+        const baseStyles = "btn-tactile group relative inline-flex items-center justify-center rounded-xl text-base font-bold transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:pointer-events-none overflow-hidden glass-shine whitespace-nowrap";
 
         const variants = {
             primary: "bg-gradient-to-br from-emerald-600 to-emerald-700 text-white border-b-4 border-emerald-900 shadow-md hover:shadow-lg hover:from-emerald-500 hover:to-emerald-600 hover:border-emerald-800",

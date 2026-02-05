@@ -8,45 +8,63 @@ This document outlines the technical and security architecture for the BMT NU Lu
 
 ### A. Feature Map (Mindmap)
 
-Breakdown of Public vs. Admin features.
+Breakdown of Public vs. Admin features, including the **AI & Semantic Engine**.
 
 ```mermaid
 mindmap
   root((BMT NU Lumajang))
     Public Area
       Home Page
-        Hero Section (Dynamic)
-        Bento Grid (Social Media)
-        Services/Products Preview
-        Analytics Tracking (View/Click)
+        Hero Slider (Branding, Sirela, Apps)
+        Stats Widget (Assets, Members, Offices)
+        Servies/Products Preview
+        CTA WhatsApp
       Products
-        Savings (Simpanan)
-        Financing (Pembiayaan)
-        Gold (Emas)
+        Category: Simpanan
+          Anggota (Pokok/Wajib)
+          Sirela (Sukarela - Hero)
+          Haji & Umroh
+          Qurban
+          Pendidikan
+          Berjangka (Deposito)
+        Category: Pembiayaan
+          Produktif (Mudharabah/Musyarokah)
+          Konsumtif (Murabahah/Renovasi/Elektronik)
+          Musiman (Pertanian/Nelayan)
+          KUN (UMKM Lazisnu)
+          KUNU (Lembaga NU)
+        Smart Search (AI-Friendly)
       News & Articles
-        Latest Updates
-        Educational Content
+        Latest Updates (RAT, Santunan)
+        Financial Tips
       About Us
+        History (2016-2020)
         Vision & Mission
-        Management Team
-        Legal (NIB/OJK)
+        Management (PCNU Command)
+        Legal Data (NIB/BH)
       Contact
-        WhatsApp Integration
-        Location Map
+        Map (Embed & Deep Links)
+        List of 16 Branches (Bento Grid)
+        Feedback Form
+      AI & Semantic Engine
+        JSON-LD Generator (Schema.org)
+        Semantic HTML5 Enforcer
+        OpenGraph Manager
     Admin Area (CMS)
       Dashboard
-        Traffic Stats (Views/Visitors)
+        Traffic Stats
         Content Performance
       Content Management
-        News CRUD (Rich Text)
-        Products CRUD
+        News CRUD (with SEO Meta)
+        AI SEO Assistant (Prompt Generator)
+        Products CRUD (with Schema Types)
         Hero Banner Mgmt
       Asset Management
         Media Library (MinIO)
         Auto-Cleanup Rules
       System Config
         Meta Tags (SEO)
-        Footer Info (Address/Hours)
+        Company Info (Assets, Members Count)
 ```
 
 ### B. App User Flow (Flowchart)
@@ -62,7 +80,7 @@ flowchart TD
 
     subgraph Public_Journey [Public User Journey]
         Start((Visit URL)) --> Verify{Check Trust?}
-        Verify -- Yes --> Footer[Footer/About: NIB, Legal, OJK]
+        Verify -- Yes --> Footer[About/Legal: NIB, BH Number]
         Verify -- No --> Explore[Browse Products/News]
         Explore --> Interest{Interested?}
         Interest -- Yes --> CTA[Click WhatsApp/Contact]
@@ -97,7 +115,7 @@ flowchart TD
 
 ### C. Advanced ERD (PocketBase Schema)
 
-Entity Relationship Diagram with Security Rules annotated.
+Entity Relationship Diagram with Security Rules annotated. **Updated for AI-SEO.**
 
 ```mermaid
 erDiagram
@@ -130,6 +148,9 @@ erDiagram
         file thumbnail
         text category
         bool published
+        text seo_title "For <title> tag"
+        text seo_desc "For <meta-desc>"
+        relation related_products "Simpanan/Pembiayaan"
         date created
         date updated
         rule view "published = true"
@@ -142,12 +163,19 @@ erDiagram
         text id PK
         text name
         text slug "unique"
-        text type "select: saving, financing, gold"
+        text product_type "text: Simpanan / Pembiayaan"
         editor description
+        text requirements "Syarat & Ketentuan"
+        text min_deposit "Setoran Awal/Nominal"
         file brochure_pdf
         file icon
         bool is_featured
-        rule view "published = true"
+        text schema_type "SavingsAccount/LoanOrCredit"
+        text seo_keywords "For AI Context"
+        bool published
+        date created
+        date updated
+        rule view "published = true || @request.auth.id != ''"
         rule create "@request.auth.id != ''"
         rule edit "@request.auth.id != ''"
         rule delete "@request.auth.id != ''"
@@ -178,16 +206,32 @@ erDiagram
         rule manage "@request.auth.id != ''"
     }
 
+    branches {
+        text id PK
+        text name
+        text address
+        text phone_wa "WhatsApp Number (628...)"
+        text map_link "Google Maps URL"
+        text type "select: Pusat, Cabang, Kas"
+        bool is_active
+        int order
+        rule view "is_active = true"
+        rule manage "@request.auth.id != ''"
+    }
+
     site_config {
         text id PK "Singleton: main_config"
         text company_name
         text nib
+        text legal_bh "Nomor Badan Hukum"
         text address
         text phone_wa
         text email_official
         text hero_title
         editor welcome_text
-        text video_profile_url
+        text total_assets "e.g. 28 Miliar"
+        text total_members "e.g. 6000"
+        text total_branches "e.g. 16"
         bool maintenance_mode
         json theme_config
         json social_links "Legacy/Footer icons"
@@ -198,55 +242,76 @@ erDiagram
     users ||--o{ news : "authors"
     users ||--o{ products : "manages"
     users ||--o{ hero_banners : "manages"
+    news }o--o{ products : "mentions"
 ```
 
-## 2. Project Structure (Next.js 14)
+### 2. Project Structure (Next.js 14)
 
 d:/web-bmtnulumajang/
 ├── app/
-│   ├── home/                  # [Public Domain] <www.bmtnulmj.local> / public routes
-│   │   ├── page.tsx           # Landing Page
+│   ├── (root)                 # [Public Domain] <www.bmtnulmj.com>
+│   │   ├── page.tsx           # Landing Page (Root)
 │   │   ├── berita/            # News
-│   │   └── produk/            # Products
-│   ├── panel/                 # [Admin Subdomain] cp.bmtnulmj.local / admin routes
+│   │   ├── produk/            # Products
+│   │   └── kontak/            # Contact
+│   │   └── tentang-kami/      # About Us
+│   ├── panel/                 # [Admin Subdomain] <cp.bmtnulmj.com> / admin routes
 │   │   ├── page.tsx           # Redirect -> Login
 │   │   ├── login/page.tsx
 │   │   └── dashboard/
 │   │       ├── layout.tsx     # Admin Sidebar/Shell
 │   │       └── ...
+│   │       └── ...
 │   ├── api/                   # Route Handlers
+│   │   └── cdn/secure/        # Secure CDN Proxy (masks PocketBase URL)
 │   ├── layout.tsx             # Root Layout (Providers)
 │   └── globals.css            # Tailwind + CSS Variables
 ├── components/
 │   ├── ui/                    # Atomic (Shadcn-like) - Buttons, Inputs
-│   │   ├── button.tsx
-│   │   ├── card.tsx
-│   │   └── input.tsx
+│   │   ├── tactile-button.tsx
+│   │   ├── arabesque-card.tsx
+│   │   ├── form-input.tsx
+│   │   └── section-heading.tsx
 │   ├── layout/                # Structures
-│   │   ├── navbar.tsx
-│   │   ├── footer.tsx
+│   │   ├── modern-navbar.tsx
+│   │   ├── modern-footer.tsx
 │   │   └── admin-sidebar.tsx
 │   ├── bento/                 # Custom Bento Grid components
-│   │   ├── video-card.tsx
-│   │   └── social-tile.tsx
-│   └── analytics/             # Analytics Components
+│   ├── widgets/               # Complex logic-bound widgets
+│   │   └── stats-widget.tsx
+│   ├── analytics/             # Analytics Components
 │       └── AnalyticsTracker.tsx # Client Component
 ├── lib/
 │   ├── pb.ts                  # PocketBase Client Singleton
 │   ├── utils.ts               # cn() and formatters
 │   ├── security.ts            # CSP, Sanitization
 │   └── analytics.ts           # Analytics helper functions
-├── middleware.ts              # Security Middleware (CSP, Bot Block, Rate Limit)
+├── middleware.ts              # Security Middleware (CSP, Bot Block, Rate Limit, Subdomain Routing)
 ├── pb_hooks/                  # Backend Scripts (MinIO Cleanup)
 │   └── main.pb.js
 ├── public/                    # Static Assets
 └── types/                     # TypeScript Interfaces
 
-```
+### 2.1 Configuration & Environment Variables
+
+The application relies on the following environment variables. **DO NOT commit `.env.local` to Git.**
+
+| Variable | Description | Example / Notes |
+| :--- | :--- | :--- |
+| `NEXT_PUBLIC_APP_URL` | Public URL of the app | `http://localhost:3000` |
+| `NEXT_PUBLIC_ROOT_DOMAIN` | Root domain for multi-tenant routing | `localhost:3000` |
+| `NEXT_PUBLIC_POCKETBASE_URL` | API Endpoint for PocketBase | `https://db-bmtnulmj.sagamuda.cloud` |
+| `POCKETBASE_ADMIN_EMAIL` | Super Admin Email | For backend scripts |
+| `POCKETBASE_ADMIN_PASSWORD` | Super Admin Password | For backend scripts |
+| `MINIO_ENDPOINT` | S3-compatible storage endpoint | `https://drivestorage.sagamuda.cloud` |
+| `MINIO_BUCKET` | Storage bucket name | `bmtnulmj-storage` |
+| `MINIO_REGION` | Storage region | `ap-southeast-3` |
+| `MINIO_ACCESS_KEY` | Access Key ID | **SECRET** |
+| `MINIO_SECRET_KEY` | Secret Access Key | **SECRET** |
 
 ### DRY Strategy
 
-1. **Atomic Design**: Small, dumb components (`components/ui`) like buttons and cards are reused purely for styling. Logic is kept in feature components.
+1. **Atomic Design**: Small, dumb components (`components/ui`) like `tactile-button` and `arabesque-card` are reused purely for styling. Logic is kept in feature components.
 2. **Layout Wrappers**: Admin and Public layouts share no state but may share UI tokens (colors, fonts) via `globals.css`.
 3. **Typed Client**: A single `lib/pb.ts` exports a typed PocketBase client, ensuring we don't repeat API rule logic.
 4. **Reusable Hooks**: Custom hooks for fetching data (e.g., `useNews`, `useConfig`) to abstract SWR/React Query logic.
@@ -265,8 +330,6 @@ d:/web-bmtnulumajang/
 
 ### MinIO Strict Cleanup (pb_hooks)
 
-To prevent "orphan files" in MinIO:
-
 * We use **PocketBase Hooks** (`main.pb.js`) listening to `onRecordUpdate` and `onRecordDelete`.
 * **Logic**:
     1. When a record is updated, check if the old filename != new filename.
@@ -275,29 +338,25 @@ To prevent "orphan files" in MinIO:
 
 ### Meta Verification (Single Source of Truth)
 
-* **Database**: A single collection `meta_config` with a known ID (e.g., `main_config`).
+* **Database**: A single collection `site_config` with a known ID (e.g., `main_config`).
 * **Frontend**: The `RootLayout` fetches this data **once** at build time (or revalidated every hour).
 * **Context**: Pass data to `Footer`, `Navbar`, and `Metadata` API generation. This ensures if the phone number changes in Admin, it updates everywhere (Header, Footer, Contact Page).
 
-### Dynamic Bento Grid
+### "AI-Ready" SEO Architecture (High-Resolution Semantics)
 
-* **Component**: `components/bento/BentoGrid.tsx`.
-* **Detection**:
-  * Iterate through `social_feeds` collection.
-  * Regex check on URL:
-    * `tiktok.com` -> Render `<TikTokEmbed />`
-    * `youtube.com` -> Render `<YouTubeLite />` (facade for performance).
-    * Default -> Render generic link card.
-* **Security**: All iframes strictly sandboxed in `CSP`.
+To ensure BMT NU Lumajang is an authoritative source for AI Agents (LLMs/Search) and traditional search engines:
 
-### SEO/Schema (JSON-LD)
+1. **Deep Structured Data (JSON-LD)**:
+    * **FinancialProduct**: Specific schemas for "Simpanan" (mapped to `SavingsAccount`) and "Pembiayaan" (mapped to `LoanOrCredit`). Attributes must include `amount` (Setoran Awal), `fees` (Biaya Admin), and `provider`.
+    * **Organization**: "SameAs" linking to official Social Media and Government Databases (NIB validation) to establish trust.
+    * **NewsArticle**: Authoritative reporting with `author`, `publisher` (Organization), and `dateModified` to establish freshness and expertise.
 
-We will implement **Structured Data** for rich results:
+2. **Semantic Content Graph**:
+    * **Internal Linking**: Contextual links connecting "News about RAT" -> "Simpanan Anggota Product", helping crawlers understand relationships between Entity and Product.
+    * **HTML5 Strictness**: Strict usage of `<article>` for news content, `<aside>` for related links, and `<main>` for primary content. This ensures AI parsers identify the "Main Entity" of the page immediately without noise.
 
-1. **Organization**: For Home (Logo, Contact, Socials).
-2. **FinancialProduct**: For Products (Interest rate, fees - if applicable, or generic Product).
-3. **NewsArticle**: For Blog posts (Headline, Image, Date).
-4. **BreadcrumbList**: For navigation hierarchy.
+3. **Entity Authority**:
+    * Every page must reinforce the entity "KSPPS BMT NU LUMAJANG" with consistent NAP (Name, Address, Phone) data matching the `site_config` Single Source of Truth.
 
 ## 4. UI/UX Style Guide
 
@@ -320,7 +379,7 @@ We will implement **Structured Data** for rich results:
   * Body: `Inter` (Readable).
 * **Imagery**:
   * High-quality photos of local activities, office front, and smiling staff.
-  * Abstract patterns for "Sharia" moifs (geometric islamic patterns) used subtly in backgrounds.
+  * Abstract patterns for "Sharia" motifs (geometric islamic patterns) used subtly in backgrounds.
 
 ## 7. Sistem Desain & Identitas Brand (Detail)
 
@@ -346,12 +405,12 @@ Untuk menjaga konsistensi visual yang premium dan mencerminkan identitas BMT NU 
 
 ### B. Penerapan Gradasi (Gradient Application)
 
-Penggunaan gradasi memberikan kesan modern dan tidak kaku (flat).
+Penggunaan gradasi memberikan kesan modern dan tidak kaku (flat), dipadukan dengan pola Arabesque untuk nuansa premium.
 
 1. **Hero Section & Header**:
     * **Style**: Diagonal Gradient
     * **CSS**: `bg-gradient-to-br from-[#15803d] to-[#14532d]` (Hijau Terang ke Hijau Gelap)
-    * **Efek**: Memberikan kedalaman pada area judul utama agar teks putih tebal terlihat kontras dan elegan.
+    * **Efek**: Memberikan kedalaman pada area judul utama. Dipadukan dengan *Arabesque Grid* di layer belakang.
 
 2. **Call-to-Action (CTA) Button**:
     * **Normal**: Solid Green `#15803d` dengan shadow halus.
@@ -361,10 +420,18 @@ Penggunaan gradasi memberikan kesan modern dan tidak kaku (flat).
 3. **Card Interactive (Layanan/Produk)**:
     * Saat di-hover, border bawah atau icon berubah menjadi gradasi hijau-emas untuk memberi feedback visual yang halus.
 
-### C. Tipografi & Komponen UI
+### C. Arabesque Tokens (New)
 
-* **Font Family**: `Inter` atau `Plus Jakarta Sans`. Memberikan kesan modern, bersih, dan sangat mudah dibaca di HP (Mobile First).
-* **Rounded Corners**:
-  * **Cards**: `rounded-2xl` (Sudut membulat modern).
-  * **Buttons**: `rounded-full` (Lebih ramah dan "clickable").
-* **Shadows**: Gunakan `shadow-lg` yang lembut (`shadow-green-900/5`) untuk elemen yang melayang di atas background putih.
+*Koleksi token desain khusus untuk nuansa islami modern yang melengkapi sistem gradasi.*
+
+* **`primary-dark`**: `#14532d` (Deep Emerald for footers/hero backgrounds)
+* **`gold-dark`**: `#CA8A04` (For text readability on light backgrounds)
+* **`arabesque-grid`**: Pattern halus geometris untuk background section.
+* **Typographic Token**: `font-display` (`Manrope` atau `Outfit`) untuk angka statistik dan headline besar.
+
+### D. Komponen UI Utama
+
+* **`TactileButton`**: Tombol dengan feedback sentuhan (pressed state) dan shadow halus.
+* **`ArabesqueCard`**: Kartu dengan ornamen geometris yang muncul saat di-hover (Interactive Variant).
+* **`ModernNavbar`**: Navigasi sticky dengan efek glassmorphism.
+* **`ModernFooter`**: Footer 4 kolom dengan integrasi sosial media.

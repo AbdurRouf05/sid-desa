@@ -7,6 +7,7 @@ export function middleware(request: NextRequest) {
 
     // Logic: If hostname starts with 'cp', treat as ADMIN.
     // We check if "cp." is present in the hostname as a simple check.
+    // This supports both cp.bmtnulmj.local and cp.bmtnulmj.id
     const isAdmin = hostname.includes("cp.");
 
     // 1. Bot Protection (Simple User-Agent Block) - Global
@@ -46,7 +47,9 @@ export function middleware(request: NextRequest) {
         // Note: checks to avoid double-rewriting if already rewritten are internal to Next.js usually
         // but explicit rewrite is safer.
         const newUrl = new URL(request.url);
-        newUrl.pathname = `/panel${url.pathname}`;
+        if (!url.pathname.startsWith("/panel")) {
+            newUrl.pathname = `/panel${url.pathname}`;
+        }
 
         // Add Security Headers
         const response = NextResponse.rewrite(newUrl);

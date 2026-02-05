@@ -5,12 +5,16 @@ import Link from "next/link";
 import { Menu, X, Home, User, Search, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TactileButton } from "@/components/ui/tactile-button";
+import { pb } from "@/lib/pb";
 
 export function ModernNavbar() {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [logoUrl, setLogoUrl] = useState<string | null>(null);
+    const [logoWhiteUrl, setLogoWhiteUrl] = useState<string | null>(null);
+    const [companyName, setCompanyName] = useState("BMT NU");
 
-    // Scroll Listener
+    // Scroll Listener & Logo Fetcher
     useEffect(() => {
         const handleScroll = () => {
             if (window.scrollY > 10) {
@@ -20,16 +24,44 @@ export function ModernNavbar() {
             }
         };
 
+        const fetchConfig = async () => {
+            try {
+                const records = await pb.collection('site_config').getList(1, 1);
+                if (records.items.length > 0) {
+                    const data = records.items[0];
+                    if (data.logo_primary) {
+                        setLogoUrl(pb.files.getUrl(data, data.logo_primary));
+                    }
+                    if (data.logo_secondary) {
+                        setLogoWhiteUrl(pb.files.getUrl(data, data.logo_secondary));
+                    }
+                    if (data.company_name) {
+                        // Hardcode / Logic to ensure it is just "BMT NU"
+                        setCompanyName("BMT NU");
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to load nav config", e);
+            }
+        };
+
         window.addEventListener("scroll", handleScroll);
+        fetchConfig();
+
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
     const navLinks = [
-        { name: "Beranda", href: "#" },
-        { name: "Produk", href: "#" },
-        { name: "Layanan", href: "#" },
-        { name: "Tentang Kami", href: "#" },
+        { name: "Beranda", href: "/" },
+        { name: "Produk", href: "/produk" },
+        { name: "Layanan", href: "/layanan" },
+        { name: "Berita", href: "/berita" },
+        { name: "Tentang Kami", href: "/tentang-kami" },
+        { name: "Kontak", href: "/kontak" },
     ];
+
+    // Logic for current logo: Scrolled = Primary (Color), Unscrolled = Secondary (White)
+    const currentLogo = isScrolled ? logoUrl : (logoWhiteUrl || logoUrl);
 
     return (
         <>
@@ -46,14 +78,22 @@ export function ModernNavbar() {
                     <div className="flex items-center gap-3">
                         <div
                             className={cn(
-                                "p-2 rounded-lg transition-colors duration-300",
-                                isScrolled ? "bg-primary text-white" : "bg-white/20 text-white backdrop-blur-sm"
+                                "p-1.5 rounded-lg transition-colors duration-300 overflow-hidden flex items-center justify-center",
+                                isScrolled ? "bg-white" : "bg-white/20 backdrop-blur-sm"
                             )}
                         >
-                            <Home className="w-5 h-5 md:w-6 md:h-6" />
+                            {currentLogo ? (
+                                <img
+                                    src={currentLogo}
+                                    alt="Logo"
+                                    className="w-8 h-8 md:w-10 md:h-10 object-contain"
+                                />
+                            ) : (
+                                <Home className="w-5 h-5 md:w-6 md:h-6 text-current" />
+                            )}
                         </div>
                         <div>
-                            <h1 className="font-bold text-lg md:text-xl tracking-tight leading-none">BMT NU</h1>
+                            <h1 className="font-bold text-lg md:text-xl tracking-tight leading-none">{companyName}</h1>
                             <p className={cn(
                                 "text-[10px] font-semibold tracking-wider uppercase opacity-80",
                                 isScrolled ? "text-emerald-700" : "text-emerald-50"
@@ -89,9 +129,6 @@ export function ModernNavbar() {
                             <Search className="w-5 h-5" />
                         </button>
                         {/* Login Button Hidden as per request */}
-                        {/* <TactileButton variant={isScrolled ? "primary" : "secondary"} className="h-10 px-6 text-sm">
-                            Login Anggota
-                        </TactileButton> */}
                     </div>
 
                     {/* Mobile Menu Toggle */}
@@ -122,8 +159,12 @@ export function ModernNavbar() {
             >
                 <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-primary text-white">
                     <div className="flex items-center gap-3">
-                        <div className="bg-white/20 p-1.5 rounded-lg">
-                            <Home className="w-5 h-5" />
+                        <div className="bg-white/20 p-1.5 rounded-lg flex items-center justify-center">
+                            {logoUrl ? (
+                                <img src={logoUrl} alt="Logo Mobile" className="w-6 h-6 object-contain" />
+                            ) : (
+                                <Home className="w-5 h-5" />
+                            )}
                         </div>
                         <span className="font-bold text-lg">Menu Utama</span>
                     </div>
@@ -147,11 +188,8 @@ export function ModernNavbar() {
                 </div>
 
                 <div className="p-6 border-t border-gray-100 bg-gray-50 space-y-4">
-                    {/* <TactileButton fullWidth variant="primary" icon={<User className="w-4 h-4" />}>
-                        Login / Register
-                    </TactileButton> */}
                     <p className="text-center text-xs text-gray-400">
-                        © 2024 BMT NU Lumajang <br /> Mobile Experience v1.0
+                        © 2025 BMT NU Lumajang <br /> Mobile Experience v1.0
                     </p>
                 </div>
             </div>

@@ -1,0 +1,282 @@
+{
+  "main": {
+    "id": "ea70dd47f905d589",
+    "type": "split",
+    "children": [
+      {
+        "id": "f656bfa717a7038b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "ea4a6afd018e0b38",
+            "type": "leaf",
+            "state": {
+              "type": "canvas",
+              "state": {
+                "file": "Untitled.canvas",
+                "viewState": {
+                  "x": 0,
+                  "y": 0,
+                  "zoom": 0
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "Untitled"
+            }
+          },
+          {
+            "id": "4c9a177cce536e1a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "01_ARCHITECTURE_BLUEPRINT.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "01_ARCHITECTURE_BLUEPRINT"
+            }
+          },
+          {
+            "id": "a6f80f305789c80b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "02_IMPLEMENTATION_PLAN.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "02_IMPLEMENTATION_PLAN"
+            }
+          },
+          {
+            "id": "77d8f41c83cb3170",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "04_DEPLOYMENT_DR.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "04_DEPLOYMENT_DR"
+            }
+          },
+          {
+            "id": "07e5306d596f0ab0",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "05_ACCESS_AND_TESTING.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "05_ACCESS_AND_TESTING"
+            }
+          },
+          {
+            "id": "8fa474128c56776e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "implementation_plan.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "implementation_plan"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "763baa03948fb5aa",
+    "type": "split",
+    "children": [
+      {
+        "id": "08c8e91f53fa3d75",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3d6ae33602ff0f81",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "5d29afee4cd4e791",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "1f96434fa43ae130",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "dea5f7d3d144a4e9",
+    "type": "split",
+    "children": [
+      {
+        "id": "e9daeecbb06bed2e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "62a9d11c8085f419",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "01_ARCHITECTURE_BLUEPRINT.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for 01_ARCHITECTURE_BLUEPRINT"
+            }
+          },
+          {
+            "id": "1256af471325913f",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "01_ARCHITECTURE_BLUEPRINT.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from 01_ARCHITECTURE_BLUEPRINT"
+            }
+          },
+          {
+            "id": "ade170210a0309fe",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "e97779c51f57b2c7",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "eff7aa0b04e59c7b",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "01_ARCHITECTURE_BLUEPRINT.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of 01_ARCHITECTURE_BLUEPRINT"
+            }
+          }
+        ],
+        "currentTab": 4
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "4c9a177cce536e1a",
+  "lastOpenFiles": [
+    "03_CONTACT_IMPLEMENTATION_PLAN.md",
+    "Enginering Journaling/2026-02-05_CREDENTIAL_EXPOSURE_INCIDENT.md",
+    "02_IMPLEMENTATION_PLAN.md",
+    "01_ARCHITECTURE_BLUEPRINT.md",
+    "03_SECURITY_HARDENING.md",
+    "task.md",
+    "Task Apply Arabesque Gradient Design System.md",
+    "VERIFICATION_REPORT_20260205_V2.md",
+    "Enginering Journaling/2026-02-04_SCHEMA_RESTORATION_POSTMORTEM.md",
+    "implementation_plan.md",
+    "ANALYSIS_REPORT_20260201.md",
+    "AUDIT_REPORT_20260205.md",
+    "Untitled.canvas",
+    "Untitled.md",
+    "Card Type.md",
+    "05_ACCESS_AND_TESTING.md",
+    "04_DEPLOYMENT_DR.md",
+    "FUTURE_WEB_BLUEPRINT.md"
+  ]
+}

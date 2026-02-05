@@ -5,7 +5,7 @@ let pb: PocketBase;
 
 if (typeof window === "undefined") {
     // Server-side
-    pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
+    pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || "http://127.0.0.1:8090");
 } else {
     // Client-side
     if (!(window as any).pb) {

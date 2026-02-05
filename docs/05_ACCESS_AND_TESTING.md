@@ -7,7 +7,7 @@ Dokumen ini menjelaskan cara menjalankan, mengakses, dan melakukan testing pada 
 Aplikasi menggunakan arsitektur **Subdomain** yang dipisahkan oleh `middleware.ts`.
 
 - **Port Default:** `3040`
-- **Host:** `localhost` atau Custom Domain Lokal (`bmtnulmj.local`)
+- **Host:** `localhost` atau Custom Domain Lokal (`bmtnulmj.local`) 
 
 ### A. Persiapan (Setup Hosts File)
 

@@ -1,40 +1,171 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Lock } from "lucide-react";
+"use client";
 
-export default function AdminLogin() {
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { pb } from "@/lib/pb";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Loader2, ShieldCheck, Mail, Lock } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+const loginSchema = z.object({
+    email: z.string().email("Format email tidak valid"),
+    password: z.string().min(6, "Password minimal 6 karakter"),
+});
+
+type LoginInputs = z.infer<typeof loginSchema>;
+
+export default function AdminLoginPage() {
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [logoUrl, setLogoUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchLogo = async () => {
+            try {
+                const records = await pb.collection('site_config').getList(1, 1);
+                if (records.items.length > 0) {
+                    const data = records.items[0];
+                    if (data.logo_secondary) {
+                        setLogoUrl(pb.files.getUrl(data, data.logo_secondary));
+                    } else if (data.logo_primary) {
+                        setLogoUrl(pb.files.getUrl(data, data.logo_primary));
+                    }
+                }
+            } catch (e) {
+                // Ignore error, fallback to icon
+            }
+        };
+        fetchLogo();
+    }, []);
+
+    const [showPassword, setShowPassword] = useState(false);
+    const { register, handleSubmit, formState: { errors } } = useForm<LoginInputs>({
+        resolver: zodResolver(loginSchema)
+    });
+
+    const onSubmit = async (data: LoginInputs) => {
+        setIsLoading(true);
+        setError("");
+
+        try {
+            await pb.collection('users').authWithPassword(data.email, data.password);
+            router.push("/panel/dashboard");
+        } catch (err: any) {
+            // Only log if it's not a 400 (Bad Request / Invalid Credentials) error
+            if (err.status !== 400) {
+                console.error("Login Error:", err);
+            }
+
+            // Fallback: Try Admin Auth (Super User)
+            try {
+                await pb.admins.authWithPassword(data.email, data.password);
+                router.push("/panel/dashboard");
+            } catch (adminErr) {
+                setError("Email atau password salah.");
+            }
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
-        <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
-            <Card className="w-full max-w-md shadow-2xl">
-                <CardHeader className="text-center space-y-4 pb-2">
-                    <div className="w-16 h-16 bg-bmt-green-700 rounded-2xl flex items-center justify-center mx-auto text-white shadow-lg">
-                        <Lock size={32} />
+        <main className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+            <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden">
+                {/* Header */}
+                <div className="bg-gradient-to-br from-bmt-green-700 to-primary-dark p-8 text-center text-white relative overflow-hidden">
+                    <div className="absolute inset-0 bg-arabesque-grid bg-grid-24 opacity-10 pointer-events-none"></div>
+                    <div className="relative z-10 w-full h-24 flex items-center justify-center mx-auto mb-2">
+                        {logoUrl ? (
+                            <img src={logoUrl} alt="Logo" className="h-full object-contain" />
+                        ) : (
+                            <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20">
+                                <ShieldCheck className="w-8 h-8 text-gold-400" />
+                            </div>
+                        )}
                     </div>
-                    <CardTitle className="text-2xl font-bold text-slate-800">BMT NU Admin</CardTitle>
-                    <p className="text-sm text-slate-500">Silakan masuk untuk melanjutkan</p>
-                </CardHeader>
-                <CardContent className="space-y-4 pt-6">
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">Email</label>
-                        <input
-                            type="email"
-                            placeholder="admin@bmtnu.id"
-                            className="w-full h-10 px-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-bmt-green-700/20 focus:border-bmt-green-700 transition"
-                        />
+                    <h1 className="text-2xl font-bold font-display tracking-tight mb-1 relative z-10">Admin Panel</h1>
+                </div>
+
+                {/* Form */}
+                <div className="p-8">
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                        {error && (
+                            <div className="p-3 bg-red-50 text-red-600 text-sm rounded-lg border border-red-100 font-medium text-center">
+                                {error}
+                            </div>
+                        )}
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold text-slate-700">Email</label>
+                            <div className="relative">
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                <input
+                                    {...register("email")}
+                                    type="email"
+                                    className={cn(
+                                        "w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all",
+                                        errors.email ? "border-red-500 bg-red-50" : "border-slate-200"
+                                    )}
+                                    placeholder="admin@bmtnu.id"
+                                />
+                            </div>
+                            {errors.email && <p className="text-xs text-red-500 font-medium">{errors.email.message}</p>}
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-bold text-slate-700">Password</label>
+                            <div className="relative">
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                <input
+                                    {...register("password")}
+                                    type={showPassword ? "text" : "password"}
+                                    className={cn(
+                                        "w-full pl-10 pr-10 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all",
+                                        errors.password ? "border-red-500 bg-red-50" : "border-slate-200"
+                                    )}
+                                    placeholder="••••••••"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                                >
+                                    {showPassword ? (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-eye-off"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" /><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" /><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7c.44 0 .87-.02 1.29-.05" /><path d="M22 2 2 22" /></svg>
+                                    ) : (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-eye"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
+                                    )}
+                                </button>
+                            </div>
+                            {errors.password && <p className="text-xs text-red-500 font-medium">{errors.password.message}</p>}
+                        </div>
+
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-900/10 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                        >
+                            {isLoading ? (
+                                <>
+                                    <Loader2 className="w-5 h-5 animate-spin" />
+                                    Memproses...
+                                </>
+                            ) : (
+                                "Masuk ke Dashboard"
+                            )}
+                        </button>
+                    </form>
+
+                    <div className="mt-8 text-center">
+                        <p className="text-xs text-slate-400">
+                            &copy; 2026 BMT NU Lumajang. Restricted Access.
+                        </p>
                     </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-slate-700">Password</label>
-                        <input
-                            type="password"
-                            placeholder="••••••••"
-                            className="w-full h-10 px-3 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-bmt-green-700/20 focus:border-bmt-green-700 transition"
-                        />
-                    </div>
-                    <Button className="w-full bg-bmt-green-700 hover:bg-bmt-green-800">
-                        Masuk Dashboard
-                    </Button>
-                </CardContent>
-            </Card>
-        </div>
+                </div>
+            </div>
+        </main>
     );
 }
