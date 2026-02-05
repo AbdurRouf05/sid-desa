@@ -36,9 +36,13 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
 
 export async function getSiteConfig(): Promise<SiteConfig> {
     try {
-        // Fetch the first record from site_config collection
-        // Since it's a singleton concept, we just take the first one
-        const record = await pb.collection('site_config').getFirstListItem("");
+        // Fetch with a timeout to prevent build hangs
+        const fetchPromise = pb.collection('site_config').getFirstListItem("");
+        const timeoutPromise = new Promise((_, reject) =>
+            setTimeout(() => reject(new Error("Timeout")), 8000)
+        );
+
+        const record = await Promise.race([fetchPromise, timeoutPromise]) as any;
 
         // Map map_embed_url from social_links if not present in root (Schema workaround)
         const config = record as unknown as SiteConfig;
@@ -48,8 +52,9 @@ export async function getSiteConfig(): Promise<SiteConfig> {
 
         return config;
     } catch (error: any) {
-        // If 404, it means no config exists yet. Return default.
-        if (error.status !== 404) {
+        // Silently return default if fetch fails (timeout, 404, or network error during build)
+        // Log only if it's not a standard 404 or a build-time connection issue
+        if (error.status !== 404 && error.message !== "Timeout" && error.status !== 0) {
             console.error("Failed to fetch site config:", error);
         }
         return DEFAULT_SITE_CONFIG;

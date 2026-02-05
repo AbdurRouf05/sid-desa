@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Inter, Plus_Jakarta_Sans, Manrope } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -32,16 +33,16 @@ export async function generateMetadata(): Promise<Metadata> {
       title: `${title} - Mudah, Murah, Berkah`,
       description: desc,
       images: [{
-        url: config?.og_image ? pb.files.getUrl(config, config.og_image) : "https://bmtnu-lumajang.id/og-image.jpg",
+        url: config?.og_image ? pb.files.getURL(config, config.og_image) : "https://bmtnu-lumajang.id/og-image.jpg",
         width: 1200,
         height: 630,
         alt: title
       }],
     },
     icons: {
-      icon: config?.favicon ? pb.files.getUrl(config, config.favicon) : "/favicon.ico",
-      shortcut: config?.favicon ? pb.files.getUrl(config, config.favicon) : "/favicon.ico",
-      apple: config?.favicon ? pb.files.getUrl(config, config.favicon) : "/apple-touch-icon.png",
+      icon: config?.favicon ? pb.files.getURL(config, config.favicon) : "/favicon.ico",
+      shortcut: config?.favicon ? pb.files.getURL(config, config.favicon) : "/favicon.ico",
+      apple: config?.favicon ? pb.files.getURL(config, config.favicon) : "/apple-touch-icon.png",
     },
   };
 }
@@ -90,7 +91,9 @@ export default async function RootLayout({
         "font-sans bg-background text-foreground antialiased"
       )}>
         <JsonLd type="Organization" data={orgSchema} />
-        <AnalyticsTracker />
+        <Suspense fallback={null}>
+          <AnalyticsTracker />
+        </Suspense>
         {children}
       </body>
     </html>

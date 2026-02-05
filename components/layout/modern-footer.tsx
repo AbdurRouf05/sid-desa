@@ -36,7 +36,7 @@ export function ModernFooter() {
                         phone: config.phone_wa || "0812-3456-7890",
                         email: config.email_official || "info@bmtnu.id",
                         companyName: config.company_name || "BMT NU Lumajang",
-                        logoSecondary: config.logo_secondary ? pb.files.getUrl(config, config.logo_secondary) : null
+                        logoSecondary: config.logo_secondary ? pb.files.getURL(config, config.logo_secondary) : null
                     });
                 }
             } catch (e) {

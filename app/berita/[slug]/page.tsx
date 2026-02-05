@@ -78,7 +78,7 @@ export default async function NewsDetailPage({ params }: Props) {
     // Prepare JSON-LD Schema
     const newsSchema = {
         headline: record.title,
-        image: record.thumbnail ? [pb.files.getUrl(record, record.thumbnail)] : [],
+        image: record.thumbnail ? [pb.files.getURL(record, record.thumbnail)] : [],
         datePublished: record.created,
         dateModified: record.updated,
         articleBody: record.content.replace(/<[^>]*>?/gm, ''), // Strip HTML for schema body
@@ -161,7 +161,7 @@ export default async function NewsDetailPage({ params }: Props) {
                                         <div className="w-20 h-20 flex-shrink-0 bg-slate-200 rounded-lg overflow-hidden relative">
                                             {item.thumbnail ? (
                                                 <img
-                                                    src={pb.files.getUrl(item, item.thumbnail)}
+                                                    src={pb.files.getURL(item, item.thumbnail)}
                                                     alt={item.title}
                                                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                                 />

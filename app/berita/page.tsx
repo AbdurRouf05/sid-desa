@@ -47,7 +47,7 @@ export default function BeritaPage() {
                     id: record.id,
                     title: record.title,
                     slug: record.slug,
-                    thumbnail: record.thumbnail ? pb.files.getUrl(record, record.thumbnail) : "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=2070", // Fallback
+                    thumbnail: record.thumbnail ? pb.files.getURL(record, record.thumbnail) : "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=2070", // Fallback
                     date: new Date(record.created).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' }),
                     category: record.category,
                     author: "Admin", // Default author

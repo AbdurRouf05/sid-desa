@@ -30,10 +30,10 @@ export function ModernNavbar() {
                 if (records.items.length > 0) {
                     const data = records.items[0];
                     if (data.logo_primary) {
-                        setLogoUrl(pb.files.getUrl(data, data.logo_primary));
+                        setLogoUrl(pb.files.getURL(data, data.logo_primary));
                     }
                     if (data.logo_secondary) {
-                        setLogoWhiteUrl(pb.files.getUrl(data, data.logo_secondary));
+                        setLogoWhiteUrl(pb.files.getURL(data, data.logo_secondary));
                     }
                     if (data.company_name) {
                         // Hardcode / Logic to ensure it is just "BMT NU"
