@@ -10,6 +10,8 @@ export function middleware(request: NextRequest) {
     // This supports both cp.bmtnulmj.local and cp.bmtnulmj.id
     const isAdmin = hostname.includes("cp.");
 
+    console.log("Middleware Debug:", { hostname, pathname: url.pathname, isAdmin });
+
     // 1. Bot Protection (Simple User-Agent Block) - Global
     const ua = request.headers.get("user-agent") || "";
     const badBots = ["GPTBot", "CCBot", "Omgilibot", "FacebookBot"];
@@ -51,6 +53,14 @@ export function middleware(request: NextRequest) {
             newUrl.pathname = `/panel${url.pathname}`;
         }
 
+        // Optimization: If the path is already correct (starts with /panel), use next()
+        // This avoids unnecessary rewrites and potential conflicts.
+        if (newUrl.pathname === url.pathname) {
+            const response = NextResponse.next();
+            response.headers.set("X-Frame-Options", "DENY");
+            return response;
+        }
+
         // Add Security Headers
         const response = NextResponse.rewrite(newUrl);
         // response.headers.set("Content-Security-Policy", cspHeader);
@@ -58,6 +68,14 @@ export function middleware(request: NextRequest) {
         return response;
     } else {
         // [PUBLIC ROUTE]
+
+        // 1. Block Admin Path on Public Domain
+        if (url.pathname.startsWith("/panel")) {
+            // Stealth Mode: Rewrite to a definitely non-existent path to trigger 404.
+            // Rewriting to "/404" specifically can sometimes loop if Next.js tries to treat it as a page.
+            url.pathname = "/private/secure/not-found";
+            return NextResponse.rewrite(url);
+        }
 
         // EXCEPTION: Development Page (Do not rewrite)
         if (url.pathname.startsWith("/development")) {

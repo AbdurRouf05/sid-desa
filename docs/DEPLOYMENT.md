@@ -16,7 +16,7 @@ Pastikan Anda login ke Netlify menggunakan akun yang telah dicatat di file `.env
 3. Pilih **GitHub**.
 4. Cari repositori `sagamuda/bmtnulmj`.
 5. Konfigurasi Build:
-    - **Build command**: `npm run build`
+    - **Build command**: `pnpm build`
     - **Publish directory**: `.next`
 
 ## 3. Environment Variables (PENTING)
@@ -25,10 +25,10 @@ Netlify **TIDAK** membaca file `.env.local` secara otomatis. Anda harus memasukk
 
 Salin nilai ("Value") dari file `.env.local` di laptop Anda.
 
-| Key | Value (Keterangan) |
+| Key | Value (Production) |
 | :--- | :--- |
-| `NEXT_PUBLIC_APP_URL` | Domain Netlify (Contoh: `https://bmtnulmj.netlify.app`) |
-| `NEXT_PUBLIC_ROOT_DOMAIN` | Domain tanpa https (Contoh: `bmtnulmj.netlify.app`) |
+| `NEXT_PUBLIC_APP_URL` | `https://bmtnulumajang.id` |
+| `NEXT_PUBLIC_ROOT_DOMAIN` | `bmtnulumajang.id` |
 | `NEXT_PUBLIC_POCKETBASE_URL` | `https://db-bmtnulmj.sagamuda.cloud` |
 | `POCKETBASE_ADMIN_EMAIL` | *Lihat di .env.local* |
 | `POCKETBASE_ADMIN_PASSWORD` | *Lihat di .env.local* |

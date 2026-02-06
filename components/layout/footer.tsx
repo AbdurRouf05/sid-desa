@@ -88,7 +88,7 @@ export function Footer() {
 
                 {/* Bottom Bar */}
                 <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p>&copy; {currentYear} BMT NU Lumajang. All rights reserved.</p>
+                    <p>&copy; {currentYear} sagamuda.id. All rights reserved.</p>
                     <div className="flex gap-6">
                         <Link href="/privacy" className="hover:text-white">Kebijakan Privasi</Link>
                         <Link href="/terms" className="hover:text-white">Syarat & Ketentuan</Link>

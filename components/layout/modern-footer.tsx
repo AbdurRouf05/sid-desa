@@ -142,7 +142,7 @@ export function ModernFooter() {
             <div className="bg-slate-950 py-6 border-t border-slate-800">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
                     <p className="text-xs text-slate-500 text-center md:text-left">
-                        © {new Date().getFullYear()} {contactInfo.companyName}. All rights reserved. <br className="hidden md:block" />
+                        © {new Date().getFullYear()} sagamuda.id. All rights reserved. <br className="hidden md:block" />
                     </p>
                     <div className="flex items-center gap-6 text-xs text-slate-500">
                         <Link href="/kebijakan-privasi" className="hover:text-emerald-400">Kebijakan Privasi</Link>
