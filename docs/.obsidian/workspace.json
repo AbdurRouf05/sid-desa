@@ -44,12 +44,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "task.md",
+                "file": "02_IMPLEMENTATION_PLAN.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "task"
+              "title": "02_IMPLEMENTATION_PLAN"
             }
           },
           {
@@ -230,13 +230,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "task.md",
+                "file": "02_IMPLEMENTATION_PLAN.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of task"
+              "title": "Outline of 02_IMPLEMENTATION_PLAN"
             }
           }
         ],
@@ -259,6 +259,7 @@
   },
   "active": "a6f80f305789c80b",
   "lastOpenFiles": [
+    "task.md",
     "05_ACCESS_AND_TESTING.md",
     "02_IMPLEMENTATION_PLAN.md",
     "STATUS_REPORT.md.resolved",
@@ -268,7 +269,6 @@
     "03_CONTACT_IMPLEMENTATION_PLAN.md",
     "Enginering Journaling/2026-02-05_CREDENTIAL_EXPOSURE_INCIDENT.md",
     "03_SECURITY_HARDENING.md",
-    "task.md",
     "Task Apply Arabesque Gradient Design System.md",
     "VERIFICATION_REPORT_20260205_V2.md",
     "Enginering Journaling/2026-02-04_SCHEMA_RESTORATION_POSTMORTEM.md",

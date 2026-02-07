@@ -9,6 +9,10 @@ const POCKETBASE_URL = process.env.NEXT_PUBLIC_POCKETBASE_URL;
 const ADMIN_EMAIL = process.env.POCKETBASE_ADMIN_EMAIL;
 const ADMIN_PASSWORD = process.env.POCKETBASE_ADMIN_PASSWORD;
 
+if (!POCKETBASE_URL) {
+    throw new Error("NEXT_PUBLIC_POCKETBASE_URL is not defined in .env");
+}
+
 pb.baseUrl = POCKETBASE_URL;
 pb.autoCancellation(false);
 
