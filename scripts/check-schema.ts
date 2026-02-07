@@ -1,26 +1,36 @@
 
 import { pb } from "../lib/pb";
+import dotenv from 'dotenv';
+import path from 'path';
+
+dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
+
+const POCKETBASE_URL = process.env.NEXT_PUBLIC_POCKETBASE_URL;
+const ADMIN_EMAIL = process.env.POCKETBASE_ADMIN_EMAIL;
+const ADMIN_PASSWORD = process.env.POCKETBASE_ADMIN_PASSWORD;
+
+pb.baseUrl = POCKETBASE_URL;
+pb.autoCancellation(false);
 
 async function checkSchema() {
-    console.log("Checking News Collection Schema...");
     try {
-        // Authenticate as admin to see schema
-        const email = process.env.POCKETBASE_ADMIN_EMAIL;
-        const password = process.env.POCKETBASE_ADMIN_PASSWORD;
-        if (!email || !password) throw new Error("Missing admin credentials in env");
+        await pb.admins.authWithPassword(ADMIN_EMAIL!, ADMIN_PASSWORD!);
+        const collection = await pb.collections.getOne("hero_banners");
+        console.log("Collection Name:", collection.name);
+        console.log("Schema Fields:", collection.schema.map((f: any) => f.name));
 
-        await pb.admins.authWithPassword(email, password);
-
-        try {
-            const collection = await pb.collections.getOne("news");
-            console.log("Collection 'news' found.");
-            console.log("Schema:", JSON.stringify(collection.schema, null, 2));
-        } catch (e: any) {
-            console.error("Error fetching 'news' collection:", e.status, e.message);
+        const fgField = collection.schema.find((f: any) => f.name === "foreground_image");
+        if (fgField) {
+            console.log("Foreground Image Field Found:", JSON.stringify(fgField, null, 2));
+        } else {
+            console.error("Foreground Image Field NOT FOUND!");
         }
 
-    } catch (e) {
-        console.error("Authentication failed:", e);
+        const imgField = collection.schema.find((f: any) => f.name === "image");
+        console.log("Main Image Field Found:", JSON.stringify(imgField, null, 2));
+
+    } catch (error: any) {
+        console.error("Error:", error);
     }
 }
 

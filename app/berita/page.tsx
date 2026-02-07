@@ -23,7 +23,8 @@ export default function BeritaPage() {
             try {
                 // Construct filter
                 // TODO: Re-enable published filter once schema is confirmed (currently causing 400)
-                let filterExpr = ''; // 'published = true';
+                // Filter for published news only
+                let filterExpr = 'published = true';
                 if (activeCategory !== "Semua") {
                     filterExpr += filterExpr ? ` && category = "${activeCategory}"` : `category = "${activeCategory}"`;
                 }

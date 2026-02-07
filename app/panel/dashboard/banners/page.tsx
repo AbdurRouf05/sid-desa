@@ -63,15 +63,18 @@ export default function BannersPage() {
                         <div key={item.id} className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden group hover:shadow-md transition-shadow">
 
                             {/* Image Preview */}
-                            <div className="aspect-video bg-slate-100 relative">
-                                {item.image ? (
+                            <div className="aspect-video bg-slate-100 relative group-hover:opacity-90 transition-opacity">
+                                {(item.image_desktop || item.image || item.foreground_image) ? (
                                     <img
-                                        src={getAssetUrl(item, item.image)}
+                                        src={getAssetUrl(item, item.image_desktop || item.image || item.foreground_image)}
                                         alt={item.title}
-                                        className="w-full h-full object-cover"
+                                        className={`w-full h-full ${(item.image_desktop || item.image) ? 'object-cover' : 'object-contain p-4 bg-slate-50'}`}
                                     />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs">No Image</div>
+                                    <div className="w-full h-full flex flex-col items-center justify-center text-slate-400 bg-slate-50">
+                                        <ImageIcon className="w-8 h-8 mb-2 opacity-20" />
+                                        <span className="text-xs">No Image</span>
+                                    </div>
                                 )}
                                 <div className="absolute top-2 right-2 flex gap-1">
                                     <span className={`px-2 py-0.5 text-xs font-bold rounded-full ${item.active ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-500'}`}>

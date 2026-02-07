@@ -16,7 +16,8 @@ type Props = {
 async function getNewsItem(slug: string) {
     try {
         const record = await pb.collection('news').getFirstListItem(`slug="${slug}"`, {
-            expand: 'author'
+            expand: 'author',
+            filter: 'published = true'
         });
         return record;
     } catch (e) {

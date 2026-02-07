@@ -10,41 +10,46 @@ import { StatsWidget } from "@/components/widgets/stats-widget";
 import { JsonLd } from "@/components/seo/json-ld";
 import {
     ArrowRight, ShieldCheck, Banknote, Users,
-    Play, Instagram, Video, ChevronRight, Calendar, ExternalLink
+    Play, Instagram, Video, ChevronRight, Calendar, ExternalLink, MapPin, Clock
 } from "lucide-react";
 import { pb } from "@/lib/pb";
 import { getAssetUrl } from "@/lib/cdn";
 
 // --- HERO SLIDE DATA ---
+// --- HERO SLIDE DATA (Static Fallback) ---
 const HERO_SLIDES = [
     {
         id: 1,
         title: "Mitra Keuangan Syariah Terpercaya",
         subtitle: "Mudah, Murah, Berkah dengan cara Syariah. Mengelola dana umat dengan prinsip kehati-hatian untuk kemandirian ekonomi.",
         cta: "Bergabung Sekarang",
+        cta_link: "/kontak",
         bgClass: "bg-emerald-900",
-        image: "https://scontent.fmlg8-1.fna.fbcdn.net/v/t39.30808-6/494441207_1487429096033258_4854043116706845221_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeH5QB2roFbLq5mjxeEL0je0K4Mmzi45ySArgybOLjnJIDS4-HyiGUPYRu7SRSvpvX8FMn2hnn3gQrgXEpocDzi4&_nc_ohc=dQASYFY0oKoQ7kNvwFCicnj&_nc_oc=AdkZF1xHSUIfAeU_9oU4IyixMDTH0oIjuLUkfSRbj6hH7MyOYu9Y2M4Ee03q5bYovS0&_nc_zt=23&_nc_ht=scontent.fmlg8-1.fna&_nc_gid=AJ55hKXDvgtwYTVBTrRnhQ&oh=00_AftLZq_1xqEs4bmh_UqxBfccJuQ-p-AldTdcR2iGNw2A5Q&oe=6985D9E4"
+        image: "https://images.unsplash.com/photo-1577083639236-0f52ba0b5273?q=60&w=1200" // Unsplash Fallback
     },
     {
         id: 2,
         title: "Tabungan SIRELA",
         subtitle: "Simpanan Sukarela yang likuid, bisa disetor dan ditarik kapan saja. Pilihan tepat untuk dana cadangan harian Anda.",
         cta: "Buka Tabungan",
+        cta_link: "/produk/sirela",
         bgClass: "bg-emerald-800",
-        image: "https://scontent.fmlg8-1.fna.fbcdn.net/v/t39.30808-6/494426188_1487429102699924_3164128189584086238_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeFC9CSygQYkfwnjaf0rJwy24IsRIw7Ly1LgixEjDsvLUoQMcoOevvgGBId0prC4C_1OClQraGLMUc5R4G_nuXXc&_nc_ohc=qRX2z86qtusQ7kNvwE4mefb&_nc_oc=AdnfaPDHpLQxYOKJolqVjzk3TW0KqKdViKo7dsgUxf9KU0rGshu1W9M1dxz6Fa7TZtY&_nc_zt=23&_nc_ht=scontent.fmlg8-1.fna&_nc_gid=dH3rjykFQ-E2bQNu3L-nsw&oh=00_AfsjBIaW3vxeSgXCFL2_hUT2R7QKzzB5BM2__0I-GtzlVg&oe=6985ACBF"
+        image: "https://images.unsplash.com/photo-1579621970795-87facc2f976d?q=60&w=1200" // Unsplash Fallback
     },
     {
         id: 3,
         title: "Digital & Transparan",
         subtitle: "Nikmati kemudahan notifikasi WhatsApp Real-time setiap transaksi. Aman, Cepat, dan Nyaman di mana saja.",
         cta: "Coba Layanan Digital",
+        cta_link: "/layanan",
         bgClass: "bg-slate-900",
-        image: "https://scontent.fmlg8-1.fna.fbcdn.net/v/t39.30808-6/494181098_1487429089366592_2968411195852970881_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=833d8c&_nc_eui2=AeHftFJyrsUlnb0n3v5Xvr6MB7fKtj-cSx8Ht8q2P5xLH8gvbTXE9fRnaEDBhd3zrCk3ZjhAo3XFoWQcvOksL6yj&_nc_ohc=itubHf6G3mwQ7kNvwHSrgyZ&_nc_oc=AdmzJsNXco64_KizMlY9XtiR0HrBqmqu2xR7LWzswgZiO2NtbO65Ik3ocaSMsW04&_nc_zt=23&_nc_ht=scontent.fmlg8-1.fna&_nc_gid=dhgkFcBWHI3KSf_1yPZusg&oh=00_AfuCxr4U6vCDLsaNC0Nc32QNeBsj8yEv5Fmtom3DwDdmjA&oe=6985DEDF"
+        image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=60&w=1200" // Unsplash Fallback
     }
 ];
 
 export default function Home() {
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [heroData, setHeroData] = useState<any[]>(HERO_SLIDES);
     const [stats, setStats] = useState({
         assets: "Loading...",
         members: "Loading...",
@@ -52,22 +57,23 @@ export default function Home() {
     });
     const [news, setNews] = useState<any[]>([]);
     const [newsLoading, setNewsLoading] = useState(true);
+    const [mapUrl, setMapUrl] = useState("");
 
     useEffect(() => {
-        // Fetch dynamic stats and news
+        // Fetch dynamic stats, news, and banners
         import("@/lib/pb").then(async ({ pb }) => {
             try {
-                // Config
-                const config = await pb.collection('site_config').getFirstListItem("");
-                if (config) {
-                    setStats({
-                        assets: config.total_assets || "28 M+",
-                        members: config.total_members || "6.000+",
-                        branches: config.total_branches || "16"
-                    });
-                }
+                // 1. Config
+                const configPromise = pb.collection('site_config').getFirstListItem("");
 
-                // News Fetch Strategy: Try with sort first, fallback if index missing
+                // 2. Banners
+                const bannersPromise = pb.collection('hero_banners').getList(1, 10, {
+                    sort: 'order',
+                    filter: 'active = true'
+                });
+
+                // 3. News
+                // Try sorting by created descending
                 let newsResult;
                 try {
                     newsResult = await pb.collection('news').getList(1, 3, {
@@ -75,37 +81,50 @@ export default function Home() {
                         filter: 'published = true'
                     });
                 } catch (e: any) {
-                    // If 400 (Bad Request), likely missing sort index. Retry without sort.
                     if (e.status === 400) {
-                        console.warn("Home news sort failed, retrying without sort...");
+                        // Fallback no sort if index missing
                         newsResult = await pb.collection('news').getList(1, 3, {
                             filter: 'published = true'
                         });
-                    } else {
-                        // If it's another error (e.g. 404), throw it
-                        throw e;
                     }
                 }
 
+                // Resolve promises
+                const [config, banners] = await Promise.all([
+                    configPromise.catch(() => null),
+                    bannersPromise.catch(() => null)
+                ]);
 
-                // If we get here but have no items and it was a 400 on filter (published), 
-                // we might need another fallback? 
-                // But admin page says "published" field exists.
-                // However, user said "Removed published filter because field might be missing".
-                // Let's stick to the sort fix first as that's what Admin does.
-                // If it fails again, I'll catch the outer error.
-
-                console.log("Fetched News Items:", newsResult?.items);
-                if (newsResult?.items?.length > 0) {
-                    console.log("Sample Item:", newsResult.items[0]);
-                    console.log("Created Date:", newsResult.items[0].created);
-                    console.log("Thumbnail:", newsResult.items[0].thumbnail);
+                if (config) {
+                    setStats({
+                        assets: config.total_assets || "28 M+",
+                        members: config.total_members || "6.000+",
+                        branches: config.total_branches || "16"
+                    });
+                    setMapUrl(config.map_embed_url || config.social_links?.map_embed_url || "");
                 }
 
-                setNews(newsResult.items);
+                if (banners && banners.items.length > 0) {
+                    // Map DB records to Hero Slide format
+                    const mappedBanners = banners.items.map((b: any) => ({
+                        id: b.id,
+                        title: b.title,
+                        subtitle: b.subtitle,
+                        cta: b.cta_text || "Lihat Detail",
+                        cta_link: b.cta_link || "#",
+                        bgClass: b.bg_class || "bg-emerald-900", // Dynamic class
+                        image: b.image_desktop ? getAssetUrl(b, b.image_desktop) : (b.image ? getAssetUrl(b, b.image) : "https://images.unsplash.com/photo-1577083639236-0f52ba0b5273?q=60&w=1200"),
+                        mobile_image: b.image_mobile ? getAssetUrl(b, b.image_mobile) : null,
+                        foreground_image: b.foreground_image, // Pass raw filename, getAssetUrl handles record linking in map
+                        collectionId: b.collectionId, // Needed for getAssetUrl
+
+                    }));
+                    setHeroData(mappedBanners);
+                }
+
+                setNews(newsResult?.items || []);
 
             } catch (e) {
-                // Fallback handled by initial state / UI check
                 console.error("Home fetch error:", e);
             } finally {
                 setNewsLoading(false);
@@ -113,6 +132,7 @@ export default function Home() {
         });
     }, []);
 
+    // ... (schemas and auto-slide logic remain same) ...
     // --- SEO: STRUCTURED DATA ---
     const sirelaSchema = {
         name: "Tabungan SIRELA (Simpanan Sukarela)",
@@ -152,7 +172,7 @@ export default function Home() {
     // Auto-slide logic
     useEffect(() => {
         const timer = setInterval(() => {
-            setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+            setCurrentSlide((prev) => (prev + 1) % heroData.length);
         }, 6000); // 6 seconds per slide
         return () => clearInterval(timer);
     }, []);
@@ -166,82 +186,120 @@ export default function Home() {
             <ModernNavbar />
 
             {/* 1. CINEMATIC HERO SLIDER */}
-            <section className="relative h-[800px] w-full overflow-hidden bg-emerald-950 text-white">
+            <section className="relative h-[650px] md:h-[800px] w-full overflow-hidden bg-emerald-950 text-white">
                 <AnimatePresence mode="popLayout">
-                    {HERO_SLIDES.map((slide, index) => (
-                        index === currentSlide && (
-                            <motion.div
-                                key={slide.id}
-                                className={`absolute inset-0 ${slide.bgClass} flex items-center justify-center`}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 1 }}
-                            >
-                                {/* Ken Burns Background Effect */}
+                    {heroData.map((slide, index) => {
+                        const isOriginal = slide.bgClass === "original";
+                        // Prepare Foreground URL if exists
+                        const foregroundUrl = slide.foreground_image ? getAssetUrl(slide, slide.foreground_image) : null;
+
+                        return (
+                            index === currentSlide && (
                                 <motion.div
-                                    className={`absolute inset-0 opacity-40 bg-cover bg-center`}
-                                    style={{ backgroundImage: `url('${slide.image}')` }}
-                                    initial={{ scale: 1.1 }}
-                                    animate={{ scale: 1 }}
-                                    transition={{ duration: 10, ease: "linear" }}
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-950/60 to-transparent" />
+                                    key={slide.id}
+                                    className={`absolute inset-0 ${isOriginal ? 'bg-slate-900' : slide.bgClass} flex items-center justify-center overflow-hidden`}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 1 }}
+                                >
+                                    {/* LAYER 1A: Desktop Background (Hidden on Mobile if Mobile Image exists) */}
+                                    <motion.div
+                                        className={`absolute inset-0 ${isOriginal ? 'opacity-100' : 'opacity-40'} bg-cover bg-center ${slide.mobile_image ? 'hidden md:block' : ''}`}
+                                        style={{ backgroundImage: `url('${slide.image}')` }}
+                                        initial={{ scale: 1.1 }}
+                                        animate={{ scale: 1 }}
+                                        transition={{ duration: 10, ease: "linear" }}
+                                    />
 
-                                {/* Arabesque Grid Overlay */}
-                                <div className="absolute inset-0 bg-arabesque-grid bg-grid-24 opacity-20 pointer-events-none" />
-
-                                <div className="container relative z-10 px-4 md:px-8 h-full flex flex-col justify-center">
-                                    <div className="max-w-3xl space-y-6">
+                                    {/* LAYER 1B: Mobile Background (Visible only on Mobile if exists) */}
+                                    {slide.mobile_image && (
                                         <motion.div
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: 0.5, duration: 0.8 }}
-                                            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-gold text-sm font-bold tracking-wide"
-                                        >
-                                            <span className="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
-                                            BMT NU LUMAJANG
-                                        </motion.div>
+                                            className={`absolute inset-0 ${isOriginal ? 'opacity-100' : 'opacity-40'} bg-cover bg-center md:hidden`}
+                                            style={{ backgroundImage: `url('${slide.mobile_image}')` }}
+                                            initial={{ scale: 1.1 }}
+                                            animate={{ scale: 1 }}
+                                            transition={{ duration: 10, ease: "linear" }}
+                                        />
+                                    )}
 
-                                        <motion.h1
-                                            initial={{ opacity: 0, y: 30 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: 0.7, duration: 0.8 }}
-                                            className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tight"
-                                        >
-                                            {slide.title}
-                                        </motion.h1>
+                                    {/* LAYER 2: Gradient Overlay (Only if not original) */}
+                                    {!isOriginal && (
+                                        <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-950/60 to-transparent" />
+                                    )}
 
-                                        <motion.p
-                                            initial={{ opacity: 0, y: 30 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: 0.9, duration: 0.8 }}
-                                            className="text-lg md:text-xl text-emerald-100/90 leading-relaxed max-w-2xl"
-                                        >
-                                            {slide.subtitle}
-                                        </motion.p>
+                                    {/* LAYER 3: Arabesque Grid (Optional) */}
+                                    <div className="absolute inset-0 bg-arabesque-grid bg-grid-24 opacity-20 pointer-events-none" />
 
+                                    {/* LAYER 4: Foreground Image (Character/Floating Object) - If exists */}
+                                    {foregroundUrl && (
                                         <motion.div
-                                            initial={{ opacity: 0, y: 30 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: 1.1, duration: 0.8 }}
-                                            className="pt-4"
+                                            className="absolute inset-0 z-10 pointer-events-none flex items-end justify-end md:justify-end md:pr-12 lg:pr-32 pb-0"
+                                            initial={{ opacity: 0, x: 50, y: 50 }}
+                                            animate={{ opacity: 1, x: 0, y: 0 }}
+                                            transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
                                         >
-                                            <TactileButton variant={index === 0 ? "secondary" : "primary"} className="text-lg h-14 px-8 shadow-2xl">
-                                                {slide.cta} <ArrowRight className="ml-2 w-5 h-5" />
-                                            </TactileButton>
+                                            <img
+                                                src={foregroundUrl}
+                                                alt=""
+                                                className="h-[60%] md:h-[85%] object-contain object-bottom drop-shadow-2xl mr-0 mb-0 pointer-events-none"
+                                            />
                                         </motion.div>
+                                    )}
+
+                                    {/* LAYER 5: Text Content (Highest Z-Index) */}
+                                    <div className="container relative z-20 px-4 md:px-8 h-full flex flex-col justify-center">
+                                        <div className={`space-y-6 ${foregroundUrl ? 'max-w-[75%] sm:max-w-[80%] md:max-w-xl lg:max-w-3xl' : 'max-w-3xl'}`}>
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: 0.5, duration: 0.8 }}
+                                                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-gold text-sm font-bold tracking-wide"
+                                            >
+                                                <span className="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
+                                                BMT NU LUMAJANG
+                                            </motion.div>
+
+                                            <motion.h1
+                                                initial={{ opacity: 0, y: 30 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: 0.7, duration: 0.8 }}
+                                                className={`${foregroundUrl ? 'text-3xl' : 'text-4xl'} md:text-6xl lg:text-7xl font-black leading-tight tracking-tight drop-shadow-lg`}
+                                            >
+                                                {slide.title}
+                                            </motion.h1>
+
+                                            <motion.p
+                                                initial={{ opacity: 0, y: 30 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: 0.9, duration: 0.8 }}
+                                                className="text-lg md:text-xl text-emerald-100/90 leading-relaxed max-w-2xl drop-shadow-md"
+                                            >
+                                                {slide.subtitle}
+                                            </motion.p>
+
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 30 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: 1.1, duration: 0.8 }}
+                                                className="pt-4"
+                                            >
+                                                <TactileButton variant={index === 0 ? "secondary" : "primary"} className="text-lg h-14 px-8 shadow-2xl">
+                                                    {slide.cta} <ArrowRight className="ml-2 w-5 h-5" />
+                                                </TactileButton>
+                                            </motion.div>
+                                        </div>
                                     </div>
-                                </div>
-                            </motion.div>
-                        )
-                    ))}
+                                </motion.div>
+                            )
+                        );
+                    })}
                 </AnimatePresence>
 
                 {/* Slide Indicators */}
-                <div className="absolute bottom-32 left-0 w-full z-20">
+                <div className="absolute bottom-24 md:bottom-32 left-0 w-full z-20">
                     <div className="container px-4 md:px-8 flex gap-3">
-                        {HERO_SLIDES.map((_, i) => (
+                        {heroData.map((_, i) => (
                             <button
                                 key={i}
                                 onClick={() => setCurrentSlide(i)}
@@ -476,10 +534,79 @@ export default function Home() {
                         )}
                     </div>
                 </div>
-            </section >
+            </section>
+
+            {/* 6.5. SERVICE NETWORK / BRANCH LOCATOR */}
+            <section className="py-20 bg-slate-50 relative overflow-hidden">
+                <div className="container mx-auto px-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div>
+                            <span className="text-emerald-600 font-bold uppercase tracking-wider text-sm mb-2 block">Jaringan Kantor</span>
+                            <h2 className="text-3xl font-bold text-slate-900 mb-6">Kami Hadir Lebih Dekat</h2>
+                            <p className="text-lg text-slate-600 mb-8 leading-relaxed">
+                                Dengan {stats.branches} titik layanan yang tersebar di wilayah Lumajang, kami siap melayani kebutuhan transaksi keuangan Anda dengan keramahan dan profesionalisme.
+                            </p>
+
+                            <ul className="space-y-4 mb-8">
+                                <li className="flex items-center gap-3 text-slate-700">
+                                    <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                        <MapPin className="w-4 h-4" />
+                                    </div>
+                                    <span className="font-medium">Kantor Pusat & Cabang Strategis</span>
+                                </li>
+                                <li className="flex items-center gap-3 text-slate-700">
+                                    <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                        <Clock className="w-4 h-4" />
+                                    </div>
+                                    <span className="font-medium">Layanan Senin - Sabtu (07.30 - 15.00)</span>
+                                </li>
+                            </ul>
+
+                            <TactileButton onClick={() => window.location.href = '/kontak'} className="bg-emerald-600 text-white hover:bg-emerald-700">
+                                Cari Kantor Terdekat <ArrowRight className="ml-2 w-4 h-4" />
+                            </TactileButton>
+                        </div>
+
+                        <div className="relative">
+                            <div className="bg-white p-2 rounded-2xl shadow-xl rotate-2 hover:rotate-0 transition-transform duration-500">
+                                <div className="aspect-video bg-slate-200 rounded-xl overflow-hidden relative group cursor-pointer" onClick={() => window.location.href = '/kontak'}>
+                                    {mapUrl ? (
+                                        <iframe
+                                            src={mapUrl}
+                                            width="100%"
+                                            height="100%"
+                                            style={{ border: 0 }}
+                                            allowFullScreen
+                                            loading="lazy"
+                                            referrerPolicy="no-referrer-when-downgrade"
+                                            className="w-full h-full"
+                                        ></iframe>
+                                    ) : (
+                                        <>
+                                            <img
+                                                src="https://images.unsplash.com/photo-1577083639236-0f52ba0b5273?q=60&w=1200"
+                                                alt="Kantor BMT NU"
+                                                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                            />
+                                            <div className="absolute inset-0 bg-black/20 flex items-center justify-center group-hover:bg-black/10 transition-colors">
+                                                <div className="bg-white/90 backdrop-blur px-6 py-3 rounded-full font-bold text-emerald-950 shadow-lg flex items-center gap-2">
+                                                    <MapPin className="w-5 h-5 text-red-500 animate-bounce" />
+                                                    Lihat di Peta
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                            {/* Decorative blobs */}
+                            <div className="absolute -z-10 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-emerald-100/50 rounded-full blur-3xl opacity-50"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             {/* 7. FINAL CTA */}
-            < section className="py-24 bg-gradient-to-br from-gold to-yellow-500 relative overflow-hidden" >
+            <section className="py-24 bg-gradient-to-br from-gold to-yellow-500 relative overflow-hidden">
                 <div className="absolute inset-0 bg-arabesque-grid bg-grid-24 opacity-20 mix-blend-overlay"></div>
                 <div className="container mx-auto px-4 relative z-10 text-center text-emerald-950">
                     <h2 className="text-3xl md:text-5xl font-black mb-6">Siap Menjadi Bagian Dari Kami?</h2>
@@ -490,7 +617,7 @@ export default function Home() {
                         Hubungi via WhatsApp <ExternalLink className="ml-2 w-5 h-5" />
                     </TactileButton>
                 </div>
-            </section >
+            </section>
 
             <ModernFooter />
         </div >

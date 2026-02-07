@@ -19,8 +19,11 @@ export async function GET(
     // Construct upstream URL
     const targetUrl = `${pbUrl}/api/files/${collectionId}/${recordId}/${filename}`;
 
+    // console.log(`[CDN] Proxying: ${targetUrl}`);
+
     try {
         const response = await fetch(targetUrl);
+        // console.log(`[CDN] Response: ${response.status} for ${filename}`);
 
         if (!response.ok) {
             return new NextResponse("Asset not found", { status: response.status });

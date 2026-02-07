@@ -48,8 +48,9 @@ export function middleware(request: NextRequest) {
         // Rewrite path to include (admin) invisible folder
         // Note: checks to avoid double-rewriting if already rewritten are internal to Next.js usually
         // but explicit rewrite is safer.
+        // EXCEPTION: CDN and specific public assets should not be rewritten to /panel
         const newUrl = new URL(request.url);
-        if (!url.pathname.startsWith("/panel")) {
+        if (!url.pathname.startsWith("/panel") && !url.pathname.startsWith("/cdn")) {
             newUrl.pathname = `/panel${url.pathname}`;
         }
 

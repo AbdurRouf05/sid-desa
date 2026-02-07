@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 import { ModernNavbar } from "@/components/layout/modern-navbar";
 import { ArabesqueCard } from "@/components/ui/arabesque-card";
 import {
@@ -164,40 +165,42 @@ export default function ProdukPage() {
                             else if (item.schema_type === "LoanOrCredit") variant = "gold-border";
 
                             return (
-                                <ArabesqueCard
-                                    key={item.id}
-                                    title={item.name}
-                                    icon={<IconComponent className="w-6 h-6" />}
-                                    variant={variant}
-                                    className={cn("h-full", item.is_featured ? "ring-2 ring-yellow-400 ring-offset-2" : "")}
-                                >
-                                    <div className="flex flex-col h-full justify-between">
-                                        <div
-                                            className="text-slate-600 mb-6 prose prose-sm max-w-none line-clamp-3"
-                                            dangerouslySetInnerHTML={{ __html: item.description || "" }}
-                                        />
+                                <Link href={`/produk/${item.slug}`} key={item.id} className="block h-full transition-transform hover:-translate-y-1">
+                                    <ArabesqueCard
+                                        title={item.name}
+                                        icon={<IconComponent className="w-6 h-6" />}
+                                        variant={variant}
+                                        className={cn("h-full", item.is_featured ? "ring-2 ring-yellow-400 ring-offset-2" : "")}
+                                    >
+                                        <div className="flex flex-col h-full justify-between">
+                                            <div
+                                                className="text-slate-600 mb-6 prose prose-sm max-w-none line-clamp-3"
+                                                dangerouslySetInnerHTML={{ __html: item.description || "" }}
+                                            />
 
-                                        <div className={cn(
-                                            "p-3 rounded-lg border",
-                                            item.product_type === 'simpanan'
-                                                ? "bg-emerald-50/50 border-emerald-100"
-                                                : "bg-blue-50/50 border-blue-100"
-                                        )}>
-                                            <p className={cn(
-                                                "text-xs font-bold uppercase tracking-wider mb-1",
-                                                item.product_type === 'simpanan' ? "text-emerald-600" : "text-blue-600"
+                                            <div className={cn(
+                                                "p-3 rounded-lg border",
+                                                item.product_type === 'simpanan'
+                                                    ? "bg-emerald-50/50 border-emerald-100"
+                                                    : "bg-blue-50/50 border-blue-100"
                                             )}>
-                                                {item.product_type === 'simpanan' ? "Min. Setoran / Syarat" : "Akad / Skema"}
-                                            </p>
-                                            <p className={cn(
-                                                "text-sm font-medium",
-                                                item.product_type === 'simpanan' ? "text-emerald-900" : "text-blue-900"
-                                            )}>
-                                                {item.min_deposit ? `Rp ${item.min_deposit}` : (item.schema_type || "-")}
-                                            </p>
+                                                <p className={cn(
+                                                    "text-xs font-bold uppercase tracking-wider mb-1",
+                                                    item.product_type === 'simpanan' ? "text-emerald-600" : "text-blue-600"
+                                                )}>
+                                                    {item.product_type === 'simpanan' ? "Min. Setoran / Syarat" : "Akad / Skema"}
+                                                </p>
+                                                <p className={cn(
+                                                    "text-sm font-medium",
+                                                    item.product_type === 'simpanan' ? "text-emerald-900" : "text-blue-900"
+                                                )}>
+                                                    {item.min_deposit ? `Rp ${item.min_deposit}` : (item.schema_type || "-")}
+                                                </p>
+                                            </div>
                                         </div>
-                                    </div>
-                                </ArabesqueCard>
+                                    </ArabesqueCard>
+                                </Link>
+
                             );
                         })}
                     </div>

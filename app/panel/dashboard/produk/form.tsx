@@ -11,7 +11,8 @@ import {
     Loader2, Save, ArrowLeft, UploadCloud,
     PiggyBank, CreditCard, Wallet, Banknote, Landmark, Coins, DollarSign,
     TrendingUp, ShieldCheck, Briefcase, Building, Home, Car, GraduationCap,
-    Plane, Umbrella, Vote, Users, ShoppingBag, Smartphone
+    Plane, Umbrella, Vote, Users, ShoppingBag, Smartphone,
+    HeartHandshake, School, Package, Clock, Sprout, Store
 } from "lucide-react";
 import { formatThousand, cleanNumber } from "@/lib/number-utils";
 import Link from "next/link";
@@ -194,15 +195,18 @@ export default function ProductEditorPage({ isEdit = false }: { isEdit?: boolean
                                         { name: "Car", Icon: Car }, { name: "GraduationCap", Icon: GraduationCap },
                                         { name: "Plane", Icon: Plane }, { name: "Umbrella", Icon: Umbrella },
                                         { name: "Vote", Icon: Vote }, { name: "Users", Icon: Users },
-                                        { name: "ShoppingBag", Icon: ShoppingBag }, { name: "Smartphone", Icon: Smartphone }
+                                        { name: "ShoppingBag", Icon: ShoppingBag }, { name: "Smartphone", Icon: Smartphone },
+                                        { name: "HeartHandshake", Icon: HeartHandshake }, { name: "School", Icon: School },
+                                        { name: "Package", Icon: Package }, { name: "Clock", Icon: Clock },
+                                        { name: "Sprout", Icon: Sprout }, { name: "Store", Icon: Store }
                                     ].map(({ name, Icon }) => (
                                         <button
                                             key={name}
                                             type="button"
                                             onClick={() => setValue("icon_name", name)}
                                             className={`p-3 rounded-lg flex items-center justify-center transition-all ${watch("icon_name") === name
-                                                    ? "bg-emerald-600 text-white shadow-md ring-2 ring-emerald-200"
-                                                    : "bg-white text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 border border-slate-100"
+                                                ? "bg-emerald-600 text-white shadow-md ring-2 ring-emerald-200"
+                                                : "bg-white text-slate-500 hover:bg-emerald-50 hover:text-emerald-600 border border-slate-100"
                                                 }`}
                                             title={name}
                                         >

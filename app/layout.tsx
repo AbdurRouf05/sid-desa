@@ -19,6 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const desc = "KSPPS BMT NU Lumajang: Mitra Keuangan Syariah Terpercaya. Melayani Simpanan, Pembiayaan, dan Haji Umroh dengan prinsip syariah yang transparan dan amanah.";
 
   return {
+    metadataBase: new URL("https://bmtnulmj.id"), // Start of dynamic URL or use canonical
     title: {
       template: `%s | ${title}`,
       default: `${title} - Mudah, Murah, Berkah`,

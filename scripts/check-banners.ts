@@ -35,6 +35,7 @@ async function main() {
                         { name: "mobile_image", type: "file", options: { mimeTypes: ["image/*"], maxSize: 5242880 } },
                         { name: "cta_text", type: "text" },
                         { name: "cta_link", type: "text" },
+                        { name: "bg_class", type: "text" },
                         { name: "order", type: "number" },
                         { name: "published", type: "bool" }
                     ]
