@@ -72,7 +72,7 @@ export default function AdminLoginPage() {
     };
 
     return (
-        <main className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+        <main className="min-h-screen bg-slate-100 flex flex-col items-center justify-center p-4 gap-6">
             <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden">
                 {/* Header */}
                 <div className="bg-gradient-to-br from-bmt-green-700 to-primary-dark p-8 text-center text-white relative overflow-hidden">
@@ -159,12 +159,19 @@ export default function AdminLoginPage() {
                         </button>
                     </form>
 
-                    <div className="mt-8 text-center">
+                    <div className="mt-8 text-center pb-8">
                         <p className="text-xs text-slate-400">
-                            &copy; 2026 BMT NU Lumajang. Restricted Access.
+                            Halaman Admin kelola website bmtnulumajang.id
                         </p>
                     </div>
                 </div>
+            </div>
+
+            {/* External License Info */}
+            <div className="text-center">
+                <p className="text-[10px] text-slate-400 font-mono tracking-wide opacity-70">
+                    Right owned by sagamuda.id Exclusive Intellectual Property Rights for KSPPS BMTNU Lumajang
+                </p>
             </div>
         </main>
     );

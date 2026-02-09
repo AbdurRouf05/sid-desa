@@ -179,8 +179,9 @@ export function ModernFooter() {
                         </p>
                     </div>
                     <div className="flex items-center gap-6 text-xs text-slate-500">
-                        <Link href="/" className="hover:text-emerald-400 transition-colors">Kebijakan Privasi</Link>
-                        <Link href="/" className="hover:text-emerald-400 transition-colors">Syarat & Ketentuan</Link>
+                        <Link href="/legal" className="text-xs hover:text-bmt-gold-400 underline decoration-dotted transition-colors">
+                            Legal & Privacy
+                        </Link>
                     </div>
                 </div>
             </div>
