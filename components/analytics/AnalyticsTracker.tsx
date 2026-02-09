@@ -2,50 +2,67 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import { pb } from "@/lib/pb";
 
 export function AnalyticsTracker() {
     const pathname = usePathname();
     const searchParams = useSearchParams();
     const startTime = useRef(Date.now());
-    const hasTracked = useRef(false);
+
+    // Helper to send data
+    const sendEvent = async (type: string, path: string, duration?: number) => {
+        try {
+            const body = {
+                event_type: type,
+                path,
+                session_id: getSessionId(),
+                referrer: document.referrer || '',
+                duration: duration || 0,
+                label: "web_v1"
+            };
+
+            if (type === 'page_leave' && navigator.sendBeacon) {
+                const blob = new Blob([JSON.stringify(body)], { type: 'application/json' });
+                navigator.sendBeacon('/api/analytics/track', blob);
+            } else {
+                await fetch('/api/analytics/track', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+            }
+        } catch (e) {
+            // Passive error handling
+        }
+    };
 
     useEffect(() => {
-        // Reset tracking on route change
-        hasTracked.current = false;
+        // --- 1. PRIVACY: Ignore /panel ---
+        if (pathname.startsWith('/panel')) return;
+
+        const fullPath = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : "");
         startTime.current = Date.now();
 
-        // Small delay to ensure we don't track rapid redirects
-        const timer = setTimeout(() => {
-            if (hasTracked.current) return;
+        // Delay view to avoid bounce tracking (< 1s)
+        const viewTimer = setTimeout(() => {
+            sendEvent('page_view', fullPath);
+        }, 1000);
 
-            const fullPath = pathname + (searchParams.toString() ? `?${searchParams.toString()}` : "");
+        // --- 2. PAGE UNMOUNT ---
+        return () => {
+            clearTimeout(viewTimer);
+            const durationArr = Math.floor((Date.now() - startTime.current) / 1000);
 
-            // Send to PB
-            pb.collection('analytics_events').create({
-                event_type: 'page_view',
-                path: fullPath,
-                referrer: document.referrer || '',
-                ua: navigator.userAgent,
-                screen_width: window.innerWidth,
-                language: navigator.language,
-                session_id: getSessionId()
-            }).catch(err => {
-                // Silent fail (analytics should not break app)
-                // console.error("Analytics Error:", err); 
-            });
-
-            hasTracked.current = true;
-        }, 1000); // 1s delay to count as "view"
-
-        return () => clearTimeout(timer);
+            if (durationArr > 1) {
+                sendEvent('page_leave', fullPath, durationArr);
+            }
+        };
     }, [pathname, searchParams]);
 
-    return null; // Headless component
+    return null;
 }
 
-// Simple Session Helper
 function getSessionId() {
+    if (typeof window === 'undefined') return "server-side";
     let sid = sessionStorage.getItem("analytics_sid");
     if (!sid) {
         sid = Math.random().toString(36).substring(2) + Date.now().toString(36);

@@ -8,6 +8,8 @@ import { NewsCard } from "@/components/news/news-card";
 import { cn } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { pb } from "@/lib/pb";
+import { getAssetUrl } from "@/lib/cdn";
+import { formatDate } from "@/lib/number-utils";
 
 const CATEGORIES = ["Semua", "Berita", "Edukasi", "Promo"];
 
@@ -16,43 +18,38 @@ export default function BeritaPage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [newsItems, setNewsItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const ITEMS_PER_PAGE = 9;
 
     useEffect(() => {
         const fetchNews = async () => {
             setLoading(true);
             try {
-                // Construct filter
-                // TODO: Re-enable published filter once schema is confirmed (currently causing 400)
-                // Filter for published news only
                 let filterExpr = 'published = true';
                 if (activeCategory !== "Semua") {
-                    filterExpr += filterExpr ? ` && category = "${activeCategory}"` : `category = "${activeCategory}"`;
+                    filterExpr += ` && category = "${activeCategory}"`;
                 }
                 if (searchQuery) {
-                    filterExpr += filterExpr ? ` && title ~ "${searchQuery}"` : `title ~ "${searchQuery}"`;
+                    filterExpr += ` && title ~ "${searchQuery}"`;
                 }
 
-                // Log query for debug
-                console.log("Fetching news with filter:", filterExpr);
-
-                const result = await pb.collection('news').getList(1, 50, {
+                const result = await pb.collection('news').getList(currentPage, ITEMS_PER_PAGE, {
                     filter: filterExpr,
                     sort: '-created',
                 });
-                console.log("News Result:", result.items);
 
-                // Transform data to match NewsCard props if necessary
-                // DB fields: title, slug, thumbnail, category, content, created
-                // NewsCard expects: id, title, slug, thumbnail (url), date, category, author, excerpt
+                setTotalPages(result.totalPages);
+
                 const mappedItems = result.items.map(record => ({
                     id: record.id,
                     title: record.title,
                     slug: record.slug,
-                    thumbnail: record.thumbnail ? pb.files.getURL(record, record.thumbnail) : "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=2070", // Fallback
-                    date: new Date(record.created).toLocaleDateString("id-ID", { day: 'numeric', month: 'long', year: 'numeric' }),
+                    thumbnail: record.thumbnail ? getAssetUrl(record, record.thumbnail) : "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=2070",
+                    date: formatDate(record.created || record.updated),
                     category: record.category,
-                    author: "Admin", // Default author
-                    excerpt: record.content.replace(/<[^>]*>/g, '').substring(0, 150) + "..." // Strip HTML
+                    author: "Admin",
+                    excerpt: record.content.replace(/<[^>]*>/g, '').substring(0, 150) + "..."
                 }));
 
                 setNewsItems(mappedItems);
@@ -63,12 +60,16 @@ export default function BeritaPage() {
             }
         };
 
-        // Debounce search slightly
         const timeout = setTimeout(() => {
             fetchNews();
         }, 300);
 
         return () => clearTimeout(timeout);
+    }, [activeCategory, searchQuery, currentPage]);
+
+    // Reset page when category or search changes
+    useEffect(() => {
+        setCurrentPage(1);
     }, [activeCategory, searchQuery]);
 
     return (
@@ -77,10 +78,7 @@ export default function BeritaPage() {
 
             {/* Header */}
             <section className="pt-32 pb-16 bg-gradient-to-br from-bmt-green-700 to-primary-dark text-white text-center px-4 relative overflow-hidden">
-                {/* Arabesque Pattern Overlay */}
                 <div className="absolute inset-0 bg-arabesque-grid bg-grid-24 opacity-10 pointer-events-none"></div>
-
-                {/* Decorative Bottom Arch */}
                 <div className="absolute -bottom-16 left-0 right-0 h-16 bg-slate-50 rounded-t-[50%] scale-x-150"></div>
 
                 <div className="relative z-10 max-w-3xl mx-auto">
@@ -90,7 +88,6 @@ export default function BeritaPage() {
                         lightMode
                     />
 
-                    {/* Search Bar */}
                     <div className="mt-8 max-w-xl mx-auto relative">
                         <input
                             type="text"
@@ -104,7 +101,6 @@ export default function BeritaPage() {
                 </div>
             </section>
 
-            {/* Category Tabs */}
             <section className="sticky top-[72px] z-20 bg-white/80 backdrop-blur-md border-b border-slate-200">
                 <div className="container mx-auto px-4 overflow-x-auto">
                     <div className="flex justify-center min-w-max">
@@ -126,20 +122,59 @@ export default function BeritaPage() {
                 </div>
             </section>
 
-            {/* News Grid */}
             <section className="py-16">
-                <div className="container mx-auto px-4">
+                <div className="container mx-auto px-4 text-center">
                     {loading ? (
                         <div className="text-center py-20 text-slate-500">Memuat berita...</div>
                     ) : newsItems.length > 0 ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {newsItems.map((item) => (
-                                <NewsCard
-                                    key={item.id}
-                                    {...item}
-                                />
-                            ))}
-                        </div>
+                        <>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
+                                {newsItems.map((item) => (
+                                    <NewsCard
+                                        key={item.id}
+                                        {...item}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Pagination UI */}
+                            {totalPages > 1 && (
+                                <div className="mt-12 flex justify-center items-center gap-2">
+                                    <button
+                                        disabled={currentPage === 1}
+                                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                        className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-50 transition-colors"
+                                    >
+                                        Prev
+                                    </button>
+
+                                    <div className="flex gap-1">
+                                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                                            <button
+                                                key={p}
+                                                onClick={() => setCurrentPage(p)}
+                                                className={cn(
+                                                    "w-10 h-10 rounded-lg text-sm font-bold transition-all",
+                                                    currentPage === p
+                                                        ? "bg-emerald-600 text-white shadow-lg shadow-emerald-200"
+                                                        : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50"
+                                                )}
+                                            >
+                                                {p}
+                                            </button>
+                                        ))}
+                                    </div>
+
+                                    <button
+                                        disabled={currentPage === totalPages}
+                                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                        className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-50 transition-colors"
+                                    >
+                                        Next
+                                    </button>
+                                </div>
+                            )}
+                        </>
                     ) : (
                         <div className="text-center py-20 text-slate-500">
                             <p className="text-lg mb-2">Tidak ada berita ditemukan.</p>

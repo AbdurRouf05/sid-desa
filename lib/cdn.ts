@@ -15,6 +15,20 @@ export function getSecureAssetUrl(collectionId: string, recordId: string, filena
  */
 export function getAssetUrl(record: any, filename: string): string {
     if (!record || !filename) return "";
+
+    // 1. Defensive Interceptor: Check for broken Unsplash URL
+    const brokenId = "photo-1577083639236-0f52ba0b5273";
+    const workingFallback = "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=60&w=1200";
+
+    if (filename.includes(brokenId)) {
+        return workingFallback;
+    }
+
+    // 2. If it's already an absolute URL (not from PB), return it directly
+    if (filename.startsWith('http')) {
+        return filename;
+    }
+
     // Handle both direct record objects and expanded ones
     const collectionId = record.collectionId || record.collectionName; // collectionName fallback if id missing (rare)
     const recordId = record.id;

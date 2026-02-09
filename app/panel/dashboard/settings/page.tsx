@@ -6,7 +6,7 @@ import { pb } from "@/lib/pb";
 import { optimizeImage } from "@/lib/image-optimizer";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { TactileButton } from "@/components/ui/tactile-button";
-import { Save, Building2, Phone, Mail, MapPin, Loader2, Image as ImageIcon } from "lucide-react";
+import { Save, Building2, Phone, Mail, MapPin, Loader2, Image as ImageIcon, Share2, Instagram, Facebook, Video, Youtube } from "lucide-react";
 
 interface SiteConfig {
     id: string;
@@ -18,6 +18,14 @@ interface SiteConfig {
     total_members: string;
     total_branches: string;
     map_embed_url: string;
+    nib: string;
+    legal_bh: string;
+    // Temp fields for Social Media form handling
+    instagram_url?: string;
+    facebook_url?: string;
+    tiktok_url?: string;
+    youtube_url?: string;
+
     logo_primary: any;
     logo_secondary: any;
     favicon: any;
@@ -76,57 +84,88 @@ export default function SettingsPage() {
         }
     }, [mapInput]);
 
-    // Load config function moved out to be reusable
-    async function loadConfig() {
-        setIsLoading(true);
-        try {
-            console.log("Loading config...");
-            const records = await pb.collection('site_config').getList(1, 1);
-            console.log("Config loaded:", records);
-            if (records.items.length > 0) {
-                const data = records.items[0];
-                setConfigId(data.id);
-                setValue("company_name", data.company_name);
-                setValue("address", data.address);
-                setValue("phone_wa", data.phone_wa);
-                setValue("email_official", data.email_official);
-                setValue("total_assets", data.total_assets);
-                setValue("total_members", data.total_members);
-                setValue("total_branches", data.total_branches);
-
-                // Read Map URL
-                const mapUrl = data.social_links?.map_embed_url || data.map_embed_url || "";
-                setValue("map_embed_url", mapUrl);
-                setMapPreview(mapUrl);
-
-                // Set logo previews
-                setLogoPreviews({
-                    logo_primary: data.logo_primary ? pb.files.getUrl(data, data.logo_primary) : null,
-                    logo_secondary: data.logo_secondary ? pb.files.getUrl(data, data.logo_secondary) : null,
-                    favicon: data.favicon ? pb.files.getUrl(data, data.favicon) : null,
-                });
-            }
-        } catch (e) {
-            console.error("Error loading config:", e);
-        } finally {
-            setIsLoading(false);
-        }
-    }
-
+    // Load config
     useEffect(() => {
+        let isMounted = true;
+
+        async function loadConfig() {
+            try {
+
+                // Add a timeout to prevent infinite loading
+                const timeoutPromise = new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error("Timeout loading config")), 10000)
+                );
+
+                const recordsPromise = pb.collection('site_config').getList(1, 1);
+
+                // Race the fetch against timeout
+                const records = await Promise.race([recordsPromise, timeoutPromise]) as any;
+
+                if (!isMounted) return;
+
+
+                if (records.items.length > 0) {
+                    const data = records.items[0];
+                    setConfigId(data.id);
+                    setValue("company_name", data.company_name);
+                    setValue("address", data.address);
+                    setValue("phone_wa", data.phone_wa);
+                    setValue("email_official", data.email_official);
+                    setValue("total_assets", data.total_assets);
+                    setValue("total_members", data.total_members);
+                    setValue("total_branches", data.total_branches);
+                    setValue("nib", data.nib || "");
+                    setValue("legal_bh", data.legal_bh || "");
+
+                    // Social Links Parsing
+                    const links = data.social_links || {};
+                    setValue("instagram_url", links.instagram || "");
+                    setValue("facebook_url", links.facebook || "");
+                    setValue("tiktok_url", links.tiktok || "");
+                    setValue("youtube_url", links.youtube || "");
+
+                    // Read Map URL
+                    // Check if map is in soc links or root field (legacy support)
+                    const mapUrl = links.map_embed_url || data.map_embed_url || "";
+                    setValue("map_embed_url", mapUrl);
+                    setMapPreview(mapUrl);
+
+                    // Update previews
+                    setLogoPreviews({
+                        logo_primary: data.logo_primary ? pb.files.getUrl(data, data.logo_primary) : null,
+                        logo_secondary: data.logo_secondary ? pb.files.getUrl(data, data.logo_secondary) : null,
+                        favicon: data.favicon ? pb.files.getUrl(data, data.favicon) : null,
+                    });
+                }
+            } catch (e: any) {
+                console.error("Error loading config:", e);
+                if (isMounted) {
+                    alert("Gagal memuat pengaturan: " + (e.message || "Unknown error"));
+                }
+            } finally {
+                if (isMounted) {
+                    setIsLoading(false);
+                }
+            }
+        }
+
         loadConfig();
+
+        return () => {
+            isMounted = false;
+        };
     }, [setValue]);
 
     const onSubmit = async (data: SiteConfig) => {
         setIsSaving(true);
-        console.log("Submitting config data:", data);
+
         try {
             const transformedMapUrl = transformMapUrl(data.map_embed_url);
 
             // Use FormData to ensure file uploads work correctly
             const formData = new FormData();
 
-            // Append Text Fields
+            // ... append text fields ...
             formData.append("company_name", data.company_name || "");
             formData.append("address", data.address || "");
             formData.append("phone_wa", data.phone_wa || "");
@@ -134,18 +173,24 @@ export default function SettingsPage() {
             formData.append("total_assets", data.total_assets || "");
             formData.append("total_members", data.total_members || "");
             formData.append("total_branches", data.total_branches || "");
+            formData.append("nib", data.nib || "");
+            formData.append("legal_bh", data.legal_bh || "");
             formData.append("map_embed_url", transformedMapUrl);
 
             // Append JSON Field (social_links)
             const socialLinks = {
-                map_embed_url: transformedMapUrl
+                map_embed_url: transformedMapUrl,
+                instagram: data.instagram_url,
+                facebook: data.facebook_url,
+                tiktok: data.tiktok_url,
+                youtube: data.youtube_url
             };
             formData.append("social_links", JSON.stringify(socialLinks));
 
             // Append Files with Smart Optimization
             if (data.logo_primary && data.logo_primary.length > 0) {
                 if (data.logo_primary[0] instanceof File) {
-                    console.log("Optimizing Primary Logo...");
+
                     try {
                         const optimized = await optimizeImage(data.logo_primary[0], 'logo');
                         formData.append("logo_primary", optimized);
@@ -157,7 +202,7 @@ export default function SettingsPage() {
             }
             if (data.logo_secondary && data.logo_secondary.length > 0) {
                 if (data.logo_secondary[0] instanceof File) {
-                    console.log("Optimizing Secondary Logo...");
+
                     try {
                         const optimized = await optimizeImage(data.logo_secondary[0], 'logo');
                         formData.append("logo_secondary", optimized);
@@ -169,7 +214,7 @@ export default function SettingsPage() {
             }
             if (data.favicon && data.favicon.length > 0) {
                 if (data.favicon[0] instanceof File) {
-                    console.log("Optimizing Favicon...");
+
                     try {
                         const optimized = await optimizeImage(data.favicon[0], 'favicon');
                         formData.append("favicon", optimized);
@@ -180,7 +225,7 @@ export default function SettingsPage() {
                 }
             }
 
-            console.log("FormData prepared.");
+
 
             let record;
 
@@ -188,12 +233,12 @@ export default function SettingsPage() {
             // Always fetch the latest to be sure, or rely on configId if we trust it doesn't change
             const existing = await pb.collection('site_config').getList(1, 1);
             if (existing.items.length > 0) {
-                console.log("Found existing config, updating...");
+
                 const targetId = existing.items[0].id; // Ensure we use the correct ID from DB
                 setConfigId(targetId);
                 record = await pb.collection('site_config').update(targetId, formData);
             } else {
-                console.log("Creating new config");
+
                 record = await pb.collection('site_config').create(formData);
                 setConfigId(record.id);
             }
@@ -353,6 +398,49 @@ export default function SettingsPage() {
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">Jumlah Kantor</label>
                             <input {...register("total_branches")} className="w-full p-2 border rounded-lg" placeholder="16" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">NIB (Nomor Induk Berusaha)</label>
+                            <input {...register("nib")} className="w-full p-2 border rounded-lg" placeholder="12345678..." />
+                        </div>
+                        <div className="md:col-span-2">
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Legalitas / Badan Hukum</label>
+                            <input {...register("legal_bh")} className="w-full p-2 border rounded-lg" placeholder="SK Menteri Hukum dan HAM..." />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Social Media Profiles */}
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                        <Share2 className="w-5 h-5 text-pink-500" />
+                        Profil Media Sosial
+                        <span className="text-xs font-normal text-slate-500 ml-2 bg-slate-100 px-2 py-1 rounded-full">Wajib untuk Magic Fetch</span>
+                    </h2>
+                    <div className="grid grid-cols-1 gap-6">
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-2">
+                                <Instagram className="w-4 h-4 text-pink-600" /> Instagram Profile
+                            </label>
+                            <input {...register("instagram_url")} className="w-full p-2 border rounded-lg font-mono text-sm" placeholder="https://www.instagram.com/bmtnu_lmj/" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-2">
+                                <Facebook className="w-4 h-4 text-blue-600" /> Facebook Page
+                            </label>
+                            <input {...register("facebook_url")} className="w-full p-2 border rounded-lg font-mono text-sm" placeholder="https://www.facebook.com/BMTNULUMAJANG/" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-2">
+                                <Video className="w-4 h-4 text-black" /> TikTok Profile
+                            </label>
+                            <input {...register("tiktok_url")} className="w-full p-2 border rounded-lg font-mono text-sm" placeholder="https://www.tiktok.com/@bmtnu_lmj" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-2">
+                                <Youtube className="w-4 h-4 text-red-600" /> YouTube Channel
+                            </label>
+                            <input {...register("youtube_url")} className="w-full p-2 border rounded-lg font-mono text-sm" placeholder="https://www.youtube.com/channel/..." />
                         </div>
                     </div>
                 </div>

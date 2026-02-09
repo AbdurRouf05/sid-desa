@@ -6,10 +6,14 @@ import { Menu, X, Home, User, Search, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { TactileButton } from "@/components/ui/tactile-button";
 import { pb } from "@/lib/pb";
+import { useUiLabels } from "@/components/providers/ui-labels-provider";
+import { SearchOverlay } from "./search-overlay";
 
 export function ModernNavbar() {
+    const { getLabel, isVisible } = useUiLabels();
     const [isScrolled, setIsScrolled] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
     const [logoWhiteUrl, setLogoWhiteUrl] = useState<string | null>(null);
     const [companyName, setCompanyName] = useState("BMT NU");
@@ -52,13 +56,12 @@ export function ModernNavbar() {
     }, []);
 
     const navLinks = [
-        { name: "Beranda", href: "/" },
-        { name: "Produk", href: "/produk" },
-        { name: "Layanan", href: "/layanan" },
-        { name: "Berita", href: "/berita" },
-        { name: "Tentang Kami", href: "/tentang-kami" },
-        { name: "Kontak", href: "/kontak" },
-    ];
+        { name: getLabel('nav_home', 'Beranda'), href: "/", visible: isVisible('nav_home') },
+        { name: getLabel('nav_products', 'Produk'), href: "/produk", visible: isVisible('nav_products') },
+        { name: getLabel('nav_news', 'Berita'), href: "/berita", visible: isVisible('nav_news') },
+        { name: getLabel('nav_about', 'Tentang Kami'), href: "/tentang-kami", visible: isVisible('nav_about') },
+        { name: getLabel('nav_contact', 'Kontak'), href: "/kontak", visible: isVisible('nav_contact') },
+    ].filter(link => link.visible);
 
     // Logic for current logo: Scrolled = Primary (Color), Unscrolled = Secondary (White)
     const currentLogo = isScrolled ? logoUrl : (logoWhiteUrl || logoUrl);
@@ -122,22 +125,32 @@ export function ModernNavbar() {
 
                     {/* Desktop Actions */}
                     <div className="hidden md:flex items-center gap-4">
-                        <button className={cn(
-                            "p-2 transition-colors hover:text-gold",
-                            isScrolled ? "text-gray-400" : "text-white/80"
-                        )}>
+                        <button
+                            onClick={() => setIsSearchOpen(true)}
+                            className={cn(
+                                "p-2 transition-colors hover:text-gold",
+                                isScrolled ? "text-gray-400" : "text-white/80"
+                            )}
+                        >
                             <Search className="w-5 h-5" />
                         </button>
-                        {/* Login Button Hidden as per request */}
                     </div>
 
                     {/* Mobile Menu Toggle */}
-                    <button
-                        className="md:hidden p-2 text-current focus:outline-none"
-                        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    >
-                        {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                    </button>
+                    <div className="flex items-center gap-2 md:hidden">
+                        <button
+                            onClick={() => setIsSearchOpen(true)}
+                            className="p-2 text-current focus:outline-none"
+                        >
+                            <Search className="w-6 h-6" />
+                        </button>
+                        <button
+                            className="p-2 text-current focus:outline-none"
+                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                        >
+                            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                        </button>
+                    </div>
                 </div>
             </nav>
 
@@ -193,6 +206,12 @@ export function ModernNavbar() {
                     </p>
                 </div>
             </div>
+
+            {/* Search Overlay */}
+            <SearchOverlay
+                isOpen={isSearchOpen}
+                onClose={() => setIsSearchOpen(false)}
+            />
         </>
     );
 }

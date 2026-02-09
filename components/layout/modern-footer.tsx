@@ -5,28 +5,39 @@ import Link from "next/link";
 import { Home, Phone, Mail, MapPin, Facebook, Instagram, Youtube, ArrowRight } from "lucide-react";
 import { pb } from "@/lib/pb";
 
+// Simple Tiktok Icon for brand consistency
+const TiktokIcon = ({ className }: { className?: string }) => (
+    <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className={className}
+    >
+        <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+    </svg>
+);
+
 export function ModernFooter() {
-    const [backToTopVisible, setBackToTopVisible] = useState(false);
     const [contactInfo, setContactInfo] = useState({
         address: "Jl. Alun-alun Timur No 3, Jogotrunan, Lumajang",
         phone: "0812-3456-7890",
         email: "info@bmtnu-lumajang.id",
         companyName: "BMT NU Lumajang",
-        logoSecondary: "" as string | null
+        logoSecondary: "" as string | null,
+        nib: "",
+        legal_bh: "",
+        socials: {
+            facebook: "#",
+            instagram: "#",
+            youtube: "#",
+            tiktok: "#"
+        }
     });
 
     useEffect(() => {
-        const toggleVisibility = () => {
-            if (window.scrollY > 300) {
-                setBackToTopVisible(true);
-            } else {
-                setBackToTopVisible(false);
-            }
-        };
-
-        window.addEventListener("scroll", toggleVisibility);
-
-        // Fetch dynamic contact info
         const fetchConfig = async () => {
             try {
                 const config = await pb.collection('site_config').getFirstListItem("");
@@ -36,7 +47,15 @@ export function ModernFooter() {
                         phone: config.phone_wa || "0812-3456-7890",
                         email: config.email_official || "info@bmtnu.id",
                         companyName: config.company_name || "BMT NU Lumajang",
-                        logoSecondary: config.logo_secondary ? pb.files.getURL(config, config.logo_secondary) : null
+                        logoSecondary: config.logo_secondary ? pb.files.getURL(config, config.logo_secondary) : null,
+                        nib: config.nib || "",
+                        legal_bh: config.legal_bh || "",
+                        socials: {
+                            facebook: config.social_links?.facebook || "#",
+                            instagram: config.social_links?.instagram || "#",
+                            youtube: config.social_links?.youtube || "#",
+                            tiktok: config.social_links?.tiktok || "#"
+                        }
                     });
                 }
             } catch (e) {
@@ -44,8 +63,6 @@ export function ModernFooter() {
             }
         };
         fetchConfig();
-
-        return () => window.removeEventListener("scroll", toggleVisibility);
     }, []);
 
     return (
@@ -66,6 +83,10 @@ export function ModernFooter() {
                             </div>
                             <span className="font-bold text-xl tracking-tight">{contactInfo.companyName}</span>
                         </div>
+                        <div className="flex flex-col gap-1 text-xs text-slate-500 font-mono">
+                            {contactInfo.legal_bh && <p>{contactInfo.legal_bh}</p>}
+                            {contactInfo.nib && <p>NIB: {contactInfo.nib}</p>}
+                        </div>
                         <p className="text-slate-400 text-sm leading-relaxed">
                             Mitra keuangan syariah terpercaya. Mudah, Murah, Berkah dengan cara Syariah untuk kemandirian ekonomi umat.
                         </p>
@@ -78,13 +99,20 @@ export function ModernFooter() {
                             </li>
                             <li className="flex items-center gap-3 text-emerald-100/80">
                                 <Mail className="w-5 h-5 flex-shrink-0 text-gold" />
-                                <span className="text-sm hover:text-white transition-colors">
+                                <a href={`mailto:${contactInfo.email}`} className="text-sm hover:text-white transition-colors">
                                     {contactInfo.email}
-                                </span>
+                                </a>
                             </li>
                             <li className="flex items-center gap-3 text-emerald-100/80">
                                 <Phone className="w-5 h-5 text-emerald-500 shrink-0" />
-                                <span>{contactInfo.phone} (WhatsApp Center)</span>
+                                <a
+                                    href={`https://wa.me/${contactInfo.phone.replace(/[^0-9]/g, '')}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-emerald-400 transition-colors"
+                                >
+                                    {contactInfo.phone} <span className="text-xs opacity-60 ml-1">(WhatsApp)</span>
+                                </a>
                             </li>
                         </ul>
                     </div>
@@ -93,13 +121,13 @@ export function ModernFooter() {
                     <div>
                         <h3 className="text-white font-bold text-lg mb-6 flex items-center gap-2">
                             <span className="w-8 h-1 bg-emerald-500 rounded-full"></span>
-                            Tentang Kami
+                            BMT NU
                         </h3>
                         <ul className="space-y-3 text-sm">
-                            <li><Link href="/tentang-kami" className="hover:text-emerald-400 transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Sejarah & Visi Misi</Link></li>
-                            <li><Link href="/structure" className="hover:text-emerald-400 transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Struktur Pengurus</Link></li>
+                            <li><Link href="/tentang-kami" className="hover:text-emerald-400 transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Tentang Kami</Link></li>
                             <li><Link href="/berita" className="hover:text-emerald-400 transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Berita & Kegiatan</Link></li>
-                            <li><Link href="/laporan" className="hover:text-emerald-400 transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Laporan RAT</Link></li>
+                            <li><Link href="/produk" className="hover:text-emerald-400 transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Layanan Produk</Link></li>
+                            <li><Link href="/kontak" className="hover:text-emerald-400 transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Kontak & Lokasi</Link></li>
                         </ul>
                     </div>
 
@@ -110,10 +138,11 @@ export function ModernFooter() {
                             Produk Unggulan
                         </h3>
                         <ul className="space-y-3 text-sm">
-                            <li><Link href="/produk/sirela" className="hover:text-gold transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Tabungan SIRELA</Link></li>
-                            <li><Link href="/produk/haji" className="hover:text-gold transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Simpanan Haji & Umroh</Link></li>
-                            <li><Link href="/produk/pendidikan" className="hover:text-gold transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Simpanan Pendidikan</Link></li>
-                            <li><Link href="/produk/pembiayaan" className="hover:text-gold transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Pembiayaan Modal Usaha</Link></li>
+                            {/* Updated to link to sections or main product page for stability */}
+                            <li><Link href="/produk" className="hover:text-gold transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Tabungan SIRELA</Link></li>
+                            <li><Link href="/produk" className="hover:text-gold transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Simpanan Investasi</Link></li>
+                            <li><Link href="/produk" className="hover:text-gold transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Simpanan Pendidikan</Link></li>
+                            <li><Link href="/produk" className="hover:text-gold transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Pembiayaan Modal</Link></li>
                         </ul>
                     </div>
 
@@ -124,13 +153,16 @@ export function ModernFooter() {
                             Ikuti perkembangan terbaru kami melalui kanal sosial media resmi.
                         </p>
                         <div className="flex items-center gap-4">
-                            <a href="#" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-emerald-600 transition-colors group">
+                            <a href={contactInfo.socials.facebook} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-blue-600 transition-colors group">
                                 <Facebook className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
                             </a>
-                            <a href="#" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-emerald-600 transition-colors group">
+                            <a href={contactInfo.socials.instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-pink-600 transition-colors group">
                                 <Instagram className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
                             </a>
-                            <a href="#" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-emerald-600 transition-colors group">
+                            <a href={contactInfo.socials.tiktok} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-black transition-colors group">
+                                <TiktokIcon className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
+                            </a>
+                            <a href={contactInfo.socials.youtube} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-red-600 transition-colors group">
                                 <Youtube className="w-5 h-5 text-white group-hover:scale-110 transition-transform" />
                             </a>
                         </div>
@@ -141,12 +173,14 @@ export function ModernFooter() {
             {/* Bottom Bar: Legal & Copyright */}
             <div className="bg-slate-950 py-6 border-t border-slate-800">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                    <p className="text-xs text-slate-500 text-center md:text-left">
-                        © {new Date().getFullYear()} sagamuda.id. All rights reserved. <br className="hidden md:block" />
-                    </p>
+                    <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 text-xs text-slate-500">
+                        <p className="text-center md:text-left">
+                            © developed by sagamuda.id
+                        </p>
+                    </div>
                     <div className="flex items-center gap-6 text-xs text-slate-500">
-                        <Link href="/kebijakan-privasi" className="hover:text-emerald-400">Kebijakan Privasi</Link>
-                        <Link href="/syarat-ketentuan" className="hover:text-emerald-400">Syarat & Ketentuan</Link>
+                        <Link href="/" className="hover:text-emerald-400 transition-colors">Kebijakan Privasi</Link>
+                        <Link href="/" className="hover:text-emerald-400 transition-colors">Syarat & Ketentuan</Link>
                     </div>
                 </div>
             </div>

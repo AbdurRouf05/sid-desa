@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { pb } from "@/lib/pb";
 import PocketBase from "pocketbase"; // Import for fresh client
 import {
-    Plus, Search, Edit, Trash2,
+    Plus, Search, Edit, Trash2, Star,
     ShoppingBag, PiggyBank, CreditCard, Wallet, Banknote, Landmark, Coins, DollarSign,
     TrendingUp, ShieldCheck, Briefcase, Building, Home, Car, GraduationCap,
     Plane, Umbrella, Vote, Users, Smartphone
@@ -36,7 +36,7 @@ export default function AdminProductsPage() {
             // Strategy: Try fetching with SORT first
             try {
                 const queryOptions: any = {
-                    sort: '-created',
+                    sort: '-is_featured,-created',
                     requestKey: null,
                     filter: filterExpr // Apply combined filter
                 };
@@ -105,8 +105,8 @@ export default function AdminProductsPage() {
                 <button
                     onClick={() => { setActiveTab('all'); setPage(1); }}
                     className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'all'
-                            ? 'border-emerald-600 text-emerald-700'
-                            : 'border-transparent text-slate-500 hover:text-slate-700'
+                        ? 'border-emerald-600 text-emerald-700'
+                        : 'border-transparent text-slate-500 hover:text-slate-700'
                         }`}
                 >
                     Semua
@@ -114,8 +114,8 @@ export default function AdminProductsPage() {
                 <button
                     onClick={() => { setActiveTab('published'); setPage(1); }}
                     className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'published'
-                            ? 'border-emerald-600 text-emerald-700'
-                            : 'border-transparent text-slate-500 hover:text-slate-700'
+                        ? 'border-emerald-600 text-emerald-700'
+                        : 'border-transparent text-slate-500 hover:text-slate-700'
                         }`}
                 >
                     Terbit (Published)
@@ -123,8 +123,8 @@ export default function AdminProductsPage() {
                 <button
                     onClick={() => { setActiveTab('draft'); setPage(1); }}
                     className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${activeTab === 'draft'
-                            ? 'border-emerald-600 text-emerald-700'
-                            : 'border-transparent text-slate-500 hover:text-slate-700'
+                        ? 'border-emerald-600 text-emerald-700'
+                        : 'border-transparent text-slate-500 hover:text-slate-700'
                         }`}
                 >
                     Draft
@@ -176,16 +176,22 @@ export default function AdminProductsPage() {
                                     </div>
                                 )}
 
-                                {/* Status Badge */}
-                                <div className="absolute top-2 right-2">
+                                {/* Status Badges */}
+                                <div className="absolute top-2 right-2 flex flex-col items-end gap-2">
                                     {item.published ? (
-                                        <span className="bg-white/90 backdrop-blur text-emerald-600 text-[10px] font-bold px-2 py-1 rounded-full shadow-sm">
+                                        <span className="bg-emerald-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-sm">
                                             Active
                                         </span>
                                     ) : (
-                                        <span className="bg-slate-200/90 backdrop-blur text-slate-500 text-[10px] font-bold px-2 py-1 rounded-full shadow-sm">
+                                        <span className="bg-slate-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-sm">
                                             Draft
                                         </span>
+                                    )}
+
+                                    {item.is_featured && (
+                                        <div className="bg-yellow-400 text-yellow-900 p-1.5 rounded-full shadow-lg border-2 border-white animate-pulse">
+                                            <Star className="w-3.5 h-3.5 fill-current" />
+                                        </div>
                                     )}
                                 </div>
                             </div>
@@ -193,10 +199,16 @@ export default function AdminProductsPage() {
                             <div className="p-5">
                                 <div className="flex justify-between items-start mb-2">
                                     <div className={cn(
-                                        "w-10 h-10 rounded-lg flex items-center justify-center -mt-10 bg-white shadow-md relative z-10",
-                                        item.type === "simpanan" ? "text-emerald-600" : "text-gold-600"
+                                        "w-10 h-10 rounded-lg flex items-center justify-center -mt-10 bg-white shadow-md relative z-10 overflow-hidden",
+                                        item.product_type === "simpanan" ? "text-emerald-600" : "text-gold-600"
                                     )}>
-                                        {(() => {
+                                        {item.icon ? (
+                                            <img
+                                                src={`${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/files/${item.collectionId}/${item.id}/${item.icon}`}
+                                                alt={item.name}
+                                                className="w-full h-full object-contain p-1"
+                                            />
+                                        ) : (() => {
                                             const IconMap: any = {
                                                 PiggyBank, CreditCard, Wallet, Banknote, Landmark, Coins, DollarSign,
                                                 TrendingUp, ShieldCheck, Briefcase, Building, Home, Car, GraduationCap,
@@ -204,7 +216,7 @@ export default function AdminProductsPage() {
                                             };
                                             const IconComponent = item.icon_name && IconMap[item.icon_name]
                                                 ? IconMap[item.icon_name]
-                                                : (item.type === "simpanan" ? PiggyBank : CreditCard);
+                                                : (item.product_type === "simpanan" ? PiggyBank : CreditCard);
 
                                             return <IconComponent className="w-5 h-5" />;
                                         })()}
@@ -226,14 +238,57 @@ export default function AdminProductsPage() {
                                 </div>
 
                                 <h3 className="font-bold text-lg text-slate-900 mb-1 leading-tight">{item.name}</h3>
-                                <p className="text-xs text-slate-500 uppercase tracking-wider font-semibold mb-3">
-                                    {item.type} • {item.schema_type || "General"}
-                                </p>
+                                <div className="flex flex-wrap gap-2 mb-3">
+                                    <span className={cn(
+                                        "text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider",
+                                        item.product_type === "simpanan" ? "bg-emerald-100 text-emerald-700" : "bg-gold-100 text-gold-700"
+                                    )}>
+                                        {item.product_type || "Umum"}
+                                    </span>
+
+                                    {(() => {
+                                        const labels: any = {
+                                            'SavingsAccount': { label: 'Tabungan', color: 'bg-blue-100 text-blue-700' },
+                                            'LoanOrCredit': { label: 'Pembiayaan', color: 'bg-purple-100 text-purple-700' },
+                                            'DepositAccount': { label: 'Deposito', color: 'bg-amber-100 text-amber-700' },
+                                            'FinancialProduct': { label: 'Keuangan', color: 'bg-slate-100 text-slate-700' }
+                                        };
+                                        const config = labels[item.schema_type] || { label: item.schema_type || 'General', color: 'bg-slate-100 text-slate-700' };
+                                        return (
+                                            <span className={cn("text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider", config.color)}>
+                                                {config.label}
+                                            </span>
+                                        );
+                                    })()}
+                                </div>
                             </div>
                         </div>
                     ))
                 )}
             </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-4 pt-8">
+                    <button
+                        onClick={() => setPage(p => Math.max(1, p - 1))}
+                        disabled={page === 1}
+                        className="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50 transition-colors"
+                    >
+                        Sebelumnya
+                    </button>
+                    <span className="text-sm font-medium text-slate-600">
+                        Halaman {page} dari {totalPages}
+                    </span>
+                    <button
+                        onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                        disabled={page === totalPages}
+                        className="p-2 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50 transition-colors"
+                    >
+                        Selanjutnya
+                    </button>
+                </div>
+            )}
         </main>
     );
 }

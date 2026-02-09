@@ -1,8 +1,8 @@
 
 import imageCompression from 'browser-image-compression';
 
-export async function processImageForUpload(file: File): Promise<File> {
-    console.log("Starting image processing...", file.name, file.size);
+export async function processImageForUpload(file: File, logoUrl?: string): Promise<File> {
+
 
     // 1. Initial Compression & Resize
     // Target: Max 1920px width, max 1MB size, convert to WebP
@@ -16,10 +16,10 @@ export async function processImageForUpload(file: File): Promise<File> {
 
     try {
         const compressedBlob = await imageCompression(file, options);
-        console.log("Compression done:", compressedBlob.size);
+
 
         // 2. Add Watermark via Canvas
-        const watermarkedBlob = await addWatermark(compressedBlob);
+        const watermarkedBlob = await addWatermark(compressedBlob, logoUrl);
 
         // 3. Convert back to File
         const finalFile = new File([watermarkedBlob], file.name.replace(/\.[^/.]+$/, "") + ".webp", {
@@ -27,7 +27,7 @@ export async function processImageForUpload(file: File): Promise<File> {
             lastModified: Date.now()
         });
 
-        console.log("Final processed file:", finalFile.name, finalFile.size);
+
         return finalFile;
 
     } catch (error) {
@@ -36,12 +36,12 @@ export async function processImageForUpload(file: File): Promise<File> {
     }
 }
 
-async function addWatermark(imageBlob: Blob): Promise<Blob> {
+async function addWatermark(imageBlob: Blob, logoUrl?: string): Promise<Blob> {
     return new Promise((resolve, reject) => {
         const img = new Image();
         img.src = URL.createObjectURL(imageBlob);
 
-        img.onload = () => {
+        img.onload = async () => {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
 
@@ -57,33 +57,58 @@ async function addWatermark(imageBlob: Blob): Promise<Blob> {
             ctx.drawImage(img, 0, 0);
 
             // Watermark Configuration
-            const text = "BMT NU LUMAJANG";
-            const fontSize = Math.max(24, Math.floor(canvas.width * 0.03)); // Responsive font size (3% of width)
-            const padding = Math.floor(fontSize * 0.8);
+            const fontSize = Math.max(20, Math.floor(canvas.width * 0.025)); // Responsive font size
+            const padding = Math.floor(fontSize * 1.5);
 
-            ctx.font = `bold ${fontSize}px sans-serif`;
-            ctx.textAlign = 'right';
-            ctx.textBaseline = 'bottom';
-
-            // X and Y coordinates (Bottom Right)
-            const x = canvas.width - padding;
+            // Coordinates (Bottom Left)
+            let x = padding;
             const y = canvas.height - padding;
 
-            // Shadow/Outline for readability on any background
+            // Load & Draw Logo if available
+            if (logoUrl) {
+                try {
+                    const logoImg = new Image();
+                    logoImg.crossOrigin = "anonymous"; // Prevent taint
+                    logoImg.src = logoUrl;
+
+                    await new Promise((r, f) => {
+                        logoImg.onload = r;
+                        logoImg.onerror = () => { console.warn("Logo load failed, skipping"); r(null); }; // Don't fail entire process
+                    });
+
+                    // Draw Logo (Resize to appropriate height)
+                    const logoHeight = fontSize * 2.5;
+                    const logoWidth = (logoImg.width / logoImg.height) * logoHeight;
+
+                    // Draw logo with shadow
+                    ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+                    ctx.shadowBlur = 4;
+                    ctx.drawImage(logoImg, x, y - logoHeight, logoWidth, logoHeight);
+
+                    // Shift text to the right of logo
+                    x += logoWidth + (fontSize * 0.5);
+
+                } catch (e) {
+                    console.warn("Watermark logo processing error", e);
+                }
+            }
+
+            // Draw Text "bmtnulumajang.id"
             ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
             ctx.shadowBlur = 4;
             ctx.shadowOffsetX = 2;
             ctx.shadowOffsetY = 2;
 
-            // Draw Text (White)
-            ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-            ctx.fillText(text, x, y);
+            ctx.font = `bold ${fontSize}px sans-serif`;
+            ctx.fillStyle = "rgba(255, 255, 255, 0.95)";
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'bottom';
 
-            // Add subtext domain if large enough
-            if (fontSize > 16) {
-                ctx.font = `${Math.floor(fontSize * 0.6)}px sans-serif`;
-                ctx.fillText("bmtnu-lumajang.id", x, y - fontSize - 4);
-            }
+            ctx.fillText("bmtnulumajang.id", x, y - (fontSize * 0.2));
+
+            // Optional: Draw smaller text below or above if needed, but user asked for just address
+            // ctx.font = `${Math.floor(fontSize * 0.7)}px sans-serif`;
+            // ctx.fillText("BMT NU Lumajang", x, y - fontSize - 5);
 
             canvas.toBlob((blob) => {
                 if (blob) {

@@ -21,7 +21,7 @@ export default function TestImage() {
                         src={foregroundUrl}
                         alt="Foreground"
                         className="h-32 object-contain border bg-slate-100"
-                        onLoad={() => console.log("Foreground Loaded")}
+                        onLoad={() => { }}
                         onError={(e) => {
                             console.error("Foreground Error", e);
                             setStatus("Foreground Error");
@@ -38,7 +38,7 @@ export default function TestImage() {
                         src={desktopUrl}
                         alt="Desktop"
                         className="h-32 object-contain border bg-slate-100"
-                        onLoad={() => console.log("Desktop Loaded")}
+                        onLoad={() => { }}
                         onError={(e) => console.error("Desktop Error", e)}
                     />
                     <a href={desktopUrl} target="_blank" className="text-blue-500 underline">Direct Link</a>

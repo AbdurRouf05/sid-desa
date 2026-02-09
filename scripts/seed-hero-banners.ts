@@ -18,7 +18,7 @@ const HERO_SLIDES = [
         bg_class: "bg-emerald-900",
         order: 1,
         // Fallback: Green/Islamic architecture or abstract
-        image_url: "https://images.unsplash.com/photo-1577083639236-0f52ba0b5273?q=60&w=600"
+        image_url: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=60&w=1200"
     },
     {
         title: "Tabungan SIRELA",

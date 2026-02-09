@@ -11,6 +11,7 @@ import { Loader2, Save, ArrowLeft, Image as ImageIcon, Sparkles } from "lucide-r
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { processImageForUpload } from "@/lib/image-processor";
+import { getAssetUrl } from "@/lib/cdn";
 
 const newsSchema = z.object({
     title: z.string().min(5, "Judul minimal 5 karakter"),
@@ -72,7 +73,7 @@ export default function NewsEditorPage({ isEdit = false }: { isEdit?: boolean })
                     setValue("seo_desc", record.seo_desc || "");
 
                     if (record.thumbnail) {
-                        setPreviewUrl(pb.files.getUrl(record, record.thumbnail));
+                        setPreviewUrl(getAssetUrl(record, record.thumbnail));
                     }
                 } catch (e) {
                     console.error("Failed to load news", e);
@@ -110,7 +111,7 @@ export default function NewsEditorPage({ isEdit = false }: { isEdit?: boolean })
                 // If it's an image, we process it.
                 if (fileInput.type.startsWith("image/")) {
                     try {
-                        const processedFile = await processImageForUpload(fileInput);
+                        const processedFile = await processImageForUpload(fileInput, logoUrl);
                         formData.append("thumbnail", processedFile);
                     } catch (err) {
                         console.error("Image processing failed, uploading original...", err);
@@ -135,6 +136,22 @@ export default function NewsEditorPage({ isEdit = false }: { isEdit?: boolean })
             setIsLoading(false);
         }
     };
+
+    const [logoUrl, setLogoUrl] = useState<string | undefined>(undefined);
+
+    // Fetch Site Config for Watermark Logo
+    useEffect(() => {
+        pb.collection('site_config').getFirstListItem("")
+            .then(config => {
+                // Use logo_secondary (white) and getSecureAssetUrl logic via getAssetUrl helper
+                if (config.logo_secondary) {
+                    const url = getAssetUrl(config, config.logo_secondary);
+
+                    setLogoUrl(url);
+                }
+            })
+            .catch(() => { });
+    }, []);
 
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];

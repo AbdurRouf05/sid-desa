@@ -5,6 +5,7 @@ import { pb } from "@/lib/pb";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { MessageSquare, Mail, Phone, Calendar, Trash2, CheckCircle2, Clock, Archive } from "lucide-react";
 import { TactileButton } from "@/components/ui/tactile-button";
+import { formatDate } from "@/lib/number-utils";
 
 interface Inquiry {
     id: string;
@@ -113,7 +114,7 @@ export default function InquiriesPage() {
                                         </div>
                                         <div className="flex items-center gap-2">
                                             <Calendar className="w-3 h-3 shrink-0" />
-                                            <span>{item.sent_at ? new Date(item.sent_at).toLocaleDateString("id-ID", { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : "-"}</span>
+                                            <span>{formatDate(item.sent_at, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
                                         </div>
                                     </div>
                                     <div className="pt-2">

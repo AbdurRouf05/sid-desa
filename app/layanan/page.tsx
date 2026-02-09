@@ -5,11 +5,36 @@ import { ModernFooter } from "@/components/layout/modern-footer";
 import { ArabesqueCard } from "@/components/ui/arabesque-card";
 import { TactileButton } from "@/components/ui/tactile-button";
 import { Smartphone, Building, CreditCard, Banknote, ArrowRight, MapPin } from "lucide-react";
+import { JsonLd } from "@/components/seo/json-ld";
 
 export default function ServicesPage() {
     return (
         <main className="min-h-screen bg-slate-50 font-sans">
             <ModernNavbar />
+            <JsonLd
+                type="CollectionPage"
+                data={{
+                    name: "Layanan & Produk BMT NU Lumajang",
+                    description: "Daftar lengkap layanan digital dan produk keuangan syariah BMT NU Lumajang.",
+                    hasPart: [
+                        {
+                            "@type": "Service",
+                            name: "BMT NU Mobile",
+                            description: "Mobile banking untuk transaksi real-time."
+                        },
+                        {
+                            "@type": "Service",
+                            name: "PPOB & Pembayaran",
+                            description: "Bayar tagihan listrik, pulsa, dan BPJS."
+                        },
+                        {
+                            "@type": "FinancialProduct",
+                            name: "Tabungan SIRELA",
+                            description: "Simpanan Sukarela yang likuid."
+                        }
+                    ]
+                }}
+            />
 
             {/* Hero Section */}
             <section className="pt-32 pb-20 bg-emerald-900 text-white relative overflow-hidden">

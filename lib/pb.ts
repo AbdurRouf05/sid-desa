@@ -18,3 +18,14 @@ if (typeof window === "undefined") {
 pb.autoCancellation(false);
 
 export { pb };
+
+export async function getSiteConfig(): Promise<any> {
+    try {
+        const records = await pb.collection('site_config').getList(1, 1);
+        return records.items[0] || {};
+    } catch (e) {
+        // Fallback if no config exists yet (should be seeded though)
+        console.warn("getSiteConfig failed", e);
+        return {};
+    }
+}

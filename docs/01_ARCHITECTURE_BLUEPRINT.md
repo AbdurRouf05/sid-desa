@@ -318,7 +318,15 @@ The application relies on the following environment variables. **DO NOT commit `
 
 ## 3. Technical Strategy Specifications
 
-### Analytics Engine (New)
+### Testing Strategy (New)
+* **Framework**: Jest + React Testing Library (RTL).
+* **Scope**:
+  * **Unit**: Utility functions (`formatRupiah`, `cn`).
+  * **Component**: UI atoms (`TactileButton`, `NewsCard`) and molecules.
+  * **Integration**: Critical user flows (Contact Form submission) with mocked backend.
+* **CI/CD**: Tests run on every commit. `npm test` ensures reliability before deployment.
+
+### Analytics Engine (Implemented)
 
 * **Privacy First**: No cookies, just session IDs and anonymous telemetry.
 * **Mechanism**:

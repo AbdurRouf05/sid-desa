@@ -4,24 +4,38 @@ import { ModernNavbar } from "@/components/layout/modern-navbar";
 import { ModernFooter } from "@/components/layout/modern-footer";
 import { JsonLd } from "@/components/seo/json-ld";
 import { TactileButton } from "@/components/ui/tactile-button";
-import { ArrowLeft, CheckCircle2, Phone, ShieldCheck, Wallet } from "lucide-react";
+import {
+    ArrowLeft, CheckCircle2, Phone, ShieldCheck, Wallet,
+    PiggyBank, CreditCard, Banknote, Landmark, Coins, DollarSign,
+    TrendingUp, Briefcase, Building, Home, Car, GraduationCap,
+    Plane, Umbrella, Vote, Users, ShoppingBag, Smartphone, Download
+} from "lucide-react";
 import Link from "next/link";
 import { Metadata } from "next";
+import { formatRupiah } from "@/lib/number-utils";
 
 export const revalidate = 60; // Revalidate every minute
 
 async function getProduct(slug: string) {
     try {
-        const record = await pb.collection('products').getFirstListItem(`slug="${slug}"`, {
-            filter: 'published = true'
-        });
+        // Try finding by slug first
+        const record = await pb.collection('products').getFirstListItem(`slug="${slug}" && published = true`);
         return record;
     } catch (e) {
-        return null;
+        // Fallback: Try finding by ID directly
+        try {
+            const record = await pb.collection('products').getOne(slug);
+            return record.published ? record : null;
+        } catch (idErr) {
+            return null;
+        }
     }
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+import { ProductContactButton } from "@/components/products/product-contact-button";
+
+export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const params = await props.params;
     const product = await getProduct(params.slug);
     if (!product) return { title: "Produk Tidak Ditemukan" };
 
@@ -31,12 +45,30 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     };
 }
 
-export default async function ProductDetailPage({ params }: { params: { slug: string } }) {
+export default async function ProductDetailPage(props: { params: Promise<{ slug: string }> }) {
+    const params = await props.params;
     const product = await getProduct(params.slug);
 
     if (!product) {
         notFound();
     }
+
+    // Helper to map technical schema to friendly terms
+    const getSchemaLabel = (type: string) => {
+        if (product.sharia_contract) return product.sharia_contract;
+        if (!type) return "Produk Syariah";
+        const normalized = type.trim();
+        const mapping: Record<string, string> = {
+            "SavingsAccount": "Simpanan Syariah",
+            "LoanOrCredit": "Pembiayaan Syariah",
+            "DepositAccount": "Simpanan Berjangka",
+            "FinancialProduct": "Produk Syariah"
+        };
+        return mapping[normalized] || normalized;
+    };
+
+    // Use formatRupiah for consistent currency presentation
+    const displayPrice = product.min_deposit ? formatRupiah(product.min_deposit) : null;
 
     const isSimpanan = product.product_type === "simpanan";
     const whatsappMessage = `Assalamualaikum, saya ingin bertanya tentang produk ${product.name}.`;
@@ -80,8 +112,24 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
                             <h1 className="text-3xl md:text-5xl font-bold font-display leading-tight">{product.name}</h1>
                         </div>
                         <div className="hidden md:block">
-                            {/* Icon Placeholder or vector art could go here */}
-                            <ShieldCheck className="w-24 h-24 text-emerald-800/50" />
+                            {product.icon ? (
+                                <img
+                                    src={`${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/files/${product.collectionId}/${product.id}/${product.icon}`}
+                                    alt={product.name}
+                                    className="w-24 h-24 object-contain brightness-0 invert opacity-50"
+                                />
+                            ) : (() => {
+                                const IconMap: any = {
+                                    PiggyBank, CreditCard, Wallet, Banknote, Landmark, Coins, DollarSign,
+                                    TrendingUp, ShieldCheck, Briefcase, Building, Home, Car, GraduationCap,
+                                    Plane, Umbrella, Vote, Users, ShoppingBag, Smartphone
+                                };
+                                const IconComponent = product.icon_name && IconMap[product.icon_name]
+                                    ? IconMap[product.icon_name]
+                                    : ShieldCheck;
+
+                                return <IconComponent className="w-24 h-24 text-emerald-800/50" />;
+                            })()}
                         </div>
                     </div>
                 </div>
@@ -124,25 +172,37 @@ export default async function ProductDetailPage({ params }: { params: { slug: st
                             <div className="space-y-4 mb-8">
                                 <div className="flex justify-between items-center py-3 border-b border-slate-50">
                                     <span className="text-slate-500 text-sm">Jenis Akad</span>
-                                    <span className="font-bold text-slate-800">{product.schema_type || "Syariah"}</span>
+                                    <span className="font-bold text-slate-800">{getSchemaLabel(product.schema_type)}</span>
                                 </div>
                                 <div className="flex justify-between items-center py-3 border-b border-slate-50">
                                     <span className="text-slate-500 text-sm">
                                         {isSimpanan ? "Setoran Awal" : "Plafond Minimal"}
                                     </span>
-                                    <span className="font-bold text-emerald-700 text-lg">
-                                        {product.min_deposit ? `Rp ${product.min_deposit}` : "Menyesuaikan"}
+                                    <span className="font-bold text-emerald-700 text-xl tracking-tight">
+                                        {displayPrice || "Menyesuaikan"}
                                     </span>
                                 </div>
                             </div>
 
-                            <TactileButton
-                                className="w-full justify-center bg-emerald-600 hover:bg-emerald-700 text-white shadow-emerald-200"
-                                onClick={() => window.open(whatsappLink, '_blank')}
-                            >
-                                <Phone className="w-4 h-4 mr-2" />
-                                {isSimpanan ? "Buka Rekening" : "Ajukan Pembiayaan"}
-                            </TactileButton>
+                            <div className="space-y-3">
+                                <ProductContactButton
+                                    whatsappLink={whatsappLink}
+                                    label={isSimpanan ? "Buka Rekening" : "Ajukan Pembiayaan"}
+                                />
+
+                                {product.brochure_pdf && (
+                                    <TactileButton
+                                        as="a"
+                                        href={`${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/files/${product.collectionId}/${product.id}/${product.brochure_pdf}`}
+                                        target="_blank"
+                                        variant="tertiary"
+                                        fullWidth
+                                        className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"
+                                    >
+                                        <Download className="w-4 h-4 mr-2" /> Download Brosur (PDF)
+                                    </TactileButton>
+                                )}
+                            </div>
 
                             <p className="text-xs text-center text-slate-400 mt-4">
                                 Hubungi CS kami via WhatsApp untuk informasi lebih lanjut.

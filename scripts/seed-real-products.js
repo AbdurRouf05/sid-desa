@@ -38,7 +38,8 @@ const REAL_PRODUCTS = [
         min_deposit: "250000",
         is_featured: true,
         published: true,
-        seo_keywords: "simpanan pokok, simpanan wajib, anggota bmt nu, shu koperasi"
+        seo_keywords: "simpanan pokok, simpanan wajib, anggota bmt nu, shu koperasi",
+        sharia_contract: "Wadiah"
     },
     {
         name: "Tabungan Sukarela (SIRELA)",
@@ -50,7 +51,8 @@ const REAL_PRODUCTS = [
         min_deposit: "20000",
         is_featured: true,
         published: true,
-        seo_keywords: "tabungan harian, simpanan cair, bmt nu lumajang, tanpa potongan"
+        seo_keywords: "tabungan harian, simpanan cair, bmt nu lumajang, tanpa potongan",
+        sharia_contract: "Wadiah"
     },
     {
         name: "Tabungan Haji & Umroh",
@@ -62,7 +64,8 @@ const REAL_PRODUCTS = [
         min_deposit: "100000",
         is_featured: false,
         published: true,
-        seo_keywords: "tabungan haji, tabungan umroh, simpanan haji bmt"
+        seo_keywords: "tabungan haji, tabungan umroh, simpanan haji bmt",
+        sharia_contract: "Mudharabah"
     },
     {
         name: "Tabungan Qurban",
@@ -74,7 +77,8 @@ const REAL_PRODUCTS = [
         min_deposit: "100000",
         is_featured: false,
         published: true,
-        seo_keywords: "tabungan qurban, simpanan kurban, idul adha"
+        seo_keywords: "tabungan qurban, simpanan kurban, idul adha",
+        sharia_contract: "Mudharabah"
     },
     {
         name: "Tabungan Pendidikan",
@@ -86,7 +90,8 @@ const REAL_PRODUCTS = [
         min_deposit: "20000",
         is_featured: false,
         published: true,
-        seo_keywords: "tabungan pendidikan, biaya sekolah, tabungan anak"
+        seo_keywords: "tabungan pendidikan, biaya sekolah, tabungan anak",
+        sharia_contract: "Mudharabah"
     },
     {
         name: "Sukarela Berjangka (Deposito)",
@@ -98,7 +103,8 @@ const REAL_PRODUCTS = [
         min_deposit: "5000000",
         is_featured: true,
         published: true,
-        seo_keywords: "deposito syariah, investasi bagi hasil, mudharabah berjangka"
+        seo_keywords: "deposito syariah, investasi bagi hasil, mudharabah berjangka",
+        sharia_contract: "Mudharabah Berjangka"
     },
 
     // --- PEMBIAYAAN ---
@@ -112,7 +118,8 @@ const REAL_PRODUCTS = [
         min_deposit: "0",
         is_featured: true,
         published: true,
-        seo_keywords: "modal usaha, kredit usaha rakyat, mudharabah, musyarakah"
+        seo_keywords: "modal usaha, kredit usaha rakyat, mudharabah, musyarakah",
+        sharia_contract: "Mudharabah/Musyarokah"
     },
     {
         name: "Pembiayaan Konsumtif",
@@ -124,7 +131,8 @@ const REAL_PRODUCTS = [
         min_deposit: "0",
         is_featured: false,
         published: true,
-        seo_keywords: "kredit elektronik, renovasi rumah, pembiayaan syariah, murabahah"
+        seo_keywords: "kredit elektronik, renovasi rumah, pembiayaan syariah, murabahah",
+        sharia_contract: "Murabahah"
     },
     {
         name: "Pembiayaan Musiman",
@@ -136,7 +144,8 @@ const REAL_PRODUCTS = [
         min_deposit: "0",
         is_featured: false,
         published: true,
-        seo_keywords: "kredit tani, yarnen, modal pertanian, pembiayaan nelayan"
+        seo_keywords: "kredit tani, yarnen, modal pertanian, pembiayaan nelayan",
+        sharia_contract: "Murabahah/Ijarah"
     },
     {
         name: "Pembiayaan KUN (Kredit Usaha Nahdliyyin)",
@@ -148,7 +157,8 @@ const REAL_PRODUCTS = [
         min_deposit: "0",
         is_featured: true,
         published: true,
-        seo_keywords: "kredit nahdliyin, umkm nu, lazisnu"
+        seo_keywords: "kredit nahdliyin, umkm nu, lazisnu",
+        sharia_contract: "Murabahah"
     },
     {
         name: "Pembiayaan KUNU (Kredit Usaha NU)",
@@ -160,7 +170,8 @@ const REAL_PRODUCTS = [
         min_deposit: "0",
         is_featured: true,
         published: true,
-        seo_keywords: "pembiayaan lembaga nu, modal usaha banom, ekonomi umat"
+        seo_keywords: "pembiayaan lembaga nu, modal usaha banom, ekonomi umat",
+        sharia_contract: "Murabahah"
     }
 ];
 

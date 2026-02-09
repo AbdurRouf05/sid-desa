@@ -5,6 +5,7 @@ import { ModernNavbar } from "@/components/layout/modern-navbar";
 import { ModernFooter } from "@/components/layout/modern-footer";
 import { ShieldCheck, Calendar, Users, Building2, FileText, CheckCircle2 } from "lucide-react";
 import { pb } from "@/lib/pb";
+import { JsonLd } from "@/components/seo/json-ld";
 
 export default function TentangKamiPage() {
     const [config, setConfig] = useState<any>(null);
@@ -35,6 +36,24 @@ export default function TentangKamiPage() {
     return (
         <main className="min-h-screen bg-slate-50 font-sans">
             <ModernNavbar />
+            <JsonLd
+                type="AboutPage"
+                data={{
+                    name: "Tentang Kami - BMT NU Lumajang",
+                    description: "KSPPS BMT NU Lumajang adalah lembaga keuangan syariah yang mandiri, sehat, dan kuat, berkhidmat untuk ekonomi umat.",
+                    mainEntity: {
+                        "@type": "Organization",
+                        name: "BMT NU Lumajang",
+                        foundingDate: "2020-08",
+                        legalName: "KSPPS BMT NU LUMAJANG",
+                        logo: "https://bmtnulumajang.id/logo.png",
+                        sameAs: [
+                            "https://www.facebook.com/bmtnulumajang",
+                            "https://www.instagram.com/bmtnulumajang"
+                        ]
+                    }
+                }}
+            />
 
             {/* Hero Section */}
             <section className="pt-32 pb-16 bg-gradient-to-br from-bmt-green-700 to-primary-dark text-white relative overflow-hidden">

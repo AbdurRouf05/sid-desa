@@ -8,6 +8,8 @@ import type { Metadata } from 'next';
 import { notFound } from "next/navigation";
 import { pb } from "@/lib/pb";
 import { getAssetUrl } from "@/lib/cdn";
+import { formatDate } from "@/lib/number-utils";
+import Image from "next/image";
 
 type Props = {
     params: Promise<{ slug: string }>
@@ -15,13 +17,21 @@ type Props = {
 
 async function getNewsItem(slug: string) {
     try {
-        const record = await pb.collection('news').getFirstListItem(`slug="${slug}"`, {
-            expand: 'author',
-            filter: 'published = true'
+        // Try finding by slug first
+        let record = await pb.collection('news').getFirstListItem(`slug="${slug}" && published = true`, {
+            expand: 'author'
         });
         return record;
     } catch (e) {
-        return null;
+        // Fallback: Try finding by ID directly
+        try {
+            const record = await pb.collection('news').getOne(slug, {
+                expand: 'author'
+            });
+            return record.published ? record : null;
+        } catch (idErr) {
+            return null;
+        }
     }
 }
 
@@ -66,6 +76,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     }
 }
 
+import { ShareButton } from "@/components/news/share-button";
+
 export default async function NewsDetailPage({ params }: Props) {
     const { slug } = await params;
     const record = await getNewsItem(slug);
@@ -94,9 +106,7 @@ export default async function NewsDetailPage({ params }: Props) {
         ? getAssetUrl(record, record.thumbnail)
         : "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=2070";
 
-    const dateStr = new Date(record.created).toLocaleDateString("id-ID", {
-        day: 'numeric', month: 'long', year: 'numeric'
-    });
+    const dateStr = formatDate(record.created || record.updated);
 
     return (
         <main className="min-h-screen bg-slate-50 font-sans">
@@ -124,8 +134,15 @@ export default async function NewsDetailPage({ params }: Props) {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
                     {/* Main Content */}
                     <article className="lg:col-span-8">
-                        <div className="rounded-2xl overflow-hidden shadow-lg mb-8">
-                            <img src={thumbnail} alt={record.title} className="w-full h-auto object-cover" />
+                        <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-lg mb-8">
+                            <Image
+                                src={thumbnail}
+                                alt={record.title}
+                                fill
+                                className="object-cover"
+                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 800px"
+                                priority
+                            />
                         </div>
 
                         {/* Author Meta (Mobile Visible) */}
@@ -139,9 +156,7 @@ export default async function NewsDetailPage({ params }: Props) {
                                     <p className="text-xs text-slate-500">Penulis</p>
                                 </div>
                             </div>
-                            <button className="flex items-center gap-2 text-slate-500 hover:text-emerald-600 transition-colors">
-                                <Share2 className="w-4 h-4" /> <span className="hidden sm:inline">Bagikan</span>
-                            </button>
+                            <ShareButton title={record.title} url="" />
                         </div>
 
                         {/* HTML Content Render */}
@@ -161,10 +176,12 @@ export default async function NewsDetailPage({ params }: Props) {
                                     <Link key={item.id} href={`/berita/${item.slug}`} className="group flex gap-4">
                                         <div className="w-20 h-20 flex-shrink-0 bg-slate-200 rounded-lg overflow-hidden relative">
                                             {item.thumbnail ? (
-                                                <img
-                                                    src={pb.files.getURL(item, item.thumbnail)}
+                                                <Image
+                                                    src={getAssetUrl(item, item.thumbnail)}
                                                     alt={item.title}
-                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                                    fill
+                                                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                                                    sizes="80px"
                                                 />
                                             ) : (
                                                 <div className="w-full h-full bg-emerald-100 flex items-center justify-center">
@@ -177,7 +194,7 @@ export default async function NewsDetailPage({ params }: Props) {
                                                 {item.title}
                                             </h4>
                                             <span className="text-xs text-slate-400">
-                                                {new Date(item.created).toLocaleDateString("id-ID", { day: 'numeric', month: 'short', year: 'numeric' })}
+                                                {formatDate(item.created || item.updated, { day: 'numeric', month: 'short', year: 'numeric' })}
                                             </span>
                                         </div>
                                     </Link>
@@ -197,9 +214,9 @@ export default async function NewsDetailPage({ params }: Props) {
                         </div>
                     </aside>
                 </div>
-            </div>
+            </div >
 
             <ModernFooter />
-        </main>
+        </main >
     );
 }

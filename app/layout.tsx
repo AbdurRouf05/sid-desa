@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+
 import { Suspense } from "react";
 import { Inter, Plus_Jakarta_Sans, Manrope } from "next/font/google";
 import "./globals.css";
@@ -7,6 +8,8 @@ import { JsonLd } from "@/components/seo/json-ld";
 import { getSiteConfig } from "@/lib/config";
 import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
 import { pb } from "@/lib/pb";
+import { UiLabelsProvider } from "@/components/providers/ui-labels-provider";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" });
@@ -95,7 +98,10 @@ export default async function RootLayout({
         <Suspense fallback={null}>
           <AnalyticsTracker />
         </Suspense>
-        {children}
+        <UiLabelsProvider>
+          {children}
+        </UiLabelsProvider>
+        <Toaster position="bottom-right" />
       </body>
     </html>
   );

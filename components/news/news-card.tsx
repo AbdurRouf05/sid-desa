@@ -31,10 +31,12 @@ export function NewsCard({
                 {/* Image Container */}
                 <div className="relative h-48 md:h-56 overflow-hidden bg-slate-200">
                     {thumbnail ? (
-                        <img
+                        <Image
                             src={thumbnail}
                             alt={title}
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                            fill
+                            className="object-cover transition-transform duration-500 group-hover:scale-110"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center text-slate-400">

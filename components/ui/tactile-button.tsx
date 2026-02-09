@@ -1,17 +1,19 @@
 import React from "react";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 interface TactileButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: "primary" | "secondary" | "tertiary" | "ghost";
     icon?: React.ReactNode;
     fullWidth?: boolean;
+    as?: "button" | "a" | typeof Link;
+    href?: string;
+    target?: string;
 }
 
-export const TactileButton = React.forwardRef<HTMLButtonElement, TactileButtonProps>(
-    ({ className, variant = "primary", icon, fullWidth, children, ...props }, ref) => {
+export const TactileButton = React.forwardRef<any, TactileButtonProps>(
+    ({ className, variant = "primary", icon, fullWidth, children, as: Component = "button", ...props }, ref) => {
 
-        // Tactile base: active:scale-95 for the "press" effect
-        // Touch targets: h-10 (minimum) to h-12
         const baseStyles = "btn-tactile group relative inline-flex items-center justify-center rounded-xl text-base font-bold transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:pointer-events-none overflow-hidden glass-shine whitespace-nowrap";
 
         const variants = {
@@ -21,24 +23,44 @@ export const TactileButton = React.forwardRef<HTMLButtonElement, TactileButtonPr
             ghost: "bg-transparent border-none shadow-none text-slate-600 hover:bg-slate-100/50 hover:text-emerald-700"
         };
 
-        return (
-            <button
-                ref={ref}
-                className={cn(
-                    baseStyles,
-                    variants[variant],
-                    // Responsive sizing: h-10 on mobile, h-12 on md+
-                    "h-10 md:h-12 px-6 py-2",
-                    fullWidth ? "w-full flex" : "inline-flex",
-                    className
-                )}
-                {...props}
-            >
+        const content = (
+            <>
                 {/* Top Gloss Reflection */}
                 <span className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/20 to-transparent opacity-50 rounded-t-xl" />
 
-                {icon && <span className="mr-2 relative z-10">{icon}</span>}
-                <span className="relative z-10">{children}</span>
+                {icon && <span className="mr-2 relative z-10 flex items-center justify-center">{icon}</span>}
+                <span className="relative z-10 flex items-center justify-center">{children}</span>
+            </>
+        );
+
+        const combinedClassName = cn(
+            baseStyles,
+            variants[variant],
+            "h-10 md:h-12 px-6 py-2",
+            fullWidth ? "w-full flex" : "inline-flex",
+            className
+        );
+
+        if (Component === "a" || typeof Component === "object") {
+            const { type, ...linkProps } = props as any;
+            return (
+                <Component
+                    ref={ref}
+                    className={combinedClassName}
+                    {...linkProps}
+                >
+                    {content}
+                </Component>
+            );
+        }
+
+        return (
+            <button
+                ref={ref}
+                className={combinedClassName}
+                {...props}
+            >
+                {content}
             </button>
         );
     }

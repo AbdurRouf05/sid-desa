@@ -46,13 +46,11 @@ export default function BannersPage() {
                     <h1 className="text-3xl font-bold font-display">Hero Banners</h1>
                     <p className="text-emerald-100 mt-2">Kelola gambar slide halaman depan.</p>
                 </div>
-                <div className="relative z-10">
-                    <Link href="/panel/dashboard/banners/baru">
-                        <TactileButton className="bg-gold-400 text-slate-900 hover:bg-gold-500 border-gold-500">
-                            <Plus className="w-4 h-4 mr-2" /> Tambah Banner
-                        </TactileButton>
-                    </Link>
-                </div>
+                <Link href="/panel/dashboard/banners/baru">
+                    <TactileButton className="bg-gradient-to-br from-amber-300 to-orange-500 text-slate-900 border-orange-400 hover:shadow-orange-500/20 shadow-orange-900/10">
+                        <Plus className="w-5 h-5 mr-2" /> <span className="font-bold">Tambah Banner</span>
+                    </TactileButton>
+                </Link>
             </div>
 
             {loading ? (

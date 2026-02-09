@@ -91,7 +91,7 @@ export async function optimizeImage(file: File, type: 'logo' | 'favicon' | 'og')
                     lastModified: Date.now(),
                 });
 
-                console.log(`[SmartOptimizer] ${file.name} (${Math.round(file.size / 1024)}KB) -> ${newName} (${Math.round(optimizedFile.size / 1024)}KB)`);
+
                 resolve(optimizedFile);
 
                 // Cleanup

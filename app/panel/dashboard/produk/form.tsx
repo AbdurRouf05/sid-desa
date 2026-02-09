@@ -14,21 +14,26 @@ import {
     Plane, Umbrella, Vote, Users, ShoppingBag, Smartphone,
     HeartHandshake, School, Package, Clock, Sprout, Store
 } from "lucide-react";
+import { toast } from "sonner";
 import { formatThousand, cleanNumber } from "@/lib/number-utils";
 import Link from "next/link";
 
 const productSchema = z.object({
     name: z.string().min(3, "Nama produk minimal 3 karakter"),
     slug: z.string().min(3, "Slug otomatis terisi"),
-    type: z.string(),
+    product_type: z.string(),
     description: z.string().optional(),
     requirements: z.string().optional(),
     min_deposit: z.string().optional(), // Text for flexibility "Rp 10.000"
     schema_type: z.string().optional(),
     published: z.boolean(),
     is_featured: z.boolean(),
-    thumbnail_file: z.any().optional(), // For file upload
+    thumbnail_file: z.any().optional(),
+    icon_file: z.any().optional(),
+    brochure_file: z.any().optional(),
     icon_name: z.string().optional(),
+    seo_keywords: z.string().optional(),
+    sharia_contract: z.string().optional(),
 });
 
 type ProductInputs = z.infer<typeof productSchema>;
@@ -43,13 +48,15 @@ export default function ProductEditorPage({ isEdit = false }: { isEdit?: boolean
         defaultValues: {
             name: "",
             slug: "",
-            type: "simpanan",
+            product_type: "simpanan",
             description: "",
             requirements: "",
             min_deposit: "",
             schema_type: "SavingsAccount",
             published: true,
-            is_featured: false
+            is_featured: false,
+            seo_keywords: "",
+            sharia_contract: ""
         }
     });
 
@@ -71,13 +78,16 @@ export default function ProductEditorPage({ isEdit = false }: { isEdit?: boolean
                     const record = await pb.collection('products').getOne(params.id as string);
                     setValue("name", record.name);
                     setValue("slug", record.slug);
-                    setValue("type", record.type);
+                    setValue("product_type", record.product_type);
                     setValue("description", record.description);
                     setValue("requirements", record.requirements);
                     setValue("min_deposit", record.min_deposit);
                     setValue("schema_type", record.schema_type);
                     setValue("published", record.published);
                     setValue("is_featured", record.is_featured);
+                    setValue("icon_name", record.icon_name);
+                    setValue("seo_keywords", record.seo_keywords);
+                    setValue("sharia_contract", record.sharia_contract || "");
                 } catch (e) {
                     console.error("Failed", e);
                     router.push("/panel/dashboard/produk");
@@ -99,8 +109,19 @@ export default function ProductEditorPage({ isEdit = false }: { isEdit?: boolean
             // Handle Files manually
             // @ts-ignore
             if (data.thumbnail_file && data.thumbnail_file[0]) {
-                // @ts-ignore
                 formData.append('thumbnail', data.thumbnail_file[0]);
+            }
+            if (data.icon_file && data.icon_file[0]) {
+                formData.append('icon', data.icon_file[0]);
+            }
+            if (data.brochure_file && data.brochure_file[0]) {
+                const file = data.brochure_file[0];
+                if (file.size > 5 * 1024 * 1024) { // 5MB Limit
+                    toast.error("Brosur PDF terlalu besar (Maks 5MB)");
+                    setIsLoading(false);
+                    return;
+                }
+                formData.append('brochure_pdf', file);
             }
 
             if (isEdit && params?.id) {
@@ -162,21 +183,58 @@ export default function ProductEditorPage({ isEdit = false }: { isEdit?: boolean
                             </div>
 
                             {/* Thumbnail Upload */}
+                            {/* Files Section */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">Thumbnail (Card Image)</label>
+                                    <p className="text-[10px] text-slate-400 mb-2">Rekomendasi: 1200x800 px (3:2) atau 1:1</p>
+                                    <div className="border border-dashed border-slate-200 rounded-xl p-4 text-center hover:bg-slate-50 transition-colors">
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            id="thumbnail-upload"
+                                            {...register("thumbnail_file")}
+                                        />
+                                        <label htmlFor="thumbnail-upload" className="cursor-pointer flex flex-col items-center gap-1">
+                                            <UploadCloud className="w-6 h-6 text-slate-400" />
+                                            <span className="text-xs text-slate-500">Pilih Thumbnail</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">Icon File (Custom SVG/PNG)</label>
+                                    <p className="text-[10px] text-slate-400 mb-2">Rekomendasi: 512x512 px, SVG lebih baik</p>
+                                    <div className="border border-dashed border-slate-200 rounded-xl p-4 text-center hover:bg-slate-50 transition-colors">
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            className="hidden"
+                                            id="icon-upload"
+                                            {...register("icon_file")}
+                                        />
+                                        <label htmlFor="icon-upload" className="cursor-pointer flex flex-col items-center gap-1">
+                                            <Package className="w-6 h-6 text-slate-400" />
+                                            <span className="text-xs text-slate-500">Pilih Icon File</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
                             <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-2">Foto Produk (Thumbnail)</label>
-                                <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:bg-slate-50 transition-colors">
+                                <label className="block text-sm font-bold text-slate-700 mb-2">Brosur PDF (Opsional)</label>
+                                <p className="text-[10px] text-slate-400 mb-2">Ukuran maksimal file: 5MB</p>
+                                <div className="border border-dashed border-slate-200 rounded-xl p-4 text-center hover:bg-slate-50 transition-colors">
                                     <input
                                         type="file"
-                                        accept="image/*"
+                                        accept=".pdf"
                                         className="hidden"
-                                        id="thumbnail-upload"
-                                        {...register("thumbnail_file")}
+                                        id="pdf-upload"
+                                        {...register("brochure_file")}
                                     />
-                                    <label htmlFor="thumbnail-upload" className="cursor-pointer flex flex-col items-center gap-2">
-                                        <UploadCloud className="w-8 h-8 text-slate-400" />
-                                        <span className="text-sm text-slate-500">
-                                            Klik untuk upload foto produk
-                                        </span>
+                                    <label htmlFor="pdf-upload" className="cursor-pointer flex flex-col items-center gap-1">
+                                        <CreditCard className="w-6 h-6 text-slate-400" />
+                                        <span className="text-sm text-slate-500 font-medium">Upload Brosur Produk (PDF)</span>
                                     </label>
                                 </div>
                             </div>
@@ -221,13 +279,25 @@ export default function ProductEditorPage({ isEdit = false }: { isEdit?: boolean
                                 <div>
                                     <label className="block text-sm font-bold text-slate-700 mb-2">Jenis Produk</label>
                                     <select
-                                        {...register("type")}
+                                        {...register("product_type")}
                                         className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                                     >
                                         <option value="simpanan">Simpanan</option>
                                         <option value="pembiayaan">Pembiayaan</option>
                                     </select>
                                 </div>
+                                <div>
+                                    <label className="block text-sm font-bold text-slate-700 mb-2">Jenis Akad (Kontrak)</label>
+                                    <input
+                                        type="text"
+                                        {...register("sharia_contract")}
+                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                                        placeholder="e.g. Wadiah, Mudharabah, Murabahah"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 gap-4">
                                 <div>
                                     <label className="block text-sm font-bold text-slate-700 mb-2">Min. Setoran / Limit</label>
                                     <Controller
@@ -302,6 +372,18 @@ export default function ProductEditorPage({ isEdit = false }: { isEdit?: boolean
                             <hr className="border-slate-100" />
 
                             <div>
+                                <label className="block text-sm font-medium text-slate-600 mb-1">SEO Keywords</label>
+                                <textarea
+                                    {...register("seo_keywords")}
+                                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                                    placeholder="tabungan, syariah, lumajang..."
+                                    rows={3}
+                                />
+                            </div>
+
+                            <hr className="border-slate-100" />
+
+                            <div>
                                 <label className="block text-sm font-medium text-slate-600 mb-1">Slug URL</label>
                                 <input
                                     {...register("slug")}
@@ -310,13 +392,14 @@ export default function ProductEditorPage({ isEdit = false }: { isEdit?: boolean
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-slate-600 mb-1">Tipe Validasi Google (SEO)</label>
+                                <label className="block text-sm font-medium text-slate-600 mb-1">Kategori SEO (Google Validation)</label>
                                 <select
                                     {...register("schema_type")}
                                     className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                                 >
                                     <option value="SavingsAccount">Simpanan / Tabungan</option>
                                     <option value="LoanOrCredit">Pinjaman / Pembiayaan</option>
+                                    <option value="DepositAccount">Simpanan Berjangka / Deposito</option>
                                     <option value="FinancialProduct">Produk Keuangan Lainnya</option>
                                 </select>
                                 <p className="text-xs text-slate-400 mt-1">

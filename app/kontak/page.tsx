@@ -7,6 +7,7 @@ import { ModernFooter } from "@/components/layout/modern-footer";
 import { Phone, Mail, MapPin, Send, Loader2, CheckCircle2, Clock } from "lucide-react";
 import { pb } from "@/lib/pb";
 import { TactileButton } from "@/components/ui/tactile-button";
+import { JsonLd } from "@/components/seo/json-ld";
 
 interface InquiryForm {
     name: string;
@@ -108,6 +109,32 @@ export default function ContactPage() {
     return (
         <main className="min-h-screen bg-slate-50 font-sans">
             <ModernNavbar />
+            <JsonLd
+                type="ContactPage"
+                data={{
+                    name: "Hubungi Kami - BMT NU Lumajang",
+                    description: "Hubungi layanan pelanggan BMT NU Lumajang via WhatsApp, Email, atau kunjungi kantor cabang kami.",
+                    mainEntity: {
+                        "@type": "Organization",
+                        name: "BMT NU Lumajang",
+                        address: {
+                            "@type": "PostalAddress",
+                            streetAddress: address,
+                            addressLocality: "Lumajang",
+                            addressRegion: "Jawa Timur",
+                            postalCode: "67316",
+                            addressCountry: "ID"
+                        },
+                        contactPoint: {
+                            "@type": "ContactPoint",
+                            telephone: phone,
+                            contactType: "customer service",
+                            areaServed: "ID",
+                            availableLanguage: "Indonesian"
+                        }
+                    }
+                }}
+            />
 
             {/* Hero Section */}
             <section className="pt-32 pb-16 bg-gradient-to-br from-bmt-green-700 to-primary-dark text-white relative overflow-hidden">
@@ -192,7 +219,7 @@ export default function ContactPage() {
                                 <button onClick={() => setIsSuccess(false)} className="text-xs text-emerald-600 underline hover:text-emerald-800">Kirim pesan lagi</button>
                             </div>
                         ) : (
-                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5" noValidate data-testid="contact-form">
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                                     <div className="space-y-1">
                                         <label className="text-sm font-medium text-slate-700">Nama Lengkap</label>
@@ -300,7 +327,7 @@ export default function ContactPage() {
                                     <div className="flex items-start justify-between mb-4">
                                         <div>
                                             <span className={`inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider mb-2 ${branch.type === 'Pusat' ? 'bg-emerald-100 text-emerald-800' :
-                                                    branch.type === 'Kas' ? 'bg-blue-100 text-blue-800' : 'bg-slate-100 text-slate-600'
+                                                branch.type === 'Kas' ? 'bg-blue-100 text-blue-800' : 'bg-slate-100 text-slate-600'
                                                 }`}>
                                                 {branch.type || "Cabang"}
                                             </span>

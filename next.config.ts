@@ -9,7 +9,27 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'scontent.fmlg8-1.fna.fbcdn.net',
+        hostname: '**.fbcdn.net',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.ytimg.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.ggpht.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.tiktokcdn.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.cdninstagram.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.instagram.com',
       },
       {
         protocol: 'http',
@@ -22,9 +42,19 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'db-bmtnulmj.sagamuda.cloud'
+      },
+      {
+        protocol: 'https',
+        hostname: 'bmtnulumajang.id'
       }
+
     ],
   },
+  experimental: {
+    serverActions: {
+      allowedOrigins: ['bmtnulmj.local:3040', 'cp.bmtnulmj.local:3040', 'localhost:3040']
+    }
+  }
 };
 
 export default nextConfig;

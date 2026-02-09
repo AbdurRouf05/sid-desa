@@ -3,7 +3,8 @@ import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
     const url = request.nextUrl;
-    const hostname = request.headers.get("host") || "";
+    // Check Host header, fallback to X-Forwarded-Host (for proxies)
+    const hostname = request.headers.get("host") || request.headers.get("x-forwarded-host") || "";
 
     // Logic: If hostname starts with 'cp', treat as ADMIN.
     // We check if "cp." is present in the hostname as a simple check.
@@ -20,16 +21,17 @@ export function middleware(request: NextRequest) {
     }
 
     // 2. CSP Headers (Preserve security)
-    const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
     const cspHeader = `
     default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://analytics.google.com;
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://analytics.google.com https://www.instagram.com https://platform.instagram.com https://www.tiktok.com;
     style-src 'self' 'unsafe-inline';
-    img-src 'self' blob: data: https://minio.sagamuda.cloud;
+    img-src 'self' blob: data: https://db-bmtnulmj.sagamuda.cloud https://images.unsplash.com https://bmtnulumajang.id https://img.youtube.com https://*.cdninstagram.com;
     font-src 'self';
     object-src 'none';
     base-uri 'self';
     form-action 'self';
+    frame-src 'self' https://www.youtube.com https://www.tiktok.com https://www.instagram.com;
+    connect-src 'self' https://analytics.google.com https://ipapi.co;
     frame-ancestors 'none';
     block-all-mixed-content;
     upgrade-insecure-requests;
@@ -42,7 +44,7 @@ export function middleware(request: NextRequest) {
         // [ADMIN ROUTE]
         // If accessing root /, redirect to /dashboard
         if (url.pathname === "/") {
-            return NextResponse.redirect(new URL("/dashboard", request.url));
+            return NextResponse.redirect(new URL("/panel/dashboard", request.url));
         }
 
         // Rewrite path to include (admin) invisible folder
@@ -64,7 +66,7 @@ export function middleware(request: NextRequest) {
 
         // Add Security Headers
         const response = NextResponse.rewrite(newUrl);
-        // response.headers.set("Content-Security-Policy", cspHeader);
+        response.headers.set("Content-Security-Policy", cspHeader);
         response.headers.set("X-Frame-Options", "DENY");
         return response;
     } else {
