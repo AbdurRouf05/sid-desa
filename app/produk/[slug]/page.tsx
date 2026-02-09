@@ -47,7 +47,10 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 
 export default async function ProductDetailPage(props: { params: Promise<{ slug: string }> }) {
     const params = await props.params;
-    const product = await getProduct(params.slug);
+    const [product, siteConfig] = await Promise.all([
+        getProduct(params.slug),
+        pb.collection('site_config').getFirstListItem("").catch(() => null)
+    ]);
 
     if (!product) {
         notFound();
@@ -72,7 +75,11 @@ export default async function ProductDetailPage(props: { params: Promise<{ slug:
 
     const isSimpanan = product.product_type === "simpanan";
     const whatsappMessage = `Assalamualaikum, saya ingin bertanya tentang produk ${product.name}.`;
-    const whatsappLink = `https://wa.me/6281234567890?text=${encodeURIComponent(whatsappMessage)}`; // TODO: Get from site_config
+
+    // Get phone from config or fallback
+    const rawPhone = siteConfig?.contact_wa || siteConfig?.phone_wa || "6281234567890";
+    const cleanPhone = rawPhone.replace(/[^0-9]/g, '');
+    const whatsappLink = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(whatsappMessage)}`;
 
     return (
         <div className="min-h-screen bg-slate-50 font-sans text-slate-800">

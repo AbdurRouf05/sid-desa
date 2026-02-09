@@ -168,9 +168,16 @@ export default function ContactPage() {
                                 <div className="bg-blue-100 p-3 rounded-full text-blue-600">
                                     <Phone className="w-6 h-6" />
                                 </div>
-                                <div>
+                                <div className="flex-grow">
                                     <h3 className="font-bold text-slate-900 mb-1">WhatsApp Center</h3>
-                                    <p className="text-sm text-slate-500">{phone}</p>
+                                    <a
+                                        href={`https://wa.me/${phone.replace(/[^0-9]/g, '')}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-sm text-emerald-600 font-bold hover:underline"
+                                    >
+                                        {phone}
+                                    </a>
                                 </div>
                             </div>
                             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-start gap-4 sm:col-span-2">

@@ -140,7 +140,7 @@ export default function TentangKamiPage() {
                                 <div>
                                     <p className="text-xs text-slate-500 uppercase font-semibold">Badan Hukum</p>
                                     <p className="font-mono text-slate-700 font-medium break-all">
-                                        BH.AHU.0008492.AH.01.26 TH.2021
+                                        {legalBH}
                                     </p>
                                 </div>
                             </div>
@@ -148,7 +148,7 @@ export default function TentangKamiPage() {
                                 <CheckCircle2 className="w-5 h-5 text-slate-400 mt-0.5" />
                                 <div>
                                     <p className="text-xs text-slate-500 uppercase font-semibold">NIB (Nomor Induk Berusaha)</p>
-                                    <p className="text-slate-700 font-medium">Terverifikasi atas nama KSPPS BMT NU LUMAJANG</p>
+                                    <p className="text-slate-700 font-medium">{nib}</p>
                                 </div>
                             </div>
                         </div>
@@ -161,7 +161,7 @@ export default function TentangKamiPage() {
                         <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
                             <Building2 className="w-6 h-6" />
                         </div>
-                        <h4 className="text-4xl font-bold text-slate-900 mb-1">28 M+</h4>
+                        <h4 className="text-4xl font-bold text-slate-900 mb-1">{assets}</h4>
                         <p className="text-sm text-slate-500 font-medium uppercase tracking-wide">Total Aset (Rp)</p>
                     </div>
 
@@ -169,7 +169,7 @@ export default function TentangKamiPage() {
                         <div className="w-12 h-12 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4">
                             <Users className="w-6 h-6" />
                         </div>
-                        <h4 className="text-4xl font-bold text-slate-900 mb-1">6.000+</h4>
+                        <h4 className="text-4xl font-bold text-slate-900 mb-1">{members}</h4>
                         <p className="text-sm text-slate-500 font-medium uppercase tracking-wide">Anggota</p>
                     </div>
 
@@ -177,8 +177,8 @@ export default function TentangKamiPage() {
                         <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
                             <Calendar className="w-6 h-6" />
                         </div>
-                        <h4 className="text-4xl font-bold text-slate-900 mb-1">16</h4>
-                        <p className="text-sm text-slate-500 font-medium uppercase tracking-wide">Kantor Layanan (1 Pusat + 15 Cabang)</p>
+                        <h4 className="text-4xl font-bold text-slate-900 mb-1">{branches}</h4>
+                        <p className="text-sm text-slate-500 font-medium uppercase tracking-wide">Kantor Layanan</p>
                     </div>
                 </div>
 
@@ -188,7 +188,7 @@ export default function TentangKamiPage() {
                     <div>
                         <h3 className="text-2xl font-bold mb-2">Lokasi Kantor Pusat</h3>
                         <p className="text-emerald-100 text-lg">
-                            Jl. Alun-alun Timur No 3, Jogotrunan, Lumajang
+                            {address}
                         </p>
                     </div>
                     {/* Disclaimer: Button would go here, omitting for simplicity as per strict data reqs */}
