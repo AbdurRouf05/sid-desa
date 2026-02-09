@@ -8,7 +8,7 @@ export const HERO_SLIDES_FALLBACK: HeroSlide[] = [
         cta: "Bergabung Sekarang",
         cta_link: "/kontak",
         bgClass: "bg-emerald-900",
-        image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=60&w=1200"
+        image: "https://images.pexels.com/photos/34528447/pexels-photo-34528447.jpeg"
     },
     {
         id: 2,

@@ -20,7 +20,7 @@ export function NewsFeed({ news, loading }: NewsFeedProps) {
         <section className="py-20 bg-white">
             <div className="container mx-auto px-4">
                 <div className="flex justify-between items-center mb-10">
-                    <h2 className="text-3xl font-bold text-emerald-950">{getLabel('section_news_title', 'Kabar Terbaru')}</h2>
+                    <h2 className="text-3xl font-bold text-emerald-950">{getLabel('section_news_title', 'Berita dan Artikel')}</h2>
                     <TactileButton variant="ghost" onClick={() => window.location.href = '/berita'}>Lihat Berita Lainnya</TactileButton>
                 </div>
 

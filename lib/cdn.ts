@@ -18,7 +18,7 @@ export function getAssetUrl(record: any, filename: string): string {
 
     // 1. Defensive Interceptor: Check for broken Unsplash URL
     const brokenId = "photo-1577083639236-0f52ba0b5273";
-    const workingFallback = "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=60&w=1200";
+    const workingFallback = "https://images.pexels.com/photos/34528447/pexels-photo-34528447.jpeg";
 
     if (filename.includes(brokenId)) {
         return workingFallback;

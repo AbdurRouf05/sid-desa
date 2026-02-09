@@ -40,25 +40,42 @@ interface SmartLinkInputProps {
 export function SmartLinkInput({ value, onChange }: SmartLinkInputProps) {
     const [open, setOpen] = useState(false);
     const [news, setNews] = useState<{ value: string; label: string }[]>([]);
+    const [products, setProducts] = useState<{ value: string; label: string; type: string }[]>([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        // Fetch dynamic content for suggestions (News & Products)
+        if (!open) return;
+
         const fetchDynamicLinks = async () => {
             setLoading(true);
             try {
-                // Fetch recent news
-                const newsResult = await pb.collection('news').getList(1, 5, {
+                // 1. Fetch recent news
+                const newsResult = await pb.collection('news').getList(1, 10, {
                     sort: '-created',
-                    filter: 'published = true'
+                    filter: 'published = true',
+                    fields: 'id,title,slug'
                 });
 
                 const newsLinks = newsResult.items.map((item: any) => ({
                     value: `/berita/${item.slug}`,
-                    label: `Berita: ${item.title.substring(0, 40)}${item.title.length > 40 ? '...' : ''}`
+                    label: item.title
                 }));
-
                 setNews(newsLinks);
+
+                // 2. Fetch products
+                const prodResult = await pb.collection('products').getList(1, 20, {
+                    sort: 'name',
+                    filter: 'published = true',
+                    fields: 'id,name,slug,product_type'
+                });
+
+                const prodLinks = prodResult.items.map((item: any) => ({
+                    value: `/produk/${item.slug}`,
+                    label: item.name,
+                    type: item.product_type // 'simpanan' or 'pembiayaan'
+                }));
+                setProducts(prodLinks);
+
             } catch (e) {
                 console.error("Failed to fetch dynamic links", e);
             } finally {
@@ -66,14 +83,13 @@ export function SmartLinkInput({ value, onChange }: SmartLinkInputProps) {
             }
         };
 
-        if (open) {
-            fetchDynamicLinks();
-        }
+        fetchDynamicLinks();
     }, [open]);
 
     // Check if current value matches a known option label
-    const combinedOptions = [...STATIC_ROUTES, ...news];
-    const selectedLabel = combinedOptions.find((opt) => opt.value === value)?.label || value;
+    const combinedOptions = [...STATIC_ROUTES, ...news, ...products];
+    const selectedItem = combinedOptions.find((opt) => opt.value === value);
+    const selectedLabel = selectedItem ? selectedItem.label : value;
 
     return (
         <Popover open={open} onOpenChange={setOpen}>
@@ -84,40 +100,86 @@ export function SmartLinkInput({ value, onChange }: SmartLinkInputProps) {
                     aria-expanded={open}
                     className="w-full justify-between font-normal text-left h-auto min-h-[42px] px-3 py-2"
                 >
-                    <span className="truncate">
-                        {value ? selectedLabel : "Pilih atau ketik link..."}
+                    <span className="truncate block max-w-[90%]">
+                        {value ? (
+                            <span className="flex flex-col text-left">
+                                <span className="font-medium text-slate-900 truncate">
+                                    {selectedLabel === value ? "Custom Link" : selectedLabel}
+                                </span>
+                                <span className="text-xs text-slate-500 font-mono truncate">{value}</span>
+                            </span>
+                        ) : (
+                            <span className="text-slate-400">Pilih atau ketik link tujuan...</span>
+                        )}
                     </span>
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-[400px] p-0" align="start">
                 <Command>
-                    <CommandInput placeholder="Cari halaman atau berita..." />
-                    <CommandList>
+                    <CommandInput placeholder="Cari halaman, produk, atau berita..." />
+                    <CommandList className="max-h-[300px] overflow-y-auto custom-scrollbar">
                         <CommandEmpty>Link tidak ditemukan.</CommandEmpty>
-                        <CommandGroup heading="Halaman Statis">
+
+                        <CommandGroup heading="Halaman Utama">
                             {STATIC_ROUTES.map((route) => (
                                 <CommandItem
                                     key={route.value}
-                                    value={route.label} // Search by label
+                                    value={route.label + " " + route.value}
                                     onSelect={() => {
                                         onChange(route.value);
                                         setOpen(false);
                                     }}
                                 >
-                                    <Check
-                                        className={cn(
-                                            "mr-2 h-4 w-4",
-                                            value === route.value ? "opacity-100" : "opacity-0"
-                                        )}
-                                    />
-                                    {route.label}
-                                    <span className="ml-auto text-xs text-slate-400 font-mono">{route.value}</span>
+                                    <Check className={cn("mr-2 h-4 w-4", value === route.value ? "opacity-100" : "opacity-0")} />
+                                    <div className="flex flex-col">
+                                        <span>{route.label}</span>
+                                        <span className="text-[10px] text-slate-400 font-mono">{route.value}</span>
+                                    </div>
                                 </CommandItem>
                             ))}
                         </CommandGroup>
-                        <CommandGroup heading="Berita Terbaru">
+
+                        <CommandGroup heading="Produk Simpanan">
                             {loading && <CommandItem disabled>Loading...</CommandItem>}
+                            {products.filter(p => p.type === 'simpanan').map((item) => (
+                                <CommandItem
+                                    key={item.value}
+                                    value={item.label}
+                                    onSelect={() => {
+                                        onChange(item.value);
+                                        setOpen(false);
+                                    }}
+                                >
+                                    <Check className={cn("mr-2 h-4 w-4", value === item.value ? "opacity-100" : "opacity-0")} />
+                                    <div className="flex flex-col">
+                                        <span>{item.label}</span>
+                                        <span className="text-[10px] text-slate-400 font-mono">{item.value}</span>
+                                    </div>
+                                </CommandItem>
+                            ))}
+                        </CommandGroup>
+
+                        <CommandGroup heading="Produk Pembiayaan">
+                            {products.filter(p => p.type === 'pembiayaan').map((item) => (
+                                <CommandItem
+                                    key={item.value}
+                                    value={item.label}
+                                    onSelect={() => {
+                                        onChange(item.value);
+                                        setOpen(false);
+                                    }}
+                                >
+                                    <Check className={cn("mr-2 h-4 w-4", value === item.value ? "opacity-100" : "opacity-0")} />
+                                    <div className="flex flex-col">
+                                        <span>{item.label}</span>
+                                        <span className="text-[10px] text-slate-400 font-mono">{item.value}</span>
+                                    </div>
+                                </CommandItem>
+                            ))}
+                        </CommandGroup>
+
+                        <CommandGroup heading="Berita Terbaru">
                             {news.map((item) => (
                                 <CommandItem
                                     key={item.value}
@@ -127,16 +189,15 @@ export function SmartLinkInput({ value, onChange }: SmartLinkInputProps) {
                                         setOpen(false);
                                     }}
                                 >
-                                    <Check
-                                        className={cn(
-                                            "mr-2 h-4 w-4",
-                                            value === item.value ? "opacity-100" : "opacity-0"
-                                        )}
-                                    />
-                                    {item.label}
+                                    <Check className={cn("mr-2 h-4 w-4", value === item.value ? "opacity-100" : "opacity-0")} />
+                                    <div className="flex flex-col">
+                                        <span>{item.label}</span>
+                                        <span className="text-[10px] text-slate-400 font-mono">{item.value}</span>
+                                    </div>
                                 </CommandItem>
                             ))}
                         </CommandGroup>
+
                     </CommandList>
                 </Command>
             </PopoverContent>

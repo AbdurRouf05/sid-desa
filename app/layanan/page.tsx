@@ -143,7 +143,7 @@ export default function ServicesPage() {
                             <div className="aspect-[4/3] rounded-2xl overflow-hidden shadow-xl bg-slate-200">
                                 {/* Placeholder for Office Service Image */}
                                 <img
-                                    src="https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?q=80&w=2070"
+                                    src="https://images.pexels.com/photos/34528447/pexels-photo-34528447.jpeg"
                                     alt="Layanan Kantor BMT NU"
                                     className="w-full h-full object-cover"
                                 />

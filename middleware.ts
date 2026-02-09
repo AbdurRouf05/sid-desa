@@ -11,7 +11,7 @@ export function middleware(request: NextRequest) {
     // This supports both cp.bmtnulmj.local and cp.bmtnulmj.id
     const isAdmin = hostname.includes("cp.");
 
-    console.log("Middleware Debug:", { hostname, pathname: url.pathname, isAdmin });
+    // console.log("Middleware Debug:", { hostname, pathname: url.pathname, isAdmin });
 
     // 1. Bot Protection (Simple User-Agent Block) - Global
     const ua = request.headers.get("user-agent") || "";

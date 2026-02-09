@@ -61,7 +61,7 @@ export function LocationsMap({ stats, mapUrl }: LocationsMapProps) {
                                 ) : (
                                     <>
                                         <Image
-                                            src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=60&w=1200"
+                                            src="https://images.pexels.com/photos/34528447/pexels-photo-34528447.jpeg"
                                             alt="Kantor BMT NU"
                                             fill
                                             className="object-cover group-hover:scale-110 transition-transform duration-700"
