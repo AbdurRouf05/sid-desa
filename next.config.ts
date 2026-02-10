@@ -5,6 +5,18 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
+        hostname: 'db-bmtnulmj.sagamuda.cloud',
+      },
+      {
+        protocol: 'https',
+        hostname: 'bmtnulumajang.id',
+      },
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+      },
+      {
+        protocol: 'https',
         hostname: 'images.unsplash.com',
       },
       {
@@ -35,28 +47,13 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: '**.instagram.com',
       },
-      {
-        protocol: 'http',
-        hostname: '127.0.0.1',
-      },
-      {
-        protocol: 'https',
-        hostname: 'cp.bmtnulmj.id'
-      },
-      {
-        protocol: 'https',
-        hostname: 'db-bmtnulmj.sagamuda.cloud'
-      },
-      {
-        protocol: 'https',
-        hostname: 'bmtnulumajang.id'
-      }
-
     ],
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 60,
   },
   experimental: {
     serverActions: {
-      allowedOrigins: ['bmtnulmj.local:3040', 'cp.bmtnulmj.local:3040', 'localhost:3040']
+      allowedOrigins: ['bmtnulumajang.id', 'localhost:3040', 'bmtnulmj.local:3040', 'cp.bmtnulmj.local:3040']
     }
   }
 };

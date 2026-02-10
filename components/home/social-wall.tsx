@@ -120,28 +120,39 @@ function SocialCard({ post }: { post: any }) {
                 {/* Natural Proportion Container */}
                 <div className="relative w-full overflow-hidden bg-slate-800">
                     {(() => {
+                        // Direct Access Strategy
                         const finalUrl = post.thumbnail
                             ? getAssetUrl(post, post.thumbnail)
                             : (post.thumbnail_url ? getAssetUrl(post, post.thumbnail_url) : "");
 
-                        // Note: Using standard <img> here to ensure natural proportions 
+                        // Note: Using standard <img> here to ensure natural proportions
                         // work seamlessly with CSS columns without requiring explicit Next.js aspect ratios
                         if (finalUrl) {
                             return (
-                                <img
-                                    src={finalUrl}
-                                    alt={post.caption || "Social Post"}
-                                    className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-1000 block"
-                                />
+                                <div className="relative w-full h-auto rounded-xl overflow-hidden bg-slate-800">
+                                    <Image
+                                        src={finalUrl}
+                                        alt={post.caption || "Social Post"}
+                                        width={600}
+                                        height={800}
+                                        className="w-full h-auto object-cover transition-transform duration-500 group-hover:scale-105"
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                    />
+                                </div>
                             );
                         } else if (platform === "youtube" && post.url) {
                             const videoId = post.url.split('v=')[1]?.substring(0, 11);
                             return (
-                                <img
-                                    src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
-                                    alt="YouTube"
-                                    className="w-full h-auto object-cover group-hover:scale-105 transition-transform duration-1000 block"
-                                />
+                                <div className="relative w-full h-auto aspect-video overflow-hidden rounded-xl bg-slate-800">
+                                    <Image
+                                        src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+                                        alt="YouTube"
+                                        width={600}
+                                        height={338} // 16:9 approx
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                    />
+                                </div>
                             );
                         } else {
                             return (

@@ -2,9 +2,11 @@
 
 import React from "react";
 import { ArabesqueCard } from "@/components/ui/arabesque-card";
+import Image from "next/image";
 import { TactileButton } from "@/components/ui/tactile-button";
 import { useUiLabels } from "@/components/providers/ui-labels-provider";
 import { formatRupiah } from "@/lib/number-utils";
+import { getAssetUrl } from "@/lib/cdn";
 import * as LucideIcons from "lucide-react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
@@ -26,9 +28,11 @@ export function ProductsShowcase({ products = [] }: ProductsShowcaseProps) {
     const getIcon = (product: any) => {
         if (product.icon) {
             return (
-                <img
-                    src={`${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/files/${product.collectionId}/${product.id}/${product.icon}`}
+                <Image
+                    src={getAssetUrl(product, product.icon)}
                     alt={product.name}
+                    width={40}
+                    height={40}
                     className="w-10 h-10 object-contain"
                 />
             );
@@ -164,10 +168,12 @@ export function ProductsShowcase({ products = [] }: ProductsShowcaseProps) {
 
                                         {product.thumbnail && (
                                             <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden shadow-inner border border-slate-100 group-hover:shadow-md transition-shadow duration-500 mt-4">
-                                                <img
-                                                    src={`${process.env.NEXT_PUBLIC_POCKETBASE_URL}/api/files/${product.collectionId}/${product.id}/${product.thumbnail}`}
+                                                <Image
+                                                    src={getAssetUrl(product, product.thumbnail)}
                                                     alt={product.name}
-                                                    className="w-full h-full object-cover"
+                                                    fill
+                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                    className="object-cover"
                                                 />
                                                 <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
                                             </div>

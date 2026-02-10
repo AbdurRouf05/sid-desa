@@ -35,5 +35,7 @@ export function getAssetUrl(record: any, filename: string): string {
 
     if (!collectionId || !recordId) return "";
 
-    return getSecureAssetUrl(collectionId, recordId, filename);
+    // Direct Access Strategy + Server-Side Thumbnail
+    const pbUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || "https://db-bmtnulmj.sagamuda.cloud";
+    return `${pbUrl}/api/files/${collectionId}/${recordId}/${filename}?thumb=500x0`;
 }

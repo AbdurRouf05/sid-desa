@@ -10,6 +10,7 @@ import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
 import { pb } from "@/lib/pb";
 import { UiLabelsProvider } from "@/components/providers/ui-labels-provider";
 import { Toaster } from "sonner";
+import { ClientGuard } from "@/components/security/client-guard";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" });
@@ -99,6 +100,7 @@ export default async function RootLayout({
           <AnalyticsTracker />
         </Suspense>
         <UiLabelsProvider>
+          <ClientGuard />
           {children}
         </UiLabelsProvider>
         <Toaster position="bottom-right" />
