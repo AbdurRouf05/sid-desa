@@ -61,25 +61,41 @@ async function secureApiRules() {
         return;
     }
 
-    // 1. Secure Content Collections (Read: Public, Write: Admin)
+    // 1. Secure Content Collections (Read: Public, Write: Authenticated Users)
+    // We allow ANY authenticated user to write because we are locking down USER CREATION below.
     for (const name of COLLECTIONS_TO_SECURE) {
         try {
             console.log(`\n👉 Securing [${name}]...`);
-            // Update to Read-Only Public
             await pb.collections.update(name, {
                 listRule: "",
                 viewRule: "",
-                createRule: null,
-                updateRule: null,
-                deleteRule: null,
+                createRule: "@request.auth.id != ''",
+                updateRule: "@request.auth.id != ''",
+                deleteRule: "@request.auth.id != ''",
             });
-            console.log(`   ✅ [${name}] Locked down (Read: Public, Write: Admin)`);
+            console.log(`   ✅ [${name}] Configured (Read: Public, Write: Auth Users)`);
         } catch (e) {
             console.error(`   ❌ Failed to update [${name}]:`, e.status || e.message);
         }
     }
 
-    // 2. Secure Inquiries (Create: Public, Read: Admin)
+    // 2. Lock Down USERS Collection (Critical: Prevent Public Registration)
+    try {
+        console.log(`\n👉 Securing [users]...`);
+        // Only Admins can manage users. Users can view/edit themselves.
+        await pb.collections.update('users', {
+            listRule: "id = @request.auth.id",
+            viewRule: "id = @request.auth.id",
+            createRule: null, // BLOCK PUBLIC REGISTRATION
+            updateRule: "id = @request.auth.id",
+            deleteRule: null,
+        });
+        console.log(`   ✅ [users] Locked down (No Public Registration)`);
+    } catch (e) {
+        console.error(`   ❌ Failed to update [users]:`, e.status || e.message);
+    }
+
+    // 3. Secure Inquiries (Create: Public, Read: Admin)
     try {
         console.log(`\n👉 Securing [inquiries]...`);
         await pb.collections.update('inquiries', {

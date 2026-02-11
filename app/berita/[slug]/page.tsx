@@ -64,14 +64,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     if (!record) return { title: 'Berita Tidak Ditemukan' };
 
     const excerpt = record.content.replace(/<[^>]*>?/gm, '').substring(0, 160);
-    const seoTitle = record.seo_title || `${record.title} - Berita BMT NU Lumajang`;
+    const seoTitle = record.seo_title || `${record.title} - BMT NU Lumajang`;
     const seoDesc = record.seo_desc || excerpt;
+
+    const imageUrl = record.thumbnail
+        ? getAssetUrl(record, record.thumbnail)
+        : "https://bmtnu-lumajang.id/og-default.jpg";
 
     return {
         title: seoTitle,
         description: seoDesc,
         openGraph: {
-            images: record.thumbnail ? [getAssetUrl(record, record.thumbnail)] : []
+            title: seoTitle,
+            description: seoDesc,
+            type: 'article',
+            publishedTime: record.created,
+            authors: ['BMT NU Lumajang'],
+            images: [{
+                url: imageUrl,
+                width: 1200,
+                height: 630,
+                alt: record.title
+            }]
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: seoTitle,
+            description: seoDesc,
+            images: [imageUrl],
         }
     }
 }

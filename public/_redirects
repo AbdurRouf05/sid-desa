@@ -1,0 +1,18 @@
+# Netlify Edge Redirects
+# Syntax: /old-path /new-path Status
+
+# Product Redirects
+/produk/* /products/:splat  301
+
+# News/Blog Redirects
+/berita/* /news/:splat  301
+
+# Service Redirects
+/layanan/* /services/:splat  301
+
+# Static Pages
+/tentang-kami  /about  301
+/kontak  /contact  301
+
+# Force 404 for truly missing pages (Handled by Next.js app)
+/* /  200

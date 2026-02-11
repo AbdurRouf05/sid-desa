@@ -101,23 +101,65 @@ async function runAudit() {
 
     console.log(`\n---------------------------------------------------\n`);
 
-    // --- SCENARIO B: THE CLIENT (Authenticated Admin) ---
-    console.log(`👔  SCENARIO B: AUTHENTICATED "CLIENT" TEST (Admin)`);
+    // --- SCENARIO B: AUTHENTICATED STAFF (Regular User) ---
+    console.log(`👤  SCENARIO B: AUTHENTICATED STAFF TEST (users collection)`);
+
+    // Initialize Admin Context
     const adminPb = new PocketBase(PB_URL);
     adminPb.autoCancellation(false);
 
+    // 1. Create a temp user using Admin
+    const tempEmail = `test-staff-${Date.now()}@example.com`;
+    const tempPass = "password123456";
+    let staffClient = null;
+    let tempUserId = null;
+
     try {
         await adminPb.admins.authWithPassword(ADMIN_EMAIL, ADMIN_PASSWORD);
-        console.log(`   ✅ Login: SUCCESS`);
+        const user = await adminPb.collection('users').create({
+            email: tempEmail,
+            password: tempPass,
+            passwordConfirm: tempPass,
+            name: "Audit Staff"
+        });
+        tempUserId = user.id;
+        console.log(`   ✅ Staff User Created: ${tempEmail}`);
+
+        // Login as Staff
+        staffClient = new PocketBase(PB_URL);
+        await staffClient.collection('users').authWithPassword(tempEmail, tempPass);
+        console.log(`   ✅ Staff Login: SUCCESS`);
+
+        // Test Create
+        const record = await staffClient.collection(COLLECTION).create({
+            title: "STAFF_TEST_RECORD",
+            slug: "staff-test-" + Date.now(),
+            content: "<p>Staff content</p>",
+            published: false
+        });
+        console.log(`   ✅ CREATE (Staff): SUCCESS (ID: ${record.id})`);
+
+        // Clean up record
+        await staffClient.collection(COLLECTION).delete(record.id);
+        console.log(`   ✅ DELETE (Staff): SUCCESS`);
+
     } catch (e) {
-        console.error(`   ❌ Login: FAILED! Check credentials in .env`);
-        console.error(e.originalError || e);
-        process.exit(1);
+        console.error(`   ❌ STAFF TEST FAILED:`, e.message || e);
+        console.error(`      Using rules: content=@request.auth.id != ""`);
+    } finally {
+        // Cleanup User
+        if (tempUserId) {
+            try {
+                await adminPb.collection('users').delete(tempUserId);
+                console.log(`   🧹 Cleanup: Temp staff user deleted`);
+            } catch (e) { }
+        }
     }
 
-    let testRecordId = null;
+    console.log(`\n---------------------------------------------------\n`);
 
-    // 1. CREATE (Should SUCCEED)
+    // --- SCENARIO C: THE ADMIN (Superuser) ---
+    console.log(`👔  SCENARIO C: SUPERUSER TEST (Admin)`);
     try {
         const record = await adminPb.collection(COLLECTION).create({
             title: "TEST_RECORD_DO_NOT_DELETE",

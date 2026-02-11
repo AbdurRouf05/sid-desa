@@ -34,14 +34,47 @@ async function getProduct(slug: string) {
 
 import { ProductContactButton } from "@/components/products/product-contact-button";
 
+import { getAssetUrl } from "@/lib/cdn";
+
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const params = await props.params;
     const product = await getProduct(params.slug);
     if (!product) return { title: "Produk Tidak Ditemukan" };
 
+    const title = `${product.name} - BMT NU Lumajang`;
+    const description = product.description?.replace(/<[^>]*>/g, '').substring(0, 160) || `Detail produk ${product.name}`;
+
+    // Determine image URL
+    // Start with a default or construct one
+    let imageUrl = "https://bmtnu-lumajang.id/og-default.jpg"; // Fallback
+
+    if (product.icon) {
+        // If it is a filename (not just an icon name like 'ShieldCheck')
+        if (!product.icon.match(/^[A-Z][a-zA-Z]+$/)) {
+            imageUrl = getAssetUrl(product, product.icon);
+        }
+    }
+
     return {
-        title: `${product.name} - BMT NU Lumajang`,
-        description: product.description?.replace(/<[^>]*>/g, '').substring(0, 160) || `Detail produk ${product.name}`,
+        title,
+        description,
+        openGraph: {
+            title,
+            description,
+            type: 'website',
+            images: [{
+                url: imageUrl,
+                width: 1200,
+                height: 630,
+                alt: product.name
+            }]
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title,
+            description,
+            images: [imageUrl],
+        }
     };
 }
 
