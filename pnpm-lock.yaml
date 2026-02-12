@@ -124,7 +124,7 @@ importers:
         specifier: ^10.4.24
         version: 10.4.24(postcss@8.5.6)
       dotenv:
-        specifier: ^17.2.3
+        specifier: ^17.2.4
         version: 17.2.4
       eslint:
         specifier: ^9
