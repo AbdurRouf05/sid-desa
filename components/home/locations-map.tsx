@@ -50,22 +50,22 @@ export function LocationsMap({ stats, mapUrl, config }: LocationsMapProps) {
                     <div>
                         <span className="text-emerald-600 font-bold uppercase tracking-wider text-sm mb-2 block">Jaringan Kantor</span>
                         <h2 className="text-3xl font-bold text-slate-900 mb-6">{title}</h2>
-                        <p className="text-lg text-slate-600 mb-8 leading-relaxed">
+                        <p className="text-lg text-slate-600 mb-8 leading-relaxed whitespace-pre-line">
                             {description}
                         </p>
 
                         <ul className="space-y-4 mb-8">
-                            <li className="flex items-center gap-3 text-slate-700">
-                                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                            <li className="flex items-start gap-3 text-slate-700">
+                                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0 mt-1">
                                     <DynamicIcon name={feature1Icon} className="w-4 h-4" />
                                 </div>
-                                <span className="font-medium">{feature1Text}</span>
+                                <span className="font-medium whitespace-pre-line">{feature1Text}</span>
                             </li>
-                            <li className="flex items-center gap-3 text-slate-700">
-                                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                            <li className="flex items-start gap-3 text-slate-700">
+                                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0 mt-1">
                                     <DynamicIcon name={feature2Icon} className="w-4 h-4" />
                                 </div>
-                                <span className="font-medium">{feature2Text}</span>
+                                <span className="font-medium whitespace-pre-line">{feature2Text}</span>
                             </li>
                         </ul>
 

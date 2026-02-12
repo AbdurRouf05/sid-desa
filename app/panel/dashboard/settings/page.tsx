@@ -193,7 +193,6 @@ export default function SettingsPage() {
             formData.append("total_branches", data.total_branches || "");
             formData.append("nib", data.nib || "");
             formData.append("legal_bh", data.legal_bh || "");
-            formData.append("legal_bh", data.legal_bh || "");
             formData.append("map_embed_url", transformedMapUrl);
 
             // Locations Section
@@ -430,9 +429,9 @@ export default function SettingsPage() {
                             <label className="block text-sm font-medium text-slate-700 mb-1">NIB (Nomor Induk Berusaha)</label>
                             <input {...register("nib")} className="w-full p-2 border rounded-lg" placeholder="12345678..." />
                         </div>
-                        <div className="md:col-span-2">
+                        <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">Legalitas / Badan Hukum</label>
-                            <input {...register("legal_bh")} className="w-full p-2 border rounded-lg" placeholder="SK Menteri Hukum dan HAM..." />
+                            <textarea {...register("legal_bh")} className="w-full p-2 border rounded-lg h-20 resize-y" placeholder="SK Menteri Hukum dan HAM..." />
                         </div>
                     </div>
                 </div>
@@ -543,7 +542,7 @@ export default function SettingsPage() {
                             <div className="space-y-4">
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Fitur 1 (Teks)</label>
-                                    <input {...register("locations_feature1_text")} className="w-full p-2 border rounded-lg" placeholder="Kantor Pusat & Cabang Strategis" />
+                                    <textarea {...register("locations_feature1_text")} className="w-full p-2 border rounded-lg h-20 resize-y" placeholder="Kantor Pusat & Cabang Strategis" />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Fitur 1 (Icon)</label>
@@ -560,7 +559,7 @@ export default function SettingsPage() {
                             <div className="space-y-4">
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Fitur 2 (Teks)</label>
-                                    <input {...register("locations_feature2_text")} className="w-full p-2 border rounded-lg" placeholder="Layanan Senin - Sabtu..." />
+                                    <textarea {...register("locations_feature2_text")} className="w-full p-2 border rounded-lg h-20 resize-y" placeholder="Layanan Senin - Sabtu..." />
                                 </div>
                                 <div>
                                     <label className="block text-sm font-medium text-slate-700 mb-1">Fitur 2 (Icon)</label>

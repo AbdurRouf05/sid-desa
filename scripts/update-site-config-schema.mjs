@@ -96,6 +96,30 @@ async function updateSchema() {
                     max: null,
                     pattern: ""
                 }
+            },
+            {
+                name: 'legal_bh',
+                type: 'text',
+                required: false,
+                presentable: false,
+                unique: false,
+                options: {
+                    min: null,
+                    max: null,
+                    pattern: ""
+                }
+            },
+            {
+                name: 'nib',
+                type: 'text',
+                required: false,
+                presentable: false,
+                unique: false,
+                options: {
+                    min: null,
+                    max: null,
+                    pattern: ""
+                }
             }
         ];
 
