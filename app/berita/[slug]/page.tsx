@@ -60,7 +60,8 @@ async function getRecentNews() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { slug } = await params;
-    const record = await getNewsItem(slug);
+    const decodedSlug = decodeURIComponent(slug);
+    const record = await getNewsItem(decodedSlug);
     if (!record) return { title: 'Berita Tidak Ditemukan' };
 
     const excerpt = record.content.replace(/<[^>]*>?/gm, '').substring(0, 160);
@@ -100,7 +101,8 @@ import { ShareButton } from "@/components/news/share-button";
 
 export default async function NewsDetailPage({ params }: Props) {
     const { slug } = await params;
-    const record = await getNewsItem(slug);
+    const decodedSlug = decodeURIComponent(slug);
+    const record = await getNewsItem(decodedSlug);
 
     if (!record) {
         notFound();

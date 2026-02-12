@@ -38,7 +38,8 @@ import { getAssetUrl } from "@/lib/cdn";
 
 export async function generateMetadata(props: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const params = await props.params;
-    const product = await getProduct(params.slug);
+    const decodedSlug = decodeURIComponent(params.slug);
+    const product = await getProduct(decodedSlug);
     if (!product) return { title: "Produk Tidak Ditemukan" };
 
     const title = `${product.name} - BMT NU Lumajang`;
@@ -80,8 +81,9 @@ export async function generateMetadata(props: { params: Promise<{ slug: string }
 
 export default async function ProductDetailPage(props: { params: Promise<{ slug: string }> }) {
     const params = await props.params;
+    const decodedSlug = decodeURIComponent(params.slug);
     const [product, siteConfig] = await Promise.all([
-        getProduct(params.slug),
+        getProduct(decodedSlug),
         pb.collection('site_config').getFirstListItem("").catch(() => null)
     ]);
 

@@ -5,11 +5,12 @@ let pb: PocketBase;
 
 if (typeof window === "undefined") {
     // Server-side
-    pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || "http://127.0.0.1:8090");
+    // Use public URL as fallback if env var is missing (CRITICAL for Netlify/Vercel if env var not set)
+    pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || "https://db-bmtnulmj.sagamuda.cloud");
 } else {
     // Client-side
     if (!(window as any).pb) {
-        (window as any).pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL);
+        (window as any).pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || "https://db-bmtnulmj.sagamuda.cloud");
     }
     pb = (window as any).pb;
 }
