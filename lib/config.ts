@@ -34,29 +34,41 @@ export const DEFAULT_SITE_CONFIG: SiteConfig = {
     social_links: {}
 };
 
-export async function getSiteConfig(): Promise<SiteConfig> {
-    try {
-        // Fetch with a timeout to prevent build hangs
-        const fetchPromise = pb.collection('site_config').getFirstListItem("");
-        const timeoutPromise = new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Timeout")), 8000)
-        );
+import { unstable_cache } from "next/cache";
 
-        const record = await Promise.race([fetchPromise, timeoutPromise]) as any;
+// Cache for 60 seconds to improve performance significantly
+export const getSiteConfig = unstable_cache(
+    async (): Promise<SiteConfig> => {
+        try {
+            // Fetch with a timeout to prevent build hangs
+            // Reduced timeout to 3s because config should be fast
+            const fetchPromise = pb.collection('site_config').getFirstListItem("");
+            const timeoutPromise = new Promise((_, reject) =>
+                setTimeout(() => reject(new Error("Timeout")), 3000)
+            );
 
-        // Map map_embed_url from social_links if not present in root (Schema workaround)
-        const config = record as unknown as SiteConfig;
-        if (!config.map_embed_url && record.social_links && record.social_links.map_embed_url) {
-            config.map_embed_url = record.social_links.map_embed_url;
+            const record = await Promise.race([fetchPromise, timeoutPromise]) as any;
+
+            // Map map_embed_url from social_links if not present in root (Schema workaround)
+            const config = record as unknown as SiteConfig;
+            if (!config.map_embed_url && record.social_links && record.social_links.map_embed_url) {
+                config.map_embed_url = record.social_links.map_embed_url;
+            }
+
+            // Ensure JSON serializable (PB returns some non-serializable methods/properties sometimes, but raw JSON should be fine)
+            return JSON.parse(JSON.stringify(config));
+        } catch (error: any) {
+            // Silently return default if fetch fails (timeout, 404, or network error during build)
+            // Log only if it's not a standard 404 or a build-time connection issue
+            if (error.status !== 404 && error.message !== "Timeout" && error.status !== 0) {
+                console.error("Failed to fetch site config:", error);
+            }
+            return DEFAULT_SITE_CONFIG;
         }
-
-        return config;
-    } catch (error: any) {
-        // Silently return default if fetch fails (timeout, 404, or network error during build)
-        // Log only if it's not a standard 404 or a build-time connection issue
-        if (error.status !== 404 && error.message !== "Timeout" && error.status !== 0) {
-            console.error("Failed to fetch site config:", error);
-        }
-        return DEFAULT_SITE_CONFIG;
+    },
+    ['site-config-v2'], // Cache Key
+    {
+        revalidate: 60, // 60 Seconds
+        tags: ['site_config']
     }
-}
+);

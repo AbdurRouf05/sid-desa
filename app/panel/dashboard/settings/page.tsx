@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
+import { toast } from "sonner";
 import { pb } from "@/lib/pb";
 import { optimizeImage } from "@/lib/image-optimizer";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { TactileButton } from "@/components/ui/tactile-button";
-import { Save, Building2, Phone, Mail, MapPin, Loader2, Image as ImageIcon, Share2, Instagram, Facebook, Video, Youtube } from "lucide-react";
+import { IconPicker } from "@/components/ui/icon-picker";
+import { Save, Building2, Phone, Mail, MapPin, Loader2, Image as ImageIcon, Share2, Instagram, Facebook, Video, Youtube, Globe, FileText } from "lucide-react";
 
 interface SiteConfig {
     id: string;
@@ -29,6 +31,14 @@ interface SiteConfig {
     logo_primary: any;
     logo_secondary: any;
     favicon: any;
+
+    // Locations Section (Jaringan Kantor)
+    locations_title?: string;
+    locations_description?: string;
+    locations_feature1_text?: string;
+    locations_feature1_icon?: string;
+    locations_feature2_text?: string;
+    locations_feature2_icon?: string;
 }
 
 // Helper to extract Lat/Lng or convert to Embed URL
@@ -73,7 +83,7 @@ export default function SettingsPage() {
     const [mapPreview, setMapPreview] = useState("");
     const [logoPreviews, setLogoPreviews] = useState<any>({});
 
-    const { register, handleSubmit, setValue, watch, getValues } = useForm<SiteConfig>();
+    const { register, handleSubmit, setValue, watch, getValues, control } = useForm<SiteConfig>();
 
     // Watch map input for live preview
     const mapInput = watch("map_embed_url");
@@ -130,6 +140,14 @@ export default function SettingsPage() {
                     setValue("map_embed_url", mapUrl);
                     setMapPreview(mapUrl);
 
+                    // Locations
+                    setValue("locations_title", data.locations_title || "");
+                    setValue("locations_description", data.locations_description || "");
+                    setValue("locations_feature1_text", data.locations_feature1_text || "");
+                    setValue("locations_feature1_icon", data.locations_feature1_icon || "");
+                    setValue("locations_feature2_text", data.locations_feature2_text || "");
+                    setValue("locations_feature2_icon", data.locations_feature2_icon || "");
+
                     // Update previews
                     setLogoPreviews({
                         logo_primary: data.logo_primary ? pb.files.getUrl(data, data.logo_primary) : null,
@@ -175,7 +193,16 @@ export default function SettingsPage() {
             formData.append("total_branches", data.total_branches || "");
             formData.append("nib", data.nib || "");
             formData.append("legal_bh", data.legal_bh || "");
+            formData.append("legal_bh", data.legal_bh || "");
             formData.append("map_embed_url", transformedMapUrl);
+
+            // Locations Section
+            formData.append("locations_title", data.locations_title || "");
+            formData.append("locations_description", data.locations_description || "");
+            formData.append("locations_feature1_text", data.locations_feature1_text || "");
+            formData.append("locations_feature1_icon", data.locations_feature1_icon || "");
+            formData.append("locations_feature2_text", data.locations_feature2_text || "");
+            formData.append("locations_feature2_icon", data.locations_feature2_icon || "");
 
             // Append JSON Field (social_links)
             const socialLinks = {
@@ -492,6 +519,60 @@ export default function SettingsPage() {
                                     ></iframe>
                                 </div>
                             )}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Locations Section (Jaringan Kantor) */}
+                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                    <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                        <MapPin className="w-5 h-5 text-emerald-600" />
+                        Bagian "Jaringan Kantor" (Homepage)
+                    </h2>
+                    <div className="grid grid-cols-1 gap-6">
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Judul</label>
+                            <input {...register("locations_title")} className="w-full p-2 border rounded-lg" placeholder="Kami Hadir Lebih Dekat" />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Deskripsi</label>
+                            <textarea {...register("locations_description")} className="w-full p-2 border rounded-lg h-24" placeholder="Dengan 16 titik layanan..." />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Fitur 1 (Teks)</label>
+                                    <input {...register("locations_feature1_text")} className="w-full p-2 border rounded-lg" placeholder="Kantor Pusat & Cabang Strategis" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Fitur 1 (Icon)</label>
+                                    <Controller
+                                        control={control}
+                                        name="locations_feature1_icon"
+                                        render={({ field }) => (
+                                            <IconPicker value={field.value} onChange={field.onChange} />
+                                        )}
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Fitur 2 (Teks)</label>
+                                    <input {...register("locations_feature2_text")} className="w-full p-2 border rounded-lg" placeholder="Layanan Senin - Sabtu..." />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-slate-700 mb-1">Fitur 2 (Icon)</label>
+                                    <Controller
+                                        control={control}
+                                        name="locations_feature2_icon"
+                                        render={({ field }) => (
+                                            <IconPicker value={field.value} onChange={field.onChange} />
+                                        )}
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

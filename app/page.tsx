@@ -33,6 +33,7 @@ export default function Home() {
     const [newsLoading, setNewsLoading] = useState(true);
     const [mapUrl, setMapUrl] = useState("");
     const [phone, setPhone] = useState("");
+    const [locationsConfig, setLocationsConfig] = useState<any>(null);
 
     const { getLabel } = useUiLabels();
 
@@ -77,6 +78,14 @@ export default function Home() {
                     });
                     setMapUrl(config.map_embed_url || config.social_links?.map_embed_url || "");
                     setPhone(config.phone_wa || "");
+                    setLocationsConfig({
+                        title: config.locations_title,
+                        description: config.locations_description,
+                        feature1_text: config.locations_feature1_text,
+                        feature1_icon: config.locations_feature1_icon,
+                        feature2_text: config.locations_feature2_text,
+                        feature2_icon: config.locations_feature2_icon
+                    });
                 }
 
                 if (banners && banners.items.length > 0) {
@@ -147,7 +156,7 @@ export default function Home() {
             <NewsFeed news={news} loading={newsLoading} />
 
             {/* 7. LOCATIONS */}
-            <LocationsMap stats={stats} mapUrl={mapUrl} />
+            <LocationsMap stats={stats} mapUrl={mapUrl} config={locationsConfig} />
 
             {/* 8. FINAL CTA */}
             <section className="py-24 bg-gradient-to-br from-gold to-yellow-500 relative overflow-hidden">

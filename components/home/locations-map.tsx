@@ -2,40 +2,70 @@
 
 import React from "react";
 import Image from "next/image";
-import { MapPin, Clock, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { TactileButton } from "@/components/ui/tactile-button";
+import * as LucideIcons from "lucide-react";
 
 interface LocationsMapProps {
     stats: {
         branches: string;
     };
     mapUrl: string;
+    config?: {
+        title?: string;
+        description?: string;
+        feature1_text?: string;
+        feature1_icon?: string;
+        feature2_text?: string;
+        feature2_icon?: string;
+    } | null;
 }
 
-export function LocationsMap({ stats, mapUrl }: LocationsMapProps) {
+// Helper component to render dynamic icon
+const DynamicIcon = ({ name, className }: { name?: string; className?: string }) => {
+    if (!name) return null;
+    // Capitalize first letter just in case
+    const iconName = (name.charAt(0).toUpperCase() + name.slice(1)) as keyof typeof LucideIcons;
+    const Icon = LucideIcons[iconName] as React.ElementType;
+
+    if (!Icon) return <LucideIcons.MapPin className={className} />; // Fallback
+    return <Icon className={className} />;
+};
+
+export function LocationsMap({ stats, mapUrl, config }: LocationsMapProps) {
+    // Defaults
+    const title = config?.title || "Kami Hadir Lebih Dekat";
+    const description = config?.description || `Dengan ${stats.branches} titik layanan yang tersebar di wilayah Lumajang, kami siap melayani kebutuhan transaksi keuangan Anda dengan keramahan dan profesionalisme.`;
+
+    const feature1Text = config?.feature1_text || "Kantor Pusat & Cabang Strategis";
+    const feature1Icon = config?.feature1_icon || "MapPin";
+
+    const feature2Text = config?.feature2_text || "Layanan Senin - Sabtu (07.30 - 15.00)";
+    const feature2Icon = config?.feature2_icon || "Clock";
+
     return (
         <section className="py-20 bg-slate-50 relative overflow-hidden">
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                     <div>
                         <span className="text-emerald-600 font-bold uppercase tracking-wider text-sm mb-2 block">Jaringan Kantor</span>
-                        <h2 className="text-3xl font-bold text-slate-900 mb-6">Kami Hadir Lebih Dekat</h2>
+                        <h2 className="text-3xl font-bold text-slate-900 mb-6">{title}</h2>
                         <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                            Dengan {stats.branches} titik layanan yang tersebar di wilayah Lumajang, kami siap melayani kebutuhan transaksi keuangan Anda dengan keramahan dan profesionalisme.
+                            {description}
                         </p>
 
                         <ul className="space-y-4 mb-8">
                             <li className="flex items-center gap-3 text-slate-700">
                                 <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-                                    <MapPin className="w-4 h-4" />
+                                    <DynamicIcon name={feature1Icon} className="w-4 h-4" />
                                 </div>
-                                <span className="font-medium">Kantor Pusat & Cabang Strategis</span>
+                                <span className="font-medium">{feature1Text}</span>
                             </li>
                             <li className="flex items-center gap-3 text-slate-700">
                                 <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-                                    <Clock className="w-4 h-4" />
+                                    <DynamicIcon name={feature2Icon} className="w-4 h-4" />
                                 </div>
-                                <span className="font-medium">Layanan Senin - Sabtu (07.30 - 15.00)</span>
+                                <span className="font-medium">{feature2Text}</span>
                             </li>
                         </ul>
 
@@ -68,7 +98,7 @@ export function LocationsMap({ stats, mapUrl }: LocationsMapProps) {
                                         />
                                         <div className="absolute inset-0 bg-black/20 flex items-center justify-center group-hover:bg-black/10 transition-colors">
                                             <div className="bg-white/90 backdrop-blur px-6 py-3 rounded-full font-bold text-emerald-950 shadow-lg flex items-center gap-2">
-                                                <MapPin className="w-5 h-5 text-red-500 animate-bounce" />
+                                                <LucideIcons.MapPin className="w-5 h-5 text-red-500 animate-bounce" />
                                                 Lihat di Peta
                                             </div>
                                         </div>
