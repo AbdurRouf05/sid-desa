@@ -1,0 +1,145 @@
+[
+    {
+        "id": "pbc_site_config",
+        "name": "site_config",
+        "type": "base",
+        "system": false,
+        "schema": [
+            { "id": "f_company", "name": "company_name", "type": "text", "required": true, "presentable": true },
+            { "id": "f_nib", "name": "nib", "type": "text" },
+            { "id": "f_address", "name": "address", "type": "text" },
+            { "id": "f_phone_wa", "name": "phone_wa", "type": "text" },
+            { "id": "f_email", "name": "email_official", "type": "email" },
+            { "id": "f_welcome", "name": "welcome_text", "type": "editor" },
+            { "id": "f_total_members", "name": "total_members", "type": "text" },
+            { "id": "f_total_assets", "name": "total_assets", "type": "text" }
+        ],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "",
+        "updateRule": "",
+        "deleteRule": null
+    },
+    {
+        "id": "pbc_news",
+        "name": "news",
+        "type": "base",
+        "system": false,
+        "schema": [
+            { "id": "n_title", "name": "title", "type": "text", "required": true, "presentable": true },
+            { "id": "n_slug", "name": "slug", "type": "text", "required": true, "unique": true },
+            { "id": "n_content", "name": "content", "type": "editor" },
+            { "id": "n_thumb", "name": "thumbnail", "type": "file", "options": { "mimeTypes": ["image/*"], "maxSelect": 1 } },
+            { "id": "n_published", "name": "published", "type": "bool" },
+            { "id": "n_cat", "name": "category", "type": "select", "options": { "maxSelect": 1, "values": ["Berita", "Pengumuman", "Kegiatan"] } }
+        ],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "",
+        "updateRule": "",
+        "deleteRule": null
+    },
+    {
+        "id": "pbc_hero",
+        "name": "hero_banners",
+        "type": "base",
+        "system": false,
+        "schema": [
+            { "id": "h_title", "name": "title", "type": "text", "required": true },
+            { "id": "h_sub", "name": "subtitle", "type": "text" },
+            { "id": "h_img", "name": "image_desktop", "type": "file", "required": true, "options": { "maxSelect": 1 } },
+            { "id": "h_active", "name": "active", "type": "bool" }
+        ],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "",
+        "updateRule": "",
+        "deleteRule": null
+    },
+    {
+        "id": "pbc_perangkat",
+        "name": "perangkat_desa",
+        "type": "base",
+        "system": false,
+        "schema": [
+            { "id": "pd_nama", "name": "nama", "type": "text", "required": true, "presentable": true },
+            { "id": "pd_jabatan", "name": "jabatan", "type": "text", "required": true },
+            { "id": "pd_nip", "name": "nip", "type": "text" },
+            { "id": "pd_foto", "name": "foto", "type": "file", "options": { "maxSelect": 1 } },
+            { "id": "pd_active", "name": "is_active", "type": "bool" }
+        ],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "",
+        "updateRule": "",
+        "deleteRule": null
+    },
+    {
+        "id": "pbc_bku",
+        "name": "bku_transaksi",
+        "type": "base",
+        "system": false,
+        "schema": [
+            { "id": "bku_type", "name": "type", "type": "select", "required": true, "options": { "maxSelect": 1, "values": ["masuk", "keluar", "pindah"] } },
+            { "id": "bku_amt", "name": "amount", "type": "number", "required": true },
+            { "id": "bku_tgl", "name": "tanggal", "type": "date", "required": true },
+            { "id": "bku_desc", "name": "uraian", "type": "text", "required": true },
+            { "id": "bku_img", "name": "bukti_foto", "type": "file", "options": { "maxSelect": 1 } }
+        ],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "",
+        "updateRule": "",
+        "deleteRule": null
+    },
+    {
+        "id": "pbc_pajak",
+        "name": "pajak_log",
+        "type": "base",
+        "system": false,
+        "schema": [
+            { "id": "pj_bku", "name": "bku_id", "type": "relation", "required": true, "options": { "collectionId": "pbc_bku", "maxSelect": 1 } },
+            { "id": "pj_type", "name": "jenis", "type": "select", "options": { "maxSelect": 1, "values": ["ppn", "pph"] } },
+            { "id": "pj_amt", "name": "nominal", "type": "number", "required": true },
+            { "id": "pj_setor", "name": "is_disetor", "type": "bool" }
+        ],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "",
+        "updateRule": "",
+        "deleteRule": null
+    },
+    {
+        "id": "pbc_surat",
+        "name": "surat_keluar",
+        "type": "base",
+        "system": false,
+        "schema": [
+            { "id": "sk_agenda", "name": "nomor_agenda", "type": "number" },
+            { "id": "sk_kode", "name": "kode_surat", "type": "text", "required": true },
+            { "id": "sk_tujuan", "name": "tujuan", "type": "text", "required": true },
+            { "id": "sk_tgl", "name": "tanggal_surat", "type": "date", "required": true }
+        ],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "",
+        "updateRule": "",
+        "deleteRule": null
+    },
+    {
+        "id": "pbc_tanah",
+        "name": "tanah_desa",
+        "type": "base",
+        "system": false,
+        "schema": [
+            { "id": "tn_lok", "name": "lokasi", "type": "text", "required": true },
+            { "id": "tn_luas", "name": "luas_m2", "type": "number" },
+            { "id": "tn_hak", "name": "pemegang_hak", "type": "text" }
+        ],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "",
+        "updateRule": "",
+        "deleteRule": null
+    }
+]

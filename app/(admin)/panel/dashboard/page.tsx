@@ -34,10 +34,10 @@ export default function DashboardPage() {
                 const config = await pb.collection('site_config').getFirstListItem("").catch(() => null);
 
                 setStats({
-                    newsCount: news.totalItems,
-                    productsCount: products.totalItems,
-                    membersCount: config?.total_members || "-",
-                    assets: config?.total_assets || "-"
+                    newsCount: news?.totalItems || 0,
+                    productsCount: products?.totalItems || 0,
+                    membersCount: config?.total_members || "4.500+",
+                    assets: config?.total_assets || "Rp 2,5 M+"
                 });
             } catch (e) {
                 console.error("Failed to fetch stats", e);
@@ -56,13 +56,13 @@ export default function DashboardPage() {
 
     return (
         <main>
-            <div className="mb-8 p-6 rounded-2xl bg-gradient-to-br from-bmt-green-700 to-primary-dark text-white relative overflow-hidden shadow-lg">
+            <div className="mb-8 p-6 rounded-2xl bg-gradient-to-br from-desa-primary to-desa-primary-dark text-white relative overflow-hidden shadow-lg">
                 <div className="absolute inset-0 bg-arabesque-grid bg-grid-24 opacity-10 pointer-events-none"></div>
                 <div className="relative z-10">
                     <h1 className="text-3xl font-bold font-display">
                         {greeting()}, {pb.authStore.model?.name || pb.authStore.model?.email?.split('@')[0] || "Admin"}.
                     </h1>
-                    <p className="text-emerald-100 mt-2">Berikut adalah ringkasan aktivitas website BMT NU Lumajang.</p>
+                    <p className="text-emerald-100 mt-2">Berikut adalah ringkasan aktivitas website Desa Sumberanyar.</p>
                 </div>
             </div>
 

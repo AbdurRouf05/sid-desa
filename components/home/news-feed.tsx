@@ -20,7 +20,7 @@ export function NewsFeed({ news, loading }: NewsFeedProps) {
         <section className="py-20 bg-white">
             <div className="container mx-auto px-4">
                 <div className="flex justify-between items-center mb-10">
-                    <h2 className="text-3xl font-bold text-emerald-950">{getLabel('section_news_title', 'Berita dan Artikel')}</h2>
+                    <h2 className="text-3xl font-bold text-desa-primary-dark font-heading">{getLabel('section_news_title', 'Kabar Desa Sumberanyar')}</h2>
                     <TactileButton variant="ghost" onClick={() => window.location.href = '/berita'}>Lihat Berita Lainnya</TactileButton>
                 </div>
 
@@ -48,13 +48,13 @@ export function NewsFeed({ news, loading }: NewsFeedProps) {
                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
                                         />
                                     ) : (
-                                        <div className="w-full h-full bg-emerald-100 flex items-center justify-center">
-                                            <span className="text-emerald-300">No Image</span>
+                                        <div className="w-full h-full bg-desa-primary/10 flex items-center justify-center">
+                                            <span className="text-desa-primary/30">No Image</span>
                                         </div>
                                     )}
                                     <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/50 to-transparent"></div>
-                                    <span className="absolute bottom-3 left-3 px-2 py-1 bg-white/90 backdrop-blur rounded text-xs font-bold text-emerald-800">
-                                        {item.category || "BERITA"}
+                                    <span className="absolute bottom-3 left-3 px-2 py-1 bg-white/90 backdrop-blur rounded text-xs font-bold text-desa-primary-dark">
+                                        {item.category || "KABAR DESA"}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
@@ -63,7 +63,7 @@ export function NewsFeed({ news, loading }: NewsFeedProps) {
                                         {formatDate(item.created || item.updated)}
                                     </span>
                                 </div>
-                                <h3 className="font-bold text-lg text-slate-900 group-hover:text-emerald-700 transition-colors line-clamp-2 mb-2">
+                                <h3 className="font-bold text-lg text-slate-900 group-hover:text-desa-primary transition-colors line-clamp-2 mb-2 font-heading">
                                     {item.title}
                                 </h3>
                                 <p

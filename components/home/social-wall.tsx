@@ -65,8 +65,8 @@ export function SocialWall() {
     return (
         <div className="space-y-12">
             <div className="text-left md:text-center max-w-3xl mx-auto mb-10">
-                <h2 className="text-3xl font-bold text-emerald-950 mb-4">{getLabel('section_social_title', 'Sosial Media')}</h2>
-                <p className="text-slate-600 text-lg leading-relaxed">{getLabel('section_social_subtitle', 'Ikuti perkembangan terbaru kami melalui kanal sosial media resmi.')}</p>
+                <h2 className="text-3xl font-bold text-desa-primary-dark mb-4 font-heading">{getLabel('section_social_title', 'Kanal Informasi Digital')}</h2>
+                <p className="text-slate-600 text-lg leading-relaxed">{getLabel('section_social_subtitle', 'Ikuti kabar terbaru dan pengumuman resmi Desa Sumberanyar melalui jejaring sosial kami.')}</p>
             </div>
 
             <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-4 md:gap-8 [column-fill:_balance]">
@@ -86,7 +86,7 @@ function SocialCard({ post }: { post: any }) {
         <div
             className={cn(
                 "relative rounded-[2rem] md:rounded-[3rem] overflow-hidden group bg-slate-900 border border-white/5 shadow-2xl transition-all duration-500 w-full mb-4 md:mb-8 break-inside-avoid",
-                isPinned ? "ring-4 ring-gold/20 z-10" : "opacity-95 hover:opacity-100"
+                isPinned ? "ring-4 ring-desa-accent/20 z-10" : "opacity-95 hover:opacity-100"
             )}
         >
             {/* Labels & Tags */}
@@ -105,9 +105,9 @@ function SocialCard({ post }: { post: any }) {
             </div>
 
             {isPinned && (
-                <div className="absolute top-5 left-5 z-20 bg-gold text-emerald-950 px-4 py-1.5 rounded-2xl text-[10px] md:text-xs font-black flex items-center gap-1.5 shadow-xl">
-                    <Pin className="w-3.5 h-3.5 fill-emerald-950" />
-                    <span className="tracking-tighter uppercase font-black text-[9px]">Highlight</span>
+                <div className="absolute top-5 left-5 z-20 bg-desa-accent text-desa-primary-dark px-4 py-1.5 rounded-2xl text-[10px] md:text-xs font-black flex items-center gap-1.5 shadow-xl">
+                    <Pin className="w-3.5 h-3.5 fill-desa-primary-dark" />
+                    <span className="tracking-tighter uppercase font-black text-[9px]">Penting</span>
                 </div>
             )}
 
@@ -174,8 +174,8 @@ function SocialCard({ post }: { post: any }) {
                         )}>
                             {post.caption || "Update Terbaru"}
                         </h3>
-                        <div className="flex items-center gap-1.5 text-gold text-[10px] md:text-xs font-black tracking-widest uppercase items-center group-hover:translate-x-1 transition-transform">
-                            Buka Post <ExternalLink className="w-3 h-3" />
+                        <div className="flex items-center gap-1.5 text-desa-accent text-[10px] md:text-xs font-black tracking-widest uppercase items-center group-hover:translate-x-1 transition-transform">
+                            Lihat Selengkapnya <ExternalLink className="w-3 h-3" />
                         </div>
                     </div>
                 </div>

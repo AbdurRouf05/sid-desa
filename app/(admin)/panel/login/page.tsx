@@ -50,6 +50,33 @@ export default function AdminLoginPage() {
         setIsLoading(true);
         setError("");
 
+        // Development Bypass: Allow viewing panel without live backend
+        if (process.env.NODE_ENV === "development" && data.email === "admin@sumberanyar.id" && data.password === "admin123") {
+            console.warn("Dev Mode: Bypassing real authentication");
+            
+            // Create a valid-looking fake JWT (header.payload.signature)
+            // Payload: {"exp": 4800000000, "id": "dev-admin"} (exp is in year 2122)
+            const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
+            const payload = btoa(JSON.stringify({ 
+                exp: 4800000000, 
+                id: "dev-admin", 
+                collectionId: "_pb_install_view_",
+                email: "admin@sumberanyar.id",
+                name: "Administrator Desa"
+            }));
+            const fakeJwt = `${header}.${payload}.signature`;
+
+            // Save mock token to satisfy pb.authStore.isValid check in layout.tsx
+            pb.authStore.save(fakeJwt, { 
+                id: "dev-admin", 
+                email: "admin@sumberanyar.id",
+                name: "Administrator Desa",
+                collectionId: "_pb_install_view_" 
+            });
+            router.push("/panel/dashboard");
+            return;
+        }
+
         try {
             await pb.collection('users').authWithPassword(data.email, data.password);
             router.push("/panel/dashboard");
@@ -75,14 +102,14 @@ export default function AdminLoginPage() {
         <main className="min-h-screen bg-slate-100 flex flex-col items-center justify-center p-4 gap-6">
             <div className="bg-white w-full max-w-md rounded-2xl shadow-xl overflow-hidden">
                 {/* Header */}
-                <div className="bg-gradient-to-br from-bmt-green-700 to-primary-dark p-8 text-center text-white relative overflow-hidden">
+                <div className="bg-gradient-to-br from-desa-primary to-desa-primary-dark p-8 text-center text-white relative overflow-hidden">
                     <div className="absolute inset-0 bg-arabesque-grid bg-grid-24 opacity-10 pointer-events-none"></div>
                     <div className="relative z-10 w-full h-24 flex items-center justify-center mx-auto mb-2">
                         {logoUrl ? (
                             <img src={logoUrl} alt="Logo" className="h-full object-contain" />
                         ) : (
                             <div className="w-16 h-16 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20">
-                                <ShieldCheck className="w-8 h-8 text-gold-400" />
+                                <ShieldCheck className="w-8 h-8 text-desa-accent" />
                             </div>
                         )}
                     </div>
@@ -109,7 +136,7 @@ export default function AdminLoginPage() {
                                         "w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all",
                                         errors.email ? "border-red-500 bg-red-50" : "border-slate-200"
                                     )}
-                                    placeholder="admin@bmtnu.id"
+                                    placeholder="admin@sumberanyar.id"
                                 />
                             </div>
                             {errors.email && <p className="text-xs text-red-500 font-medium">{errors.email.message}</p>}
@@ -146,7 +173,7 @@ export default function AdminLoginPage() {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-900/10 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                            className="w-full bg-desa-primary hover:bg-desa-primary-dark text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-desa-primary/10 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                         >
                             {isLoading ? (
                                 <>
@@ -161,7 +188,7 @@ export default function AdminLoginPage() {
 
                     <div className="mt-8 text-center pb-8">
                         <p className="text-xs text-slate-400">
-                            Halaman Admin kelola website bmtnulumajang.id
+                            Halaman Admin kelola website desa sumberanyar.id
                         </p>
                     </div>
                 </div>
@@ -170,7 +197,7 @@ export default function AdminLoginPage() {
             {/* External License Info */}
             <div className="text-center">
                 <p className="text-[10px] text-slate-400 font-mono tracking-wide opacity-70">
-                    Right owned by sagamuda.id Exclusive Intellectual Property Rights for KSPPS BMTNU Lumajang
+                    Sistem Informasi Desa Sumberanyar &copy; 2026
                 </p>
             </div>
         </main>

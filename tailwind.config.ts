@@ -11,30 +11,30 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ['var(--font-inter)'],
-        heading: ['var(--font-jakarta)'],
+        heading: ['var(--font-merriweather)', 'serif'],
         display: ['var(--font-manrope)', 'sans-serif'], // Added from Arabesque Design
       },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        bmt: {
-          green: {
-            700: '#15803d', // Primary
-            800: '#166534',
-            900: '#14532d',
+        desa: {
+          primary: {
+            DEFAULT: '#0f766e', // Teal 700
+            dark: '#0d9488',
+            light: '#14b8a6',
           },
-          gold: {
-            200: '#FEF08A',
-            400: '#FACC15', // Secondary
-            500: '#EAB308',
+          accent: {
+            DEFAULT: '#ea580c', // Orange 600
+            dark: '#c2410c',
+            light: '#f97316',
+          },
+          slate: {
+            800: '#1e293b',
           },
         },
-        // Modern Arabesque Tokens
-        // "primary": "#15803d", // Removed to prevent conflict with Shadcn "primary" object
-        "primary-dark": "#14532d",
-        "gold": "#FACC15",
-        "gold-dark": "#CA8A04",
-        "background-light": "#f6f8f7",
+        "primary-dark": "#0f766e",
+        "accent": "#ea580c",
+        "background-light": "#f1f5f9",
         "background-dark": "#122017",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

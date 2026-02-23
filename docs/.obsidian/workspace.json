@@ -87,17 +87,14 @@
             "id": "7c85d20c3035da79",
             "type": "leaf",
             "state": {
-              "type": "canvas",
+              "type": "markdown",
               "state": {
-                "file": "Security Check for Vibe.canvas",
-                "viewState": {
-                  "x": 37.99630860266842,
-                  "y": 161.46268963590154,
-                  "zoom": -0.2731831048193931
-                }
+                "file": "01_ARCHITECTURE_BLUEPRINT.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-layout-dashboard",
-              "title": "Security Check for Vibe"
+              "icon": "lucide-file",
+              "title": "01_ARCHITECTURE_BLUEPRINT"
             }
           }
         ],
@@ -236,13 +233,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "Security Check for Vibe.canvas",
+                "file": "01_ARCHITECTURE_BLUEPRINT.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of Security Check for Vibe"
+              "title": "Outline of 01_ARCHITECTURE_BLUEPRINT"
             }
           }
         ],
@@ -250,7 +247,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -265,6 +263,9 @@
   },
   "active": "7c85d20c3035da79",
   "lastOpenFiles": [
+    "ai_master_prompt.md",
+    "FUTURE_WEB_BLUEPRINT.md",
+    "Security Check for Vibe.canvas",
     "Pasted image 20260209073207.png",
     "Pasted image 20260209053759.png",
     "Pasted image 20260209052245.png",
@@ -275,7 +276,6 @@
     "phase_8_1_schema_analytics.json",
     "02_IMPLEMENTATION_PLAN.md",
     "01_ARCHITECTURE_BLUEPRINT.md",
-    "Security Check for Vibe.canvas",
     "Pasted image 20260208135925.png",
     "05_ACCESS_AND_TESTING.md",
     "implementation_plan.md",
@@ -292,7 +292,6 @@
     "ANALYSIS_REPORT_20260201.md",
     "AUDIT_REPORT_20260205.md",
     "Untitled.md",
-    "Card Type.md",
-    "FUTURE_WEB_BLUEPRINT.md"
+    "Card Type.md"
   ]
 }

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { Suspense } from "react";
-import { Inter, Plus_Jakarta_Sans, Manrope } from "next/font/google";
+import { Inter, Merriweather, Manrope } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -13,7 +13,11 @@ import { Toaster } from "sonner";
 import { ClientGuard } from "@/components/security/client-guard";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" });
+const merriweather = Merriweather({ 
+  subsets: ["latin"], 
+  weight: ["300", "400", "700", "900"],
+  variable: "--font-merriweather" 
+});
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -91,7 +95,7 @@ export default async function RootLayout({
     <html lang="id" className="scroll-smooth" data-scroll-behavior="smooth">
       <body className={cn(
         inter.variable,
-        jakarta.variable,
+        merriweather.variable,
         manrope.variable,
         "font-sans bg-background text-foreground antialiased"
       )}>

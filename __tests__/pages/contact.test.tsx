@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import ContactPage from '@/app/kontak/page';
+import '@testing-library/jest-dom';
+import ContactPage from '@/app/(public)/kontak/page';
 import { pb } from '@/lib/pb';
 
 // Mock PocketBase

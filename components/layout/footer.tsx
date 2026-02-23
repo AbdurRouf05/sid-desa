@@ -15,13 +15,13 @@ export async function Footer() {
 
     // Format WA Number for Link (remove + or 0, ensure 62)
     // Assuming config.whatsapp_number is stored plain or with symbols
-    const waRaw = config.whatsapp_number?.replace(/\D/g, '') || "6282334812239"; // Fallback to provided number
+    const waRaw = config.phone_wa?.replace(/\D/g, '') || "6282334812239"; 
     const waLink = `https://wa.me/${waRaw}`;
 
     return (
         <footer className="bg-slate-900 text-slate-300 pt-16 pb-8 text-sm relative overflow-hidden">
             {/* Decorative Background */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-bmt-green-500 via-gold to-bmt-green-500"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-desa-primary via-desa-accent to-desa-primary"></div>
 
             {/* WhatsApp Floating Button (Only visible on Mobile usually, but here requested as "Footer Button") */}
             {/* Actually user asked for "tombol whatsapp di footer bawah juga benar-benar bisa di tekan" */}
@@ -30,14 +30,14 @@ export async function Footer() {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
                     {/* Brand Column */}
                     <div className="space-y-4">
-                        <div className="flex items-center gap-2 text-white font-bold text-xl">
-                            <div className="w-10 h-10 bg-bmt-green-700 rounded-lg flex items-center justify-center shadow-lg shadow-bmt-green-900/50">
-                                <span className="text-gold font-serif">NU</span>
+                        <div className="flex items-center gap-2 text-white font-bold text-xl font-heading">
+                            <div className="w-10 h-10 bg-desa-primary rounded-lg flex items-center justify-center shadow-lg shadow-desa-primary-dark/20">
+                                <span className="text-desa-accent font-serif">S</span>
                             </div>
-                            <span className="font-display tracking-tight">BMT NU Lumajang</span>
+                            <span className="font-display tracking-tight">SID Sumberanyar</span>
                         </div>
                         <p className="leading-relaxed text-slate-400">
-                            Lembaga Keuangan Syariah terpercaya, amanah, dan profesional untuk kemaslahatan umat.
+                            Sistem Informasi Desa Sumberanyar memberikan keterbukaan informasi dan pelayanan terbaik bagi warga.
                         </p>
                         <div className="flex gap-4 pt-4">
                             {socials.instagram && (
@@ -60,23 +60,22 @@ export async function Footer() {
 
                     {/* Quick Links */}
                     <div className="space-y-4">
-                        <h3 className="text-white font-bold text-lg font-display">Tautan Cepat</h3>
+                        <h3 className="text-white font-bold text-lg font-heading">Tautan Cepat</h3>
                         <ul className="space-y-2">
-                            <li><Link href="/produk" className="hover:text-gold transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-gold rounded-full"></span>Produk & Layanan</Link></li>
-                            <li><Link href="/berita" className="hover:text-gold transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-gold rounded-full"></span>Berita Terkini</Link></li>
-                            <li><Link href="/tentang-kami" className="hover:text-gold transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-gold rounded-full"></span>Tentang Kami</Link></li>
-                            <li><Link href="/karir" className="hover:text-gold transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-gold rounded-full"></span>Karir</Link></li>
-                            <li><Link href="/kontak" className="hover:text-gold transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-gold rounded-full"></span>Hubungi Kami</Link></li>
+                            <li><Link href="/layanan" className="hover:text-desa-accent transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-desa-accent rounded-full"></span>Layanan & Program</Link></li>
+                            <li><Link href="/berita" className="hover:text-desa-accent transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-desa-accent rounded-full"></span>Kabar Desa</Link></li>
+                            <li><Link href="/tentang-kami" className="hover:text-desa-accent transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-desa-accent rounded-full"></span>Profil Desa</Link></li>
+                            <li><Link href="/kontak" className="hover:text-desa-accent transition-colors flex items-center gap-2"><span className="w-1 h-1 bg-desa-accent rounded-full"></span>Hubungi Kami</Link></li>
                         </ul>
                     </div>
 
                     {/* Legal & Trust */}
                     <div className="space-y-4">
-                        <h3 className="text-white font-bold text-lg font-display">Legalitas</h3>
+                        <h3 className="text-white font-bold text-lg font-heading">Pemerintahan</h3>
                         <ul className="space-y-2 text-slate-400">
-                            <li><strong className="text-slate-300">NIB:</strong> {config.nib_number || "-"}</li>
-                            <li><strong className="text-slate-300">Badan Hukum:</strong> {config.legal_entity || "Koperasi Syariah"}</li>
-                            <li>Diawasi oleh: Diskop UKM & OJK (On Process)</li>
+                            <li><strong className="text-slate-300">Kepala Desa:</strong> {config.kepala_desa || "-"}</li>
+                            <li><strong className="text-slate-300">Kecamatan:</strong> Rowokangkung</li>
+                            <li><strong className="text-slate-300">Kabupaten:</strong> Lumajang</li>
                         </ul>
                         <div className="pt-4">
                             {/* Placeholder for OJK/Logo */}
@@ -89,44 +88,44 @@ export async function Footer() {
 
                     {/* Contact */}
                     <div className="space-y-4">
-                        <h3 className="text-white font-bold text-lg font-display">Kantor Pusat</h3>
+                        <h3 className="text-white font-bold text-lg font-heading">Kantor Desa</h3>
                         <ul className="space-y-4">
                             <li className="flex gap-3 items-start">
-                                <MapPin className="shrink-0 text-gold mt-1" size={18} />
-                                <span className="text-slate-400 leading-snug">{config.address || "Lumajang, Jawa Timur"}</span>
+                                <MapPin className="shrink-0 text-desa-accent mt-1" size={18} />
+                                <span className="text-slate-400 leading-snug">{config.alamat || "Lumajang, Jawa Timur"}</span>
                             </li>
                             <li className="flex gap-3 items-center">
-                                <Phone className="shrink-0 text-gold" size={18} />
-                                <span className="text-slate-400">{config.phone || "-"}</span>
+                                <Phone className="shrink-0 text-desa-accent" size={18} />
+                                <span className="text-slate-400">{config.phone_wa || "-"}</span>
                             </li>
                             <li className="flex gap-3 items-center">
-                                <Mail className="shrink-0 text-gold" size={18} />
-                                <span className="text-slate-400">{config.email || "info@bmtnu-lumajang.id"}</span>
+                                <Mail className="shrink-0 text-desa-accent" size={18} />
+                                <span className="text-slate-400">{config.email_official || "desa-sumberanyar@lumajangkab.go.id"}</span>
                             </li>
                             <li className="flex gap-3 items-center">
-                                <Clock className="shrink-0 text-gold" size={18} />
-                                <span className="text-slate-400">Senin - Jumat: 08:00 - 16:00</span>
+                                <Clock className="shrink-0 text-desa-accent" size={18} />
+                                <span className="text-slate-400">Senin - Jumat: 08:00 - 15:00</span>
                             </li>
                         </ul>
 
                         <a
                             href={waLink}
                             target="_blank"
-                            className="mt-4 flex items-center justify-center gap-2 w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg hover:shadow-emerald-900/40"
+                            className="mt-4 flex items-center justify-center gap-2 w-full bg-desa-primary hover:bg-desa-primary-light text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-desa-primary/20"
                         >
                             <Phone className="w-5 h-5" />
-                            Chat WhatsApp
+                            Hubungi via WhatsApp
                         </a>
                     </div>
                 </div>
 
                 {/* Bottom Bar */}
                 <div className="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
-                    <p>&copy; {currentYear} BMT NU Lumajang. All rights reserved.</p>
+                    <p>&copy; {currentYear} Pemerintah Desa Sumberanyar. All rights reserved.</p>
                     <div className="flex gap-6">
                         <Link href="/privacy" className="hover:text-white transition-colors">Kebijakan Privasi</Link>
                         <Link href="/terms" className="hover:text-white transition-colors">Syarat & Ketentuan</Link>
-                        <span className="opacity-50">v1.2.0 • Powered by Sagamuda</span>
+                        <span className="opacity-50">v2.0 • Powered by SID Digital</span>
                     </div>
                 </div>
             </div>

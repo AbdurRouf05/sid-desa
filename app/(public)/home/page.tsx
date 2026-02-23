@@ -24,9 +24,9 @@ import { HERO_SLIDES_FALLBACK } from "@/lib/fallback-data";
 export default function Home() {
     const [heroData, setHeroData] = useState<HeroSlide[]>([]);
     const [stats, setStats] = useState({
-        assets: "Loading...",
-        members: "Loading...",
-        branches: "16"
+        assets: "Loading...", // Realisasi APBDes
+        members: "Loading...", // Populasi
+        branches: "4 Dusun"
     });
     const [news, setNews] = useState<any[]>([]);
     const [products, setProducts] = useState<any[]>([]);
@@ -72,9 +72,9 @@ export default function Home() {
 
                 if (config) {
                     setStats({
-                        assets: config.total_assets || "28 M+",
-                        members: config.total_members || "6.000+",
-                        branches: config.total_branches || "16"
+                        assets: config.total_assets || "Rp 2,5 M+",
+                        members: config.total_members || "4.500+",
+                        branches: config.total_branches || "4 Dusun"
                     });
                     setMapUrl(config.map_embed_url || config.social_links?.map_embed_url || "");
                     setPhone(config.phone_wa || "");
@@ -95,7 +95,7 @@ export default function Home() {
                         subtitle: b.subtitle,
                         cta: b.cta_text || "Lihat Detail",
                         cta_link: b.cta_link || "#",
-                        bgClass: b.bg_class || "bg-emerald-900",
+                        bgClass: b.bg_class || "bg-desa-primary",
                         image: b.image_desktop ? getAssetUrl(b, b.image_desktop) : (b.image ? getAssetUrl(b, b.image) : " "),
                         mobile_image: b.image_mobile ? getAssetUrl(b, b.image_mobile) : null,
                         foreground_image: b.foreground_image,
@@ -103,6 +103,9 @@ export default function Home() {
                         recordId: b.id
                     }));
                     setHeroData(mappedBanners);
+                } else {
+                    // Fallback to static slides if no banners in DB
+                    setHeroData(HERO_SLIDES_FALLBACK);
                 }
 
                 setNews(newsResult?.items || []);
@@ -118,11 +121,11 @@ export default function Home() {
 
     // --- SEO: STRUCTURED DATA ---
     const websiteSchema = {
-        name: "BMT NU Lumajang",
-        url: "https://bmtnulumajang.id",
+        name: "SID Sumberanyar",
+        url: "https://sumberanyar.id",
         potentialAction: {
             "@type": "SearchAction",
-            target: "https://bmtnulumajang.id/search?q={search_term_string}",
+            target: "https://sumberanyar.id/search?q={search_term_string}",
             "query-input": "required name=search_term_string"
         }
     };
@@ -159,20 +162,20 @@ export default function Home() {
             <LocationsMap stats={stats} mapUrl={mapUrl} config={locationsConfig} />
 
             {/* 8. FINAL CTA */}
-            <section className="py-24 bg-gradient-to-br from-gold to-yellow-500 relative overflow-hidden">
+            <section className="py-24 bg-gradient-to-br from-desa-accent to-desa-accent-dark relative overflow-hidden">
                 <div className="absolute inset-0 bg-arabesque-grid bg-grid-24 opacity-20 mix-blend-overlay"></div>
-                <div className="container mx-auto px-4 relative z-10 text-center text-emerald-950">
-                    <h2 className="text-3xl md:text-5xl font-black mb-6">
-                        {getLabel('section_cta_title', 'Siap Menjadi Bagian Dari Kami?')}
+                <div className="container mx-auto px-4 relative z-10 text-center text-white">
+                    <h2 className="text-3xl md:text-5xl font-black mb-6 font-heading">
+                        {getLabel('section_cta_title', 'Bangun Desa Bersama')}
                     </h2>
-                    <p className="text-lg md:text-xl font-medium max-w-2xl mx-auto mb-10">
-                        {getLabel('section_cta_subtitle', 'Mulai langkah kebaikan finansial Anda hari ini. Bersama BMT NU Lumajang, ekonomi kuat, umat bermartabat.')}
+                    <p className="text-lg md:text-xl font-medium max-w-2xl mx-auto mb-10 opacity-90">
+                        {getLabel('section_cta_subtitle', 'Mari wujudkan Desa Sumberanyar yang transparan, maju, dan mandiri dengan kolaborasi bersama.')}
                     </p>
                     <TactileButton
                         as="a"
                         href={`https://wa.me/${phone.replace(/[^0-9]/g, '')}`}
                         target="_blank"
-                        className="bg-emerald-900 text-white border-emerald-950 hover:bg-emerald-800 px-10 h-16 text-lg shadow-2xl"
+                        className="bg-desa-primary text-white border-desa-primary-dark hover:bg-desa-primary-light px-10 h-16 text-lg shadow-2xl"
                     >
                         Hubungi via WhatsApp <ExternalLink className="ml-2 w-5 h-5" />
                     </TactileButton>

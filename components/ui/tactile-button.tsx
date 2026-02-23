@@ -17,10 +17,10 @@ export const TactileButton = React.forwardRef<any, TactileButtonProps>(
         const baseStyles = "btn-tactile group relative inline-flex items-center justify-center rounded-xl text-base font-bold transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:pointer-events-none overflow-hidden glass-shine whitespace-nowrap";
 
         const variants = {
-            primary: "bg-gradient-to-br from-emerald-600 to-emerald-700 text-white border-b-4 border-emerald-900 shadow-md hover:shadow-lg hover:from-emerald-500 hover:to-emerald-600 hover:border-emerald-800",
-            secondary: "bg-gradient-to-br from-yellow-300 to-yellow-400 text-emerald-950 border-b-4 border-yellow-600 shadow-sm hover:shadow-md hover:from-yellow-200 hover:to-yellow-300 hover:border-yellow-500",
+            primary: "bg-gradient-to-br from-desa-primary to-desa-primary-dark text-white border-b-4 border-desa-primary-dark/80 shadow-md hover:shadow-lg hover:from-desa-primary-light hover:to-desa-primary",
+            secondary: "bg-gradient-to-br from-desa-accent to-desa-accent-dark text-white border-b-4 border-desa-accent-dark/80 shadow-sm hover:shadow-md hover:from-desa-accent-light hover:to-desa-accent",
             tertiary: "bg-slate-100 text-slate-600 border-b-4 border-slate-300 hover:bg-slate-200",
-            ghost: "bg-transparent border-none shadow-none text-slate-600 hover:bg-slate-100/50 hover:text-emerald-700"
+            ghost: "bg-transparent border-none shadow-none text-slate-600 hover:bg-slate-100/50 hover:text-desa-primary"
         };
 
         const content = (

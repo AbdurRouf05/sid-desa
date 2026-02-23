@@ -8,8 +8,8 @@ import Image from "next/image";
 import { formatDate } from "@/lib/number-utils";
 
 export const metadata = {
-    title: "Pencarian - BMT NU Lumajang",
-    description: "Hasil pencarian produk dan berita BMT NU Lumajang",
+    title: "Pencarian - SID Sumberanyar",
+    description: "Hasil pencarian layanan dan kabar Desa Sumberanyar",
 };
 
 export default async function SearchPage({
@@ -31,8 +31,8 @@ export default async function SearchPage({
                         <h1 className="text-3xl font-bold text-slate-900 mb-4">
                             Hasil Pencarian
                         </h1>
-                        <p className="text-slate-500">
-                            Menampilkan hasil untuk keywoard <span className="font-bold text-emerald-700">"{query}"</span>
+                        <p className="text-slate-600">
+                            Menampilkan hasil untuk kata kunci <span className="font-bold text-desa-primary">"{query}"</span>
                         </p>
                     </header>
 
@@ -48,7 +48,7 @@ export default async function SearchPage({
                         </div>
                     ) : (
                         <div className="grid gap-6">
-                            {results.map((item) => (
+                            {results.map((item: any) => (
                                 <Link
                                     key={item.id}
                                     href={item.url}
@@ -59,7 +59,7 @@ export default async function SearchPage({
                                         {item.thumbnail ? (
                                             item.type === 'produk' && !item.thumbnail.startsWith('http') ? (
                                                 // For products where thumbnail might be an icon name or filename
-                                                <div className="w-full h-full flex items-center justify-center bg-emerald-50 text-emerald-200">
+                                                <div className="w-full h-full flex items-center justify-center bg-desa-primary/5 text-desa-primary/20">
                                                     <ShoppingBag className="w-12 h-12" />
                                                 </div>
                                             ) : (
@@ -71,7 +71,7 @@ export default async function SearchPage({
                                                 />
                                             )
                                         ) : (
-                                            <div className="w-full h-full flex items-center justify-center bg-emerald-50 text-emerald-200">
+                                            <div className="w-full h-full flex items-center justify-center bg-desa-primary/5 text-desa-primary/20">
                                                 {item.type === 'produk' ? (
                                                     <ShoppingBag className="w-12 h-12" />
                                                 ) : (
@@ -83,16 +83,16 @@ export default async function SearchPage({
                                         <div className="absolute top-2 right-2">
                                             <span className={`px-2 py-1 text-xs font-bold rounded shadow-sm ${item.type === 'produk'
                                                     ? 'bg-blue-100 text-blue-700'
-                                                    : 'bg-emerald-100 text-emerald-700'
+                                                    : 'bg-desa-primary/10 text-desa-primary-dark'
                                                 }`}>
-                                                {item.type === 'produk' ? 'PRODUK' : 'BERITA'}
+                                                {item.type === 'produk' ? 'LAYANAN' : 'KABAR DESA'}
                                             </span>
                                         </div>
                                     </div>
 
                                     {/* Content */}
                                     <div className="flex-1">
-                                        <h3 className="text-xl font-bold text-slate-900 group-hover:text-emerald-700 transition-colors mb-2">
+                                        <h3 className="text-xl font-bold text-slate-900 group-hover:text-desa-primary transition-colors mb-2 font-heading">
                                             {item.title}
                                         </h3>
                                         <p className="text-slate-500 mb-4 line-clamp-2 text-sm">
@@ -103,7 +103,7 @@ export default async function SearchPage({
                                                 <Calendar className="w-3 h-3 mr-1" />
                                                 {formatDate(item.created)}
                                             </div>
-                                            <span className="text-emerald-600 text-sm font-bold flex items-center group-hover:translate-x-1 transition-transform">
+                                            <span className="text-desa-primary text-sm font-bold flex items-center group-hover:translate-x-1 transition-transform">
                                                 Detail <ChevronRight className="w-4 h-4 ml-1" />
                                             </span>
                                         </div>

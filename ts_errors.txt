@@ -1,0 +1,66 @@
+.next/dev/types/validator.ts(53,39): error TS2307: Cannot find module '../../../app/berita/[slug]/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(62,39): error TS2307: Cannot find module '../../../app/berita/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(80,39): error TS2307: Cannot find module '../../../app/kontak/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(89,39): error TS2307: Cannot find module '../../../app/layanan/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(98,39): error TS2307: Cannot find module '../../../app/legal/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(107,39): error TS2307: Cannot find module '../../../app/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(116,39): error TS2307: Cannot find module '../../../app/panel/dashboard/assets/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(125,39): error TS2307: Cannot find module '../../../app/panel/dashboard/banners/[id]/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(134,39): error TS2307: Cannot find module '../../../app/panel/dashboard/banners/baru/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(143,39): error TS2307: Cannot find module '../../../app/panel/dashboard/banners/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(152,39): error TS2307: Cannot find module '../../../app/panel/dashboard/berita/[id]/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(161,39): error TS2307: Cannot find module '../../../app/panel/dashboard/berita/baru/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(170,39): error TS2307: Cannot find module '../../../app/panel/dashboard/berita/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(179,39): error TS2307: Cannot find module '../../../app/panel/dashboard/cabang/[id]/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(188,39): error TS2307: Cannot find module '../../../app/panel/dashboard/cabang/baru/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(197,39): error TS2307: Cannot find module '../../../app/panel/dashboard/cabang/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(206,39): error TS2307: Cannot find module '../../../app/panel/dashboard/inquiries/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(215,39): error TS2307: Cannot find module '../../../app/panel/dashboard/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(224,39): error TS2307: Cannot find module '../../../app/panel/dashboard/produk/[id]/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(233,39): error TS2307: Cannot find module '../../../app/panel/dashboard/produk/baru/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(242,39): error TS2307: Cannot find module '../../../app/panel/dashboard/produk/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(251,39): error TS2307: Cannot find module '../../../app/panel/dashboard/settings/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(260,39): error TS2307: Cannot find module '../../../app/panel/dashboard/socials/add/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(269,39): error TS2307: Cannot find module '../../../app/panel/dashboard/socials/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(278,39): error TS2307: Cannot find module '../../../app/panel/login/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(287,39): error TS2307: Cannot find module '../../../app/panel/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(305,39): error TS2307: Cannot find module '../../../app/produk/[slug]/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(314,39): error TS2307: Cannot find module '../../../app/produk/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(323,39): error TS2307: Cannot find module '../../../app/tentang-kami/page.js' or its corresponding type declarations.
+.next/dev/types/validator.ts(381,39): error TS2307: Cannot find module '../../../app/panel/layout.js' or its corresponding type declarations.
+.next/types/validator.ts(53,39): error TS2307: Cannot find module '../../app/berita/[slug]/page.js' or its corresponding type declarations.
+.next/types/validator.ts(62,39): error TS2307: Cannot find module '../../app/berita/page.js' or its corresponding type declarations.
+.next/types/validator.ts(80,39): error TS2307: Cannot find module '../../app/kontak/page.js' or its corresponding type declarations.
+.next/types/validator.ts(89,39): error TS2307: Cannot find module '../../app/layanan/page.js' or its corresponding type declarations.
+.next/types/validator.ts(98,39): error TS2307: Cannot find module '../../app/legal/page.js' or its corresponding type declarations.
+.next/types/validator.ts(107,39): error TS2307: Cannot find module '../../app/page.js' or its corresponding type declarations.
+.next/types/validator.ts(116,39): error TS2307: Cannot find module '../../app/panel/dashboard/assets/page.js' or its corresponding type declarations.
+.next/types/validator.ts(125,39): error TS2307: Cannot find module '../../app/panel/dashboard/banners/[id]/page.js' or its corresponding type declarations.
+.next/types/validator.ts(134,39): error TS2307: Cannot find module '../../app/panel/dashboard/banners/baru/page.js' or its corresponding type declarations.
+.next/types/validator.ts(143,39): error TS2307: Cannot find module '../../app/panel/dashboard/banners/page.js' or its corresponding type declarations.
+.next/types/validator.ts(152,39): error TS2307: Cannot find module '../../app/panel/dashboard/berita/[id]/page.js' or its corresponding type declarations.
+.next/types/validator.ts(161,39): error TS2307: Cannot find module '../../app/panel/dashboard/berita/baru/page.js' or its corresponding type declarations.
+.next/types/validator.ts(170,39): error TS2307: Cannot find module '../../app/panel/dashboard/berita/page.js' or its corresponding type declarations.
+.next/types/validator.ts(179,39): error TS2307: Cannot find module '../../app/panel/dashboard/cabang/[id]/page.js' or its corresponding type declarations.
+.next/types/validator.ts(188,39): error TS2307: Cannot find module '../../app/panel/dashboard/cabang/baru/page.js' or its corresponding type declarations.
+.next/types/validator.ts(197,39): error TS2307: Cannot find module '../../app/panel/dashboard/cabang/page.js' or its corresponding type declarations.
+.next/types/validator.ts(206,39): error TS2307: Cannot find module '../../app/panel/dashboard/inquiries/page.js' or its corresponding type declarations.
+.next/types/validator.ts(215,39): error TS2307: Cannot find module '../../app/panel/dashboard/page.js' or its corresponding type declarations.
+.next/types/validator.ts(224,39): error TS2307: Cannot find module '../../app/panel/dashboard/produk/[id]/page.js' or its corresponding type declarations.
+.next/types/validator.ts(233,39): error TS2307: Cannot find module '../../app/panel/dashboard/produk/baru/page.js' or its corresponding type declarations.
+.next/types/validator.ts(242,39): error TS2307: Cannot find module '../../app/panel/dashboard/produk/page.js' or its corresponding type declarations.
+.next/types/validator.ts(251,39): error TS2307: Cannot find module '../../app/panel/dashboard/settings/page.js' or its corresponding type declarations.
+.next/types/validator.ts(260,39): error TS2307: Cannot find module '../../app/panel/dashboard/socials/add/page.js' or its corresponding type declarations.
+.next/types/validator.ts(269,39): error TS2307: Cannot find module '../../app/panel/dashboard/socials/page.js' or its corresponding type declarations.
+.next/types/validator.ts(278,39): error TS2307: Cannot find module '../../app/panel/login/page.js' or its corresponding type declarations.
+.next/types/validator.ts(287,39): error TS2307: Cannot find module '../../app/panel/page.js' or its corresponding type declarations.
+.next/types/validator.ts(305,39): error TS2307: Cannot find module '../../app/produk/[slug]/page.js' or its corresponding type declarations.
+.next/types/validator.ts(314,39): error TS2307: Cannot find module '../../app/produk/page.js' or its corresponding type declarations.
+.next/types/validator.ts(323,39): error TS2307: Cannot find module '../../app/tentang-kami/page.js' or its corresponding type declarations.
+.next/types/validator.ts(381,39): error TS2307: Cannot find module '../../app/panel/layout.js' or its corresponding type declarations.
+__tests__/pages/contact.test.tsx(2,25): error TS2307: Cannot find module '@/app/kontak/page' or its corresponding type declarations.
+app/(admin)/panel/dashboard/socials/page.tsx(6,14): error TS2305: Module '"@/lib/pb"' has no exported member 'getSiteConfig'.
+app/pencarian/page.tsx(1,10): error TS2305: Module '"@/lib/pb"' has no exported member 'searchContent'.
+app/pencarian/page.tsx(51,43): error TS7006: Parameter 'item' implicitly has an 'any' type.
+components/layout/footer.tsx(5,10): error TS2305: Module '"@/lib/pb"' has no exported member 'getSiteConfig'.
+lib/validations/site.ts(13,19): error TS2554: Expected 2-3 arguments, but got 1.

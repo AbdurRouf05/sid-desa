@@ -16,7 +16,7 @@ export function ModernNavbar() {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
     const [logoWhiteUrl, setLogoWhiteUrl] = useState<string | null>(null);
-    const [companyName, setCompanyName] = useState("BMT NU");
+    const [companyName, setCompanyName] = useState("SID Sumberanyar");
 
     // Scroll Listener & Logo Fetcher
     useEffect(() => {
@@ -40,8 +40,7 @@ export function ModernNavbar() {
                         setLogoWhiteUrl(pb.files.getURL(data, data.logo_secondary));
                     }
                     if (data.company_name) {
-                        // Hardcode / Logic to ensure it is just "BMT NU"
-                        setCompanyName("BMT NU");
+                        setCompanyName(data.company_name);
                     }
                 }
             } catch (e) {
@@ -72,7 +71,7 @@ export function ModernNavbar() {
                 className={cn(
                     "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out px-4 sm:px-6 lg:px-8",
                     isScrolled
-                        ? "bg-white text-emerald-950 shadow-md py-3"
+                        ? "bg-white text-slate-900 shadow-md py-3"
                         : "bg-transparent text-white py-5"
                 )}
             >
@@ -99,9 +98,9 @@ export function ModernNavbar() {
                             <h1 className="font-bold text-lg md:text-xl tracking-tight leading-none">{companyName}</h1>
                             <p className={cn(
                                 "text-[10px] font-semibold tracking-wider uppercase opacity-80",
-                                isScrolled ? "text-emerald-700" : "text-emerald-50"
+                                isScrolled ? "text-desa-primary" : "text-desa-primary-light"
                             )}>
-                                Lumajang
+                                Desa Sumberanyar
                             </p>
                         </div>
                     </div>
@@ -113,12 +112,12 @@ export function ModernNavbar() {
                                 key={link.name}
                                 href={link.href}
                                 className={cn(
-                                    "text-sm font-medium transition-colors hover:text-gold relative group",
+                                    "text-sm font-medium transition-colors hover:text-desa-accent relative group",
                                     isScrolled ? "text-gray-600" : "text-white/90"
                                 )}
                             >
                                 {link.name}
-                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full"></span>
+                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-desa-accent transition-all duration-300 group-hover:w-full"></span>
                             </Link>
                         ))}
                     </div>
@@ -128,7 +127,7 @@ export function ModernNavbar() {
                         <button
                             onClick={() => setIsSearchOpen(true)}
                             className={cn(
-                                "p-2 transition-colors hover:text-gold",
+                                "p-2 transition-colors hover:text-desa-accent",
                                 isScrolled ? "text-gray-400" : "text-white/80"
                             )}
                         >
@@ -170,7 +169,7 @@ export function ModernNavbar() {
                     isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
                 )}
             >
-                <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-primary text-white">
+                <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-desa-primary text-white">
                     <div className="flex items-center gap-3">
                         <div className="bg-white/20 p-1.5 rounded-lg flex items-center justify-center">
                             {logoUrl ? (
@@ -195,14 +194,14 @@ export function ModernNavbar() {
                             onClick={() => setIsMobileMenuOpen(false)}
                         >
                             {link.name}
-                            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-primary" />
+                            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-desa-primary" />
                         </Link>
                     ))}
                 </div>
 
                 <div className="p-6 border-t border-gray-100 bg-gray-50 space-y-4">
                     <p className="text-center text-xs text-gray-400">
-                        © 2025 BMT NU Lumajang <br /> Mobile Experience v1.0
+                        © 2026 Pemerintah Desa Sumberanyar <br /> App Experience v2.0
                     </p>
                 </div>
             </div>

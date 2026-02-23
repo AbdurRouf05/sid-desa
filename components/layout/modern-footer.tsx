@@ -22,10 +22,10 @@ const TiktokIcon = ({ className }: { className?: string }) => (
 
 export function ModernFooter() {
     const [contactInfo, setContactInfo] = useState({
-        address: "Jl. Alun-alun Timur No 3, Jogotrunan, Lumajang",
+        address: "Jl. Raya Sumberanyar No. 1, Sumberanyar, Lumajang",
         phone: "0812-3456-7890",
-        email: "info@bmtnu-lumajang.id",
-        companyName: "BMT NU Lumajang",
+        email: "desa@sumberanyar.id",
+        companyName: "Pemerintah Desa Sumberanyar",
         logoSecondary: "" as string | null,
         nib: "",
         legal_bh: "",
@@ -43,10 +43,10 @@ export function ModernFooter() {
                 const config = await pb.collection('site_config').getFirstListItem("");
                 if (config) {
                     setContactInfo({
-                        address: config.address || "Jl. Alun-alun Timur No 3, Jogotrunan, Lumajang",
+                        address: config.address || "Jl. Raya Sumberanyar No. 1, Sumberanyar, Lumajang",
                         phone: config.phone_wa || "0812-3456-7890",
-                        email: config.email_official || "info@bmtnu.id",
-                        companyName: config.company_name || "BMT NU Lumajang",
+                        email: config.email_official || "desa@sumberanyar.id",
+                        companyName: config.company_name || "Pemerintah Desa Sumberanyar",
                         logoSecondary: config.logo_secondary ? pb.files.getURL(config, config.logo_secondary) : null,
                         nib: config.nib || "",
                         legal_bh: config.legal_bh || "",
@@ -66,7 +66,7 @@ export function ModernFooter() {
     }, []);
 
     return (
-        <footer className="bg-slate-900 text-slate-300 border-t border-emerald-900/30">
+        <footer className="bg-slate-900 text-slate-300 border-t border-desa-primary/30">
             {/* Main Footer Content */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
@@ -74,11 +74,11 @@ export function ModernFooter() {
                     {/* Column 1: Brand & Contact */}
                     <div className="space-y-6">
                         <div className="flex items-center gap-2 text-white">
-                            <div className="bg-emerald-600/20 p-2 rounded-lg backdrop-blur-sm border border-emerald-500/30">
+                            <div className="bg-desa-primary/20 p-2 rounded-lg backdrop-blur-sm border border-desa-primary-light/30">
                                 {contactInfo.logoSecondary ? (
                                     <img src={contactInfo.logoSecondary} alt="Logo" className="w-8 h-8 object-contain" />
                                 ) : (
-                                    <Home className="w-6 h-6 text-emerald-400" />
+                                    <Home className="w-6 h-6 text-desa-primary-light" />
                                 )}
                             </div>
                             <span className="font-bold text-xl tracking-tight">{contactInfo.companyName}</span>
@@ -88,28 +88,28 @@ export function ModernFooter() {
                             {contactInfo.nib && <p>NIB: {contactInfo.nib}</p>}
                         </div>
                         <p className="text-slate-400 text-sm leading-relaxed">
-                            Mitra keuangan syariah terpercaya. Mudah, Murah, Berkah dengan cara Syariah untuk kemandirian ekonomi umat.
+                            Sistem Informasi Desa Sumberanyar. Melayani warga dengan amanah, transparan, dan profesional untuk pembangunan desa yang mandiri.
                         </p>
                         <ul className="space-y-4 pt-2">
                             <li className="flex items-start gap-3 text-emerald-100/80">
-                                <MapPin className="w-5 h-5 flex-shrink-0 text-gold mt-0.5" />
+                                <MapPin className="w-5 h-5 flex-shrink-0 text-desa-accent mt-0.5" />
                                 <span className="text-sm leading-relaxed">
                                     {contactInfo.address}
                                 </span>
                             </li>
                             <li className="flex items-center gap-3 text-emerald-100/80">
-                                <Mail className="w-5 h-5 flex-shrink-0 text-gold" />
+                                <Mail className="w-5 h-5 flex-shrink-0 text-desa-accent" />
                                 <a href={`mailto:${contactInfo.email}`} className="text-sm hover:text-white transition-colors">
                                     {contactInfo.email}
                                 </a>
                             </li>
                             <li className="flex items-center gap-3 text-emerald-100/80">
-                                <Phone className="w-5 h-5 text-emerald-500 shrink-0" />
+                                <Phone className="w-5 h-5 text-desa-primary-light shrink-0" />
                                 <a
                                     href={`https://wa.me/${contactInfo.phone.replace(/[^0-9]/g, '')}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="hover:text-emerald-400 transition-colors"
+                                    className="hover:text-desa-primary-light transition-colors"
                                 >
                                     {contactInfo.phone} <span className="text-xs opacity-60 ml-1">(WhatsApp)</span>
                                 </a>
@@ -120,29 +120,28 @@ export function ModernFooter() {
                     {/* Column 2: Quick Links */}
                     <div>
                         <h3 className="text-white font-bold text-lg mb-6 flex items-center gap-2">
-                            <span className="w-8 h-1 bg-emerald-500 rounded-full"></span>
-                            BMT NU
+                            <span className="w-8 h-1 bg-desa-primary rounded-full"></span>
+                            Navigasi Desa
                         </h3>
                         <ul className="space-y-3 text-sm">
-                            <li><Link href="/tentang-kami" className="hover:text-emerald-400 transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Tentang Kami</Link></li>
-                            <li><Link href="/berita" className="hover:text-emerald-400 transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Berita & Kegiatan</Link></li>
-                            <li><Link href="/produk" className="hover:text-emerald-400 transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Layanan Produk</Link></li>
-                            <li><Link href="/kontak" className="hover:text-emerald-400 transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Kontak & Lokasi</Link></li>
+                            <li><Link href="/tentang-kami" className="hover:text-desa-primary-light transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Tentang Kami</Link></li>
+                            <li><Link href="/berita" className="hover:text-desa-primary-light transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Berita & Kegiatan</Link></li>
+                            <li><Link href="/layanan" className="hover:text-desa-primary-light transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Layanan Desa</Link></li>
+                            <li><Link href="/kontak" className="hover:text-desa-primary-light transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Kontak & Lokasi</Link></li>
                         </ul>
                     </div>
 
                     {/* Column 3: Products */}
                     <div>
                         <h3 className="text-white font-bold text-lg mb-6 flex items-center gap-2">
-                            <span className="w-8 h-1 bg-gold rounded-full"></span>
-                            Produk Unggulan
+                            <span className="w-8 h-1 bg-desa-accent rounded-full"></span>
+                            Layanan Publik
                         </h3>
                         <ul className="space-y-3 text-sm">
-                            {/* Updated to link to sections or main product page for stability */}
-                            <li><Link href="/produk" className="hover:text-gold transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Tabungan SIRELA</Link></li>
-                            <li><Link href="/produk" className="hover:text-gold transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Simpanan Investasi</Link></li>
-                            <li><Link href="/produk" className="hover:text-gold transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Simpanan Pendidikan</Link></li>
-                            <li><Link href="/produk" className="hover:text-gold transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Pembiayaan Modal</Link></li>
+                            <li><Link href="/layanan" className="hover:text-desa-accent transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Layanan Surat</Link></li>
+                            <li><Link href="/transparan" className="hover:text-desa-accent transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Transparansi APBDes</Link></li>
+                            <li><Link href="/pengaduan" className="hover:text-desa-accent transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Pengaduan Warga</Link></li>
+                            <li><Link href="/berita" className="hover:text-desa-accent transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Agenda Desa</Link></li>
                         </ul>
                     </div>
 
@@ -179,7 +178,7 @@ export function ModernFooter() {
                         </p>
                     </div>
                     <div className="flex items-center gap-6 text-xs text-slate-500">
-                        <Link href="/legal" className="text-xs hover:text-bmt-gold-400 underline decoration-dotted transition-colors">
+                        <Link href="/legal" className="text-xs hover:text-desa-accent underline decoration-dotted transition-colors">
                             Legal & Privacy
                         </Link>
                     </div>

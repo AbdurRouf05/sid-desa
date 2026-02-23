@@ -7,19 +7,19 @@
    Format: HSL without units (for Tailwind opacity usage)
 ========================================= */
 :root {
-  /* BRAND: BMT Green */
-  /* #15803d (green-700) -> 142 72% 29% */
-  --primary: 142 72% 29%;
-  /* #166534 (green-800) -> 145 63% 24% */
-  --primary-dark: 145 63% 24%;
+  /* BRAND: Desa Teal */
+  /* #0f766e (teal-700) -> 175 77% 26% */
+  --primary: 175 77% 26%;
+  /* #0d9488 (teal-600) -> 175 84% 32% */
+  --primary-dark: 175 84% 32%;
   --primary-foreground: 0 0% 100%;
 
-  /* BRAND: Prosperity Gold */
-  /* #FACC15 (yellow-400) -> 48 96% 53% */
-  --secondary: 48 96% 53%;
-  /* #EAB308 (yellow-500) -> 42 87% 55% */
-  --secondary-dark: 42 87% 55%;
-  --secondary-foreground: 222 47% 11%;
+  /* BRAND: Soil Orange */
+  /* #ea580c (orange-600) -> 20 91% 48% */
+  --secondary: 20 91% 48%;
+  /* #c2410c (orange-700) -> 20 88% 41% */
+  --secondary-dark: 20 88% 41%;
+  --secondary-foreground: 0 0% 100%;
 
   /* NEUTRALS */
   --background: 0 0% 100%;
@@ -65,15 +65,15 @@
 
   /* Typography Scale from Architecture */
   h1 {
-    @apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight;
+    @apply text-4xl md:text-5xl lg:text-6xl font-heading font-bold tracking-tight;
   }
 
   h2 {
-    @apply text-3xl md:text-4xl font-bold tracking-tight;
+    @apply text-3xl md:text-4xl font-heading font-bold tracking-tight;
   }
 
   h3 {
-    @apply text-2xl md:text-3xl font-semibold;
+    @apply text-2xl md:text-3xl font-heading font-semibold;
   }
 }
 
@@ -81,7 +81,6 @@
    3. COMPONENT DEFINITIONS (Future Stitched Components)
 ========================================= */
 @layer components {
-
   /* --- ATOMS: Buttons & Badges --- */
   .btn {
     @apply inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
@@ -155,7 +154,7 @@
     @apply flex flex-1 items-center justify-between py-4 font-medium transition-all hover:underline;
   }
 
-  .accordion-trigger[data-state=open]>svg {
+  .accordion-trigger[data-state="open"] > svg {
     @apply rotate-180;
   }
 
@@ -185,7 +184,6 @@
   .toast-root {
     @apply group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full;
   }
-
 
   /* --- UTILITIES: Visuals --- */
 
@@ -217,7 +215,11 @@
   }
 
   .hero-gradient {
-    background: linear-gradient(135deg, hsl(142 72% 29%) 0%, hsl(145 63% 24%) 100%);
+    background: linear-gradient(
+      135deg,
+      hsl(142 72% 29%) 0%,
+      hsl(145 63% 24%) 100%
+    );
   }
 
   /* --- MODERN ARABESQUE UTILITIES --- */

@@ -109,7 +109,32 @@ export function AnalyticsStats() {
 
             } catch (e: any) {
                 console.error("Analytics Error:", e);
-                setError(e.message);
+                
+                // Development Fallback: Provide mock data if backend fails
+                if (process.env.NODE_ENV === "development") {
+                    setData({
+                        totalViews: 1240,
+                        uniqueVisitors: 850,
+                        avgDuration: 145,
+                        topPages: [
+                            { path: "/home", count: 450, avgTime: 120 },
+                            { path: "/berita", count: 320, avgTime: 180 },
+                            { path: "/layanan", count: 210, avgTime: 90 },
+                            { path: "/kontak", count: 120, avgTime: 45 },
+                        ],
+                        sources: [
+                            { source: "Google", count: 680 },
+                            { source: "Direct", count: 320 },
+                            { source: "WhatsApp", count: 240 },
+                        ],
+                        shares: 45,
+                        waClicks: 82,
+                        highEngagementSessions: 310,
+                        rawEvents: []
+                    });
+                } else {
+                    setError(e.message);
+                }
             } finally {
                 setLoading(false);
             }

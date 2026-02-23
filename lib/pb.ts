@@ -1,91 +1,111 @@
 import PocketBase from 'pocketbase';
+import { SiteConfigSchema, type SiteConfig } from './validations/site';
+import { BkuTransactionSchema, type BkuTransaction } from './validations/bku';
+import { PerangkatDesaSchema, type PerangkatDesa, SuratKeluarSchema, type SuratKeluar } from './validations/admin';
+import { TanahDesaSchema, type TanahDesa } from './validations/aset';
 
 // Singleton pattern to prevent multiple instances
 let pb: PocketBase;
 
+const PB_URL = process.env.NEXT_PUBLIC_POCKETBASE_URL || "https://db-desa.sumberanyar.id";
+
 if (typeof window === "undefined") {
-    // Server-side
-    // Use public URL as fallback if env var is missing (CRITICAL for Netlify/Vercel if env var not set)
-    pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || "https://db-bmtnulmj.sagamuda.cloud");
+    pb = new PocketBase(PB_URL);
 } else {
-    // Client-side
     if (!(window as any).pb) {
-        (window as any).pb = new PocketBase(process.env.NEXT_PUBLIC_POCKETBASE_URL || "https://db-bmtnulmj.sagamuda.cloud");
+        (window as any).pb = new PocketBase(PB_URL);
     }
     pb = (window as any).pb;
 }
 
-// Global Auth Store auto-sync
 pb.autoCancellation(false);
 
 export { pb };
 
-export async function getSiteConfig(): Promise<any> {
-    try {
-        const records = await pb.collection('site_config').getList(1, 1);
-        return records.items[0] || {};
-    } catch (e) {
-        // Fallback if no config exists yet (should be seeded though)
-        console.warn("getSiteConfig failed", e);
-        return {};
+/**
+ * Strict Typed Accessors
+ */
+export const db = {
+  siteConfig: {
+    get: async () => {
+      const record = await pb.collection('profil_desa').getFirstListItem("");
+      return SiteConfigSchema.parse(record);
     }
-}
+  },
+  bku: {
+    list: async (page = 1, perPage = 50, filter = "") => {
+      const result = await pb.collection('bku_transaksi').getList(page, perPage, { filter, sort: '-tanggal' });
+      return {
+        ...result,
+        items: result.items.map((item: any) => BkuTransactionSchema.parse(item))
+      };
+    },
+    create: async (data: BkuTransaction) => {
+      const validated = BkuTransactionSchema.parse(data);
+      const record = await pb.collection('bku_transaksi').create(validated);
+      return BkuTransactionSchema.parse(record);
+    }
+  },
+  surat: {
+    list: async (page = 1, perPage = 50) => {
+      const result = await pb.collection('surat_keluar').getList(page, perPage, { sort: '-nomor_agenda' });
+      return {
+        ...result,
+        items: result.items.map((item: any) => SuratKeluarSchema.parse(item))
+      };
+    }
+  },
+  perangkat: {
+    listActive: async () => {
+      const result = await pb.collection('perangkat_desa').getFullList({ filter: 'is_active = true' });
+      return result.map((item: any) => PerangkatDesaSchema.parse(item));
+    }
+  }
+};
 
-export interface SearchResult {
-    id: string;
-    collectionId: string;
-    title: string;
-    description: string;
-    thumbnail: string;
-    type: 'produk' | 'berita';
-    url: string;
-    created: string;
-}
+/**
+ * Legacy/Helper Accessors
+ */
+export const getSiteConfig = () => db.siteConfig.get();
 
-export async function searchContent(query: string): Promise<SearchResult[]> {
-    if (!query || query.length < 2) return [];
+export const searchContent = async (query: string) => {
+    if (!query) return [];
 
     try {
-        const [products, news] = await Promise.all([
-            pb.collection('products').getList(1, 10, {
-                filter: `name ~ "${query}" || description ~ "${query}"`,
-                sort: '-created'
-            }),
+        const [news, products] = await Promise.all([
             pb.collection('news').getList(1, 10, {
                 filter: `title ~ "${query}" || content ~ "${query}"`,
+                sort: '-created'
+            }),
+            pb.collection('products').getList(1, 10, {
+                filter: `name ~ "${query}" || description ~ "${query}"`,
                 sort: '-created'
             })
         ]);
 
-        const formatProduct = (item: any): SearchResult => ({
+        const newsResults = news.items.map((item: any) => ({
             id: item.id,
-            collectionId: item.collectionId,
-            title: item.name,
-            description: item.description?.replace(/<[^>]*>/g, '').substring(0, 150) || "",
-            thumbnail: item.icon ? item.icon : "", // Products might use 'icon' or 'image' depending on schema, usually 'icon' for BMT products
-            type: 'produk',
-            url: `/produk/${item.slug}`,
-            created: item.created
-        });
-
-        const formatNews = (item: any): SearchResult => ({
-            id: item.id,
-            collectionId: item.collectionId,
             title: item.title,
-            description: item.content?.replace(/<[^>]*>/g, '').substring(0, 150) || "",
+            description: item.content?.replace(/<[^>]*>/g, '').substring(0, 160) + "...",
             thumbnail: item.thumbnail,
-            type: 'berita',
             url: `/berita/${item.slug}`,
+            type: 'berita' as const,
             created: item.created
-        });
+        }));
 
-        return [
-            ...products.items.map(formatProduct),
-            ...news.items.map(formatNews)
-        ].sort((a, b) => new Date(b.created).getTime() - new Date(a.created).getTime());
+        const productResults = products.items.map((item: any) => ({
+            id: item.id,
+            title: item.name,
+            description: item.description,
+            thumbnail: item.icon_name || item.thumbnail,
+            url: `/layanan/${item.slug}`,
+            type: 'produk' as const,
+            created: item.created
+        }));
 
+        return [...newsResults, ...productResults];
     } catch (e) {
-        console.error("Search failed:", e);
+        console.error("Search Error:", e);
         return [];
     }
-}
+};

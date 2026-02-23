@@ -129,7 +129,7 @@ export default function SocialsPage() {
     // Filter feeds based on active tab
     const filteredFeeds = activeTab === "all"
         ? feeds
-        : feeds.filter(f => f.platform === activeTab);
+        : feeds.filter((f: any) => f.platform === activeTab);
 
     // Platform config for UI
     const platforms = [
@@ -216,7 +216,7 @@ export default function SocialsPage() {
                 </div>
             ) : filteredFeeds.length > 0 ? (
                 <div className="columns-1 md:columns-3 lg:columns-4 gap-4 space-y-4">
-                    {filteredFeeds.map((feed) => {
+                    {filteredFeeds.map((feed: any) => {
                         // Platform-specific styling
                         let aspectRatio = "aspect-[4/5]"; // Default vertical-ish
                         let cardStyle = "bg-white";

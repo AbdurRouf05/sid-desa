@@ -25,7 +25,10 @@ interface HeroSliderProps {
     slides: HeroSlide[];
 }
 
+import { useUiLabels } from "@/components/providers/ui-labels-provider";
+
 export function HeroSlider({ slides }: HeroSliderProps) {
+    const { getLabel } = useUiLabels();
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isMounted, setIsMounted] = useState(false);
 
@@ -151,10 +154,10 @@ export function HeroSlider({ slides }: HeroSliderProps) {
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: isMounted ? 0.3 : 0, duration: 0.5 }}
-                                            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-gold text-sm font-bold tracking-wide"
+                                            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-desa-accent text-sm font-bold tracking-wide"
                                         >
-                                            <span className="w-2 h-2 rounded-full bg-gold animate-pulse"></span>
-                                            BMT NU LUMAJANG
+                                            <span className="w-2 h-2 rounded-full bg-desa-accent animate-pulse"></span>
+                                            {getLabel('hero_badge_text', 'SID SUMBERANYAR')}
                                         </motion.div>
 
                                         <motion.h1
@@ -204,7 +207,7 @@ export function HeroSlider({ slides }: HeroSliderProps) {
                         <button
                             key={i}
                             onClick={() => setCurrentSlide(i)}
-                            className={`h-1.5 rounded-full transition-all duration-500 ${i === currentSlide ? 'w-12 bg-gold' : 'w-3 bg-white/30 hover:bg-white/50'}`}
+                            className={`h-1.5 rounded-full transition-all duration-500 ${i === currentSlide ? 'w-12 bg-desa-accent' : 'w-3 bg-white/30 hover:bg-white/50'}`}
                         />
                     ))}
                 </div>

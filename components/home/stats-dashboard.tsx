@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Banknote, Users, ShieldCheck } from "lucide-react";
+import { MapPin, Users, Landmark } from "lucide-react";
 import { useUiLabels } from "@/components/providers/ui-labels-provider";
 
 interface StatsDashboardProps {
@@ -18,33 +18,33 @@ export function StatsDashboard({ stats }: StatsDashboardProps) {
     return (
         <section className="relative z-30 -mt-24 px-4 pb-12">
             <div className="container mx-auto">
-                <div className="bg-white rounded-2xl shadow-xl p-6 md:p-10 border-b-4 border-gold">
+                <div className="bg-white rounded-2xl shadow-xl p-6 md:p-10 border-b-4 border-desa-accent">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-100">
                         <div className="flex items-center gap-4 px-4">
-                            <div className="p-3 rounded-full bg-emerald-50 text-emerald-700">
-                                <Banknote className="w-8 h-8" />
+                            <div className="p-3 rounded-full bg-desa-primary/10 text-desa-primary">
+                                <MapPin className="w-8 h-8" />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-bold uppercase tracking-wider">{getLabel('stat_branches_label', 'Titik Layanan')}</p>
-                                <h3 className="text-3xl font-black text-gray-900">{stats.branches} Kantor</h3>
+                                <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">{getLabel('stat_branches_label', 'Wilayah Dusun')}</p>
+                                <h3 className="text-3xl font-black text-slate-900">{stats.branches}</h3>
                             </div>
                         </div>
                         <div className="flex items-center gap-4 px-4 pt-4 md:pt-0">
-                            <div className="p-3 rounded-full bg-emerald-50 text-emerald-700">
+                            <div className="p-3 rounded-full bg-desa-primary/10 text-desa-primary">
                                 <Users className="w-8 h-8" />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-bold uppercase tracking-wider">{getLabel('stat_members_label', 'Anggota')}</p>
-                                <h3 className="text-3xl font-black text-gray-900">{stats.members} Orang</h3>
+                                <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">{getLabel('stat_members_label', 'Penduduk')}</p>
+                                <h3 className="text-3xl font-black text-slate-900">{stats.members} Jiwa</h3>
                             </div>
                         </div>
                         <div className="flex items-center gap-4 px-4 pt-4 md:pt-0">
-                            <div className="p-3 rounded-full bg-emerald-50 text-emerald-700">
-                                <ShieldCheck className="w-8 h-8" />
+                            <div className="p-3 rounded-full bg-desa-primary/10 text-desa-primary">
+                                <Landmark className="w-8 h-8" />
                             </div>
                             <div>
-                                <p className="text-sm text-gray-500 font-bold uppercase tracking-wider">{getLabel('stat_assets_label', 'Total Aset')}</p>
-                                <h3 className="text-3xl font-black text-gray-900">{stats.assets}</h3>
+                                <p className="text-sm text-gray-400 font-bold uppercase tracking-wider">{getLabel('stat_assets_label', 'Realisasi APBDes')}</p>
+                                <h3 className="text-3xl font-black text-slate-900">{stats.assets}</h3>
                             </div>
                         </div>
                     </div>

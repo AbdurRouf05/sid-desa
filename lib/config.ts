@@ -19,13 +19,13 @@ export interface SiteConfig {
 
 export const DEFAULT_SITE_CONFIG: SiteConfig = {
     id: "default",
-    company_name: "BMT NU Lumajang",
-    address: "Jln. Alun-alun Timur No. 3, Jogotrunan, Lumajang",
+    company_name: "Pemerintah Desa Sumberanyar",
+    address: "Jl. Raya Sumberanyar No. 1, Sumberanyar, Lumajang",
     phone_wa: "+62-812-3456-7890",
-    email_official: "info@bmtnu-lumajang.id",
-    total_assets: "28 M+",
-    total_members: "6.000+",
-    total_branches: "16",
+    email_official: "desa@sumberanyar.id",
+    total_assets: "Rp 2,5 M+", // Realisasi APBDes
+    total_members: "4.500+", // Jumlah Penduduk
+    total_branches: "4 Dusun", // Struktur Wilayah
     map_embed_url: "",
     logo_primary: "",
     logo_secondary: "",

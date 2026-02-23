@@ -41,8 +41,8 @@ const MENU_GROUPS = [
     {
         label: "Produk & Layanan",
         items: [
-            { href: "/panel/dashboard/produk", icon: ShoppingBag, label: "Produk Keuangan" },
-            { href: "/panel/dashboard/cabang", icon: MapPin, label: "Kantor Cabang" },
+            { href: "/panel/dashboard/produk", icon: ShoppingBag, label: "Layanan Desa" },
+            { href: "/panel/dashboard/cabang", icon: MapPin, label: "Wilayah Dusun" },
         ]
     },
     {
@@ -95,7 +95,7 @@ export function AdminSidebar({ collapsed, setCollapsed, mobileOpen = false, setM
                 <div className="relative z-10 flex flex-col h-full">
                     {/* Header */}
                     <div className="h-16 flex items-center justify-between px-4 bg-emerald-900/50 border-b border-emerald-800 backdrop-blur-sm">
-                        {!collapsed && <span className="font-bold text-lg tracking-tight text-white">BMT Panel</span>}
+                        {!collapsed && <span className="font-bold text-lg tracking-tight text-white">Admin Panel</span>}
                         <button
                             onClick={() => setCollapsed(!collapsed)}
                             className="hidden md:block p-2 hover:bg-emerald-800 rounded-lg text-emerald-200 hover:text-white transition-colors ml-auto"
@@ -177,6 +177,7 @@ export function AdminSidebar({ collapsed, setCollapsed, mobileOpen = false, setM
                                     <p className="text-sm font-bold text-white truncate" title={pb.authStore.model?.email}>
                                         {pb.authStore.model?.email ? (() => {
                                             const email = pb.authStore.model.email;
+                                            if (email === "admin@sumberanyar.id") return "Admin Desa";
                                             const [name, domain] = email.split('@');
                                             const maskedName = name.length > 2
                                                 ? `${name[0]}*****${name[name.length - 1]}`

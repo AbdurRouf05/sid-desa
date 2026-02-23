@@ -43,7 +43,7 @@ export function ProductsShowcase({ products = [] }: ProductsShowcaseProps) {
         if (iconName.length < 4) return <span className="text-2xl">{iconName}</span>;
 
         const IconComponent = (LucideIcons as any)[iconName];
-        if (IconComponent) return <IconComponent className="w-8 h-8 text-emerald-700" />;
+        if (IconComponent) return <IconComponent className="w-8 h-8 text-desa-primary" />;
 
         return <span className="text-2xl">✨</span>;
     };
@@ -51,45 +51,29 @@ export function ProductsShowcase({ products = [] }: ProductsShowcaseProps) {
     // Helper to get Card Color
     const getCardColor = (product: any) => {
         const type = (product.product_type || "").toLowerCase();
-        const schema = (product.schema_type || "");
-        const slug = (product.slug || "").toLowerCase();
-        const name = (product.name || "").toLowerCase();
-
-        // 1. Deposito / Investment (Gold)
-        if (schema === "DepositAccount" || slug.includes('deposito') || name.includes('deposito') || name.includes('berjangka')) {
-            return "gold";
+        
+        if (type === "program" || type === "info") {
+            return "gold"; // Accent
         }
 
-        // 2. Pembiayaan / Financing (Blue)
-        if (type === "pembiayaan" || schema === "LoanOrCredit" || slug.includes('pembiayaan') || name.includes('pembiayaan')) {
-            return "blue";
-        }
-
-        // 3. Simpanan / Savings (Emerald)
-        if (type === "simpanan" || schema === "SavingsAccount" || slug.includes('tabungan') || name.includes('tabungan')) {
-            return "emerald";
-        }
-
-        return "emerald"; // Default to Emerald as it's the primary brand color
+        return "emerald"; // Primary
     };
 
     // Default products if none provided
     const displayProducts = products.length > 0 ? products : [
         {
-            name: 'Tabungan SIRELA',
-            icon_name: '💰',
-            product_type: 'simpanan',
-            schema_type: 'SavingsAccount',
-            description: 'Simpanan Sukarela yang likuid, setor dan tarik kapan saja.',
-            cta: 'Buka Rekening'
+            name: 'Surat Keterangan Mandiri',
+            icon_name: 'FileText',
+            product_type: 'layanan',
+            description: 'Buat berbagai surat keterangan kependudukan secara mandiri melalui portal desa.',
+            cta: 'Mulai Layanan'
         },
         {
-            name: 'Pembiayaan Produktif',
-            icon_name: '📈',
-            product_type: 'pembiayaan',
-            schema_type: 'LoanOrCredit',
-            description: 'Tambahan modal usaha dengan akad adil dan bebas riba.',
-            cta: 'Ajukan Modal'
+            name: 'Penyaluran BLT-DD',
+            icon_name: 'HeartHandshake',
+            product_type: 'program',
+            description: 'Transparansi data penerima bantuan langsung tunai dana desa (BLT-DD) bagi warga yang berhak.',
+            cta: 'Cek Penerima'
         }
     ];
 
@@ -97,8 +81,8 @@ export function ProductsShowcase({ products = [] }: ProductsShowcaseProps) {
         <section className="py-20 bg-slate-50 overflow-hidden">
             <div className="container mx-auto px-4 mb-12">
                 <div className="text-center max-w-2xl mx-auto">
-                    <h2 className="text-3xl font-bold text-emerald-950">{getLabel('section_products_title', 'Produk Unggulan')}</h2>
-                    <p className="text-slate-600 mt-2">{getLabel('section_products_subtitle', 'Solusi keuangan terbaik pilihan anggota.')}</p>
+                    <h2 className="text-3xl font-bold text-desa-primary-dark font-heading">{getLabel('section_products_title', 'Layanan & Program Desa')}</h2>
+                    <p className="text-slate-600 mt-2">{getLabel('section_products_subtitle', 'Terus bergerak maju bersama seluruh warga Sumberanyar.')}</p>
                 </div>
             </div>
 
@@ -126,44 +110,40 @@ export function ProductsShowcase({ products = [] }: ProductsShowcaseProps) {
                                         {/* Info Badge - Refined Logic */}
                                         <div className={cn(
                                             "p-3 rounded-xl border border-dashed",
-                                            getCardColor(product) === 'emerald' ? "bg-emerald-50/50 border-emerald-200" :
-                                                getCardColor(product) === 'blue' ? "bg-blue-50/50 border-blue-200" :
-                                                    "bg-amber-50/50 border-amber-200"
+                                            getCardColor(product) === 'emerald' ? "bg-desa-primary/5 border-desa-primary/20" :
+                                                "bg-desa-accent/5 border-desa-accent/20"
                                         )}>
                                             <p className={cn(
                                                 "text-[10px] font-bold uppercase tracking-wider mb-0.5 opacity-70",
-                                                getCardColor(product) === 'emerald' ? "text-emerald-700" :
-                                                    getCardColor(product) === 'blue' ? "text-blue-700" :
-                                                        "text-amber-700"
+                                                getCardColor(product) === 'emerald' ? "text-desa-primary" :
+                                                    "text-desa-accent-dark"
                                             )}>
-                                                {product.product_type === 'simpanan' ? "Min. Setoran" : "Akad Utama"}
+                                                {product.product_type === 'layanan' ? "Metode" : "Status Program"}
                                             </p>
                                             <p className={cn(
                                                 "text-sm font-bold",
-                                                getCardColor(product) === 'emerald' ? "text-emerald-900" :
-                                                    getCardColor(product) === 'blue' ? "text-blue-900" :
-                                                        "text-amber-900"
+                                                getCardColor(product) === 'emerald' ? "text-desa-primary-dark" :
+                                                    "text-desa-accent-dark"
                                             )}>
-                                                {product.product_type === 'simpanan'
-                                                    ? (product.min_deposit && product.min_deposit !== "0" ? formatRupiah(product.min_deposit) : "Ringan & Mudah")
-                                                    : (product.sharia_contract || "Syariah")
+                                                {product.product_type === 'layanan'
+                                                    ? "Layanan Digital / Tatap Muka"
+                                                    : "Berjalan / Tahunan"
                                                 }
                                             </p>
                                         </div>
 
                                         <TactileButton
                                             as="a"
-                                            href={product.slug ? `/produk/${product.slug}` : "/produk"}
+                                            href={product.slug ? `/layanan/${product.slug}` : "/layanan"}
                                             fullWidth
                                             className={cn(
                                                 "text-white shadow-lg border-b-4",
-                                                getCardColor(product) === "emerald" ? "bg-emerald-600 hover:bg-emerald-700 border-emerald-900 shadow-emerald-900/10" :
-                                                    getCardColor(product) === "blue" ? "bg-blue-600 hover:bg-blue-700 border-blue-900 shadow-blue-900/10" :
-                                                        getCardColor(product) === "gold" ? "bg-amber-500 hover:bg-amber-600 border-amber-800 shadow-amber-900/10" :
-                                                            "bg-emerald-700 hover:bg-emerald-800 border-emerald-900"
+                                                getCardColor(product) === "emerald" 
+                                                    ? "bg-desa-primary hover:bg-desa-primary-dark border-desa-primary-dark shadow-desa-primary/10" 
+                                                    : "bg-desa-accent hover:bg-desa-accent-dark border-desa-accent-dark shadow-desa-accent/10"
                                             )}
                                         >
-                                            {getLabel('btn_view_detail', 'Lihat Detail')}
+                                            {product.cta || getLabel('btn_view_detail', 'Lihat Detail')}
                                         </TactileButton>
 
                                         {product.thumbnail && (
