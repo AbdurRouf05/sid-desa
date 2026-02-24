@@ -48,7 +48,7 @@ export function SocialAddModal({ isOpen, onClose, platform, profileUrl, initialD
     useEffect(() => {
         if (isOpen) {
             if (initialData) {
-                const baseUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || "https://db-bmtnulmj.sagamuda.cloud";
+                const baseUrl = process.env.NEXT_PUBLIC_POCKETBASE_URL || "https://sid-magang.sagamuda.cloud";
                 setUrl(initialData.url || "");
                 setCaption(initialData.caption || "");
 

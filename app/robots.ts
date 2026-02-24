@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
             allow: '/',
             disallow: '/panel/',
         },
-        sitemap: 'https://bmtnulumajang.id/sitemap.xml',
+        sitemap: `${process.env.NEXT_PUBLIC_APP_URL || 'http://sumberanyar.local:3000'}/sitemap.xml`,
     };
 }

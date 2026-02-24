@@ -23,26 +23,26 @@ const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", displa
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getSiteConfig();
 
-  const title = config?.company_name || "BMT NU Lumajang";
-  const desc = "KSPPS BMT NU Lumajang: Mitra Keuangan Syariah Terpercaya. Melayani Simpanan, Pembiayaan, dan Haji Umroh dengan prinsip syariah yang transparan dan amanah.";
+  const title = config?.company_name || "SID Sumberanyar";
+  const desc = "Sistem Informasi Desa (SID) Sumberanyar: Portal resmi Desa Sumberanyar, Kec. Nguling, Kab. Pasuruan. Layanan administrasi, informasi publik, dan transparansi pemerintahan desa.";
 
   return {
-    metadataBase: new URL("https://bmtnulmj.id"), // Start of dynamic URL or use canonical
+    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://sumberanyar.local:3000"),
     title: {
       template: `%s | ${title}`,
-      default: `${title} - Mudah, Murah, Berkah`,
+      default: `${title} - Portal Desa Digital`,
     },
     description: desc,
-    keywords: ["BMT NU", "Koperasi Syariah Lumajang", "Simpanan Syariah", "Pembiayaan UMKM", "Tabungan Haji Lumajang", title],
+    keywords: ["SID Sumberanyar", "Desa Sumberanyar", "Pemerintah Desa", "Kecamatan Nguling", "Kabupaten Pasuruan", "Sistem Informasi Desa", title],
     openGraph: {
       type: "website",
       locale: "id_ID",
-      url: "https://bmtnu-lumajang.id",
+      url: process.env.NEXT_PUBLIC_APP_URL || "http://sumberanyar.local:3000",
       siteName: title,
-      title: `${title} - Mudah, Murah, Berkah`,
+      title: `${title} - Portal Desa Digital`,
       description: desc,
       images: [{
-        url: config?.og_image ? pb.files.getURL(config, config.og_image) : "https://bmtnu-lumajang.id/og-image.jpg",
+        url: config?.og_image ? pb.files.getURL(config, config.og_image) : "/og-image.jpg",
         width: 1200,
         height: 630,
         alt: title
@@ -64,31 +64,27 @@ export default async function RootLayout({
   const config = await getSiteConfig();
 
   const orgSchema = {
-    name: config?.company_name || "KSPPS BMT NU Lumajang",
-    alternateName: "BMT NU Lumajang",
-    url: "https://bmtnu-lumajang.id",
-    logo: "https://bmtnu-lumajang.id/logo.png",
-    description: "Lembaga keuangan syariah yang mandiri, sehat, dan kuat milik PCNU Lumajang.",
+    name: config?.company_name || "Pemerintah Desa Sumberanyar",
+    alternateName: "SID Sumberanyar",
+    url: process.env.NEXT_PUBLIC_APP_URL || "http://sumberanyar.local:3000",
+    logo: "/logo.png",
+    description: "Portal resmi Sistem Informasi Desa (SID) Sumberanyar, Kecamatan Nguling, Kabupaten Pasuruan, Jawa Timur.",
     contactPoint: {
       "@type": "ContactPoint",
       telephone: config?.phone_wa || "+62-812-3456-7890",
-      contactType: "Customer Service",
+      contactType: "Pelayanan Masyarakat",
       areaServed: "ID",
       availableLanguage: ["Indonesian", "Javanese"]
     },
     address: {
       "@type": "PostalAddress",
-      streetAddress: config?.address || "Jln. Alun-alun Timur No. 3, Jogotrunan",
-      addressLocality: "Lumajang",
+      streetAddress: config?.address || "Jl. Raya Sumberanyar No. 1",
+      addressLocality: "Nguling",
       addressRegion: "Jawa Timur",
-      postalCode: "67316",
+      postalCode: "67171",
       addressCountry: "ID"
     },
-    sameAs: config?.social_links ? Object.values(config.social_links) : [
-      "https://facebook.com/bmtnulumajang",
-      "https://instagram.com/bmtnulumajang",
-      "https://youtube.com/@bmtnulumajang"
-    ]
+    sameAs: config?.social_links ? Object.values(config.social_links) : []
   };
 
   return (

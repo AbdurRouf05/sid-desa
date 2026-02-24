@@ -104,11 +104,11 @@ async function addWatermark(imageBlob: Blob, logoUrl?: string): Promise<Blob> {
             ctx.textAlign = 'left';
             ctx.textBaseline = 'bottom';
 
-            ctx.fillText("bmtnulumajang.id", x, y - (fontSize * 0.2));
+            ctx.fillText("sumberanyar.id", x, y - (fontSize * 0.2));
 
-            // Optional: Draw smaller text below or above if needed, but user asked for just address
+            // Optional: Draw smaller text below or above if needed
             // ctx.font = `${Math.floor(fontSize * 0.7)}px sans-serif`;
-            // ctx.fillText("BMT NU Lumajang", x, y - fontSize - 5);
+            // ctx.fillText("Desa Sumberanyar", x, y - fontSize - 5);
 
             canvas.toBlob((blob) => {
                 if (blob) {

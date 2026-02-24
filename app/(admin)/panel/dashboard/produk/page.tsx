@@ -89,7 +89,7 @@ export default function AdminProductsPage() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900">Produk & Layanan</h1>
-                    <p className="text-slate-500">Kelola produk simpanan dan pembiayaan BMT NU.</p>
+                    <p className="text-slate-500">Kelola layanan dan informasi publik Desa Sumberanyar.</p>
                 </div>
                 <Link
                     href="/panel/dashboard/produk/baru"

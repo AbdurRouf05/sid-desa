@@ -189,7 +189,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         {query.length < 2 && (
                             <div className="flex flex-col items-center justify-center py-20 text-white/20">
                                 <SearchSlash className="w-16 h-16 mb-4 opacity-10" />
-                                <p className="text-center max-w-sm">Ketikkan kata kunci untuk mencari tabungan, pinjaman, atau berita terbaru dari BMT NU Lumajang.</p>
+                                <p className="text-center max-w-sm">Ketikkan kata kunci untuk mencari layanan, berita, atau informasi terbaru dari Desa Sumberanyar.</p>
                             </div>
                         )}
                     </div>
@@ -197,7 +197,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                     {/* Branding Logo Overlay */}
                     {logoUrl && (
                         <div className="fixed bottom-10 right-10 pointer-events-none opacity-20 select-none hidden md:block">
-                            <img src={logoUrl} alt="BMT NU Branding" className="w-48 h-auto grayscale brightness-200" />
+                            <img src={logoUrl} alt="SID Sumberanyar" className="w-48 h-auto grayscale brightness-200" />
                         </div>
                     )}
                 </motion.div>

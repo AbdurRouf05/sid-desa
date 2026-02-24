@@ -29,7 +29,7 @@ export function ShareButton({ title, url }: ShareButtonProps) {
             try {
                 await navigator.share({
                     title: title,
-                    text: `Baca berita terbaru dari BMT NU Lumajang: ${title}`,
+                    text: `Baca berita terbaru dari SID Sumberanyar: ${title}`,
                     url: url || window.location.href,
                 });
             } catch (err) {

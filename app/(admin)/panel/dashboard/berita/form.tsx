@@ -241,7 +241,7 @@ export default function NewsEditorPage({ isEdit = false }: { isEdit?: boolean })
                                     onClick={async () => {
                                         const contentText = watch("content")?.replace(/<[^>]*>?/gm, "") || "";
                                         const prompt = `Bertindaklah sebagai SEO Specialist. Tolong buatkan:
-1. SEO Title (Max 60 chars, mengandung keyword, akhiri dengan "| BMT NU Lumajang").
+1. SEO Title (Max 60 chars, mengandung keyword, akhiri dengan "| SID Sumberanyar").
 2. SEO Description (Max 150 chars, ringkasan masalah + solusi + CTA).
 
 Untuk artikel berikut:

@@ -199,7 +199,7 @@ export function BranchForm({ initialData, isEdit }: BranchFormProps) {
                             }
 
                             // 2. Fallback: Generate Search Embed based on Name + Address
-                            return `https://maps.google.com/maps?q=${encodeURIComponent((name || "") + " " + (address || "") + " Lumajang")}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
+                            return `https://maps.google.com/maps?q=${encodeURIComponent((name || "") + " " + (address || "") + " Pasuruan")}&t=&z=15&ie=UTF8&iwloc=&output=embed`;
                         })()}
                         className="absolute inset-0"
                         frameBorder="0"

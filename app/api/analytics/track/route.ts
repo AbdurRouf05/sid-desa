@@ -4,7 +4,7 @@ import crypto from "crypto";
 
 // --- PRIVACY & SECURITY CONFIG ---
 // We use a daily rotating salt to ensure hashes cannot be reversed or linked across days.
-const SALT_SECRET = process.env.ANALYTICS_SALT || "bmt-nu-secret-salt-v1";
+const SALT_SECRET = process.env.ANALYTICS_SALT || "sid-secret-salt-v1";
 
 function getDailyHash(ip: string, userAgent: string, path: string): string {
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD

@@ -23,9 +23,9 @@ export function Navbar() {
 
     const navLinks = [
         { href: "/", label: "Beranda" },
-        { href: "/produk", label: "Produk" },
+        { href: "/layanan", label: "Layanan" },
         { href: "/berita", label: "Berita" },
-        { href: "/tentang", label: "Tentang Kami" },
+        { href: "/tentang-kami", label: "Tentang Desa" },
     ];
 
     const isActive = (path: string) => pathname === path;
@@ -43,14 +43,14 @@ export function Navbar() {
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2">
                     <div className="w-10 h-10 bg-bmt-green-700 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                        NU
+                        S
                     </div>
                     <div className="flex flex-col">
                         <span className={cn("font-bold text-lg leading-none", isScrolled ? "text-bmt-green-900" : "text-bmt-green-900 md:text-white")}>
-                            BMT NU
+                            SID
                         </span>
                         <span className={cn("text-xs font-medium", isScrolled ? "text-bmt-green-700" : "text-bmt-green-200")}>
-                            Lumajang
+                            Sumberanyar
                         </span>
                     </div>
                 </Link>
@@ -78,7 +78,7 @@ export function Navbar() {
                 {/* CTA Button */}
                 <div className="hidden md:block">
                     <Button variant={isScrolled ? "default" : "gold"} size="sm">
-                        Daftar Anggota
+                        Kontak Desa
                     </Button>
                 </div>
 
@@ -104,7 +104,7 @@ export function Navbar() {
                             {link.label}
                         </Link>
                     ))}
-                    <Button className="w-full">Daftar Anggota</Button>
+                    <Button className="w-full">Kontak Desa</Button>
                 </div>
             )}
         </nav>

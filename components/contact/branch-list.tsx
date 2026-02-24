@@ -104,7 +104,7 @@ export function BranchList() {
 
                                     {/* Maps Button (No API, Deep Link) */}
                                     <a
-                                        href={branch.map_link || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("BMT NU Lumajang " + branch.name + " " + branch.address)}`}
+                                        href={branch.map_link || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent("Desa Sumberanyar " + branch.name + " " + branch.address)}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg border border-slate-200 text-slate-600 font-semibold text-sm hover:border-blue-300 hover:text-blue-600 hover:bg-blue-50 transition-all"

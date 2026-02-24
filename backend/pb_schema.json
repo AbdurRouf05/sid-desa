@@ -1,594 +1,128 @@
 [
     {
-        "id": "pbc_site_config",
         "name": "site_config",
         "type": "base",
         "system": false,
-        "schema": [
-            {
-                "system": false,
-                "id": "field_company",
-                "name": "company_name",
-                "type": "text",
-                "required": true,
-                "presentable": true,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "field_nib",
-                "name": "nib",
-                "type": "text",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "field_address",
-                "name": "address",
-                "type": "text",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "field_phone_wa",
-                "name": "phone_wa",
-                "type": "text",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "field_email",
-                "name": "email_official",
-                "type": "email",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "exceptDomains": [],
-                    "onlyDomains": []
-                }
-            },
-            {
-                "system": false,
-                "id": "field_hero_title",
-                "name": "hero_title",
-                "type": "text",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "field_welcome",
-                "name": "welcome_text",
-                "type": "editor",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "convertUrls": false
-                }
-            },
-            {
-                "system": false,
-                "id": "field_vid_profile",
-                "name": "video_profile_url",
-                "type": "url",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "exceptDomains": [],
-                    "onlyDomains": []
-                }
-            },
-            {
-                "system": false,
-                "id": "field_maint_mode",
-                "name": "maintenance_mode",
-                "type": "bool",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {}
-            },
-            {
-                "system": false,
-                "id": "field_theme",
-                "name": "theme_config",
-                "type": "json",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "maxSize": 2000000
-                }
-            },
-            {
-                "system": false,
-                "id": "field_socials",
-                "name": "social_links",
-                "type": "json",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "maxSize": 2000000
-                }
-            }
-        ],
-        "indexes": [],
-        "listRule": "",
-        "viewRule": "",
-        "createRule": null,
-        "updateRule": "@request.auth.id != ''",
-        "deleteRule": null,
-        "options": {}
-    },
-    {
-        "id": "pbc_social_feeds",
-        "name": "social_feeds",
-        "type": "base",
-        "system": false,
-        "schema": [
-            {
-                "system": false,
-                "id": "field_platform",
-                "name": "platform",
-                "type": "select",
-                "required": true,
-                "presentable": true,
-                "unique": false,
-                "options": {
-                    "maxSelect": 1,
-                    "values": [
-                        "tiktok",
-                        "instagram",
-                        "youtube",
-                        "facebook"
-                    ]
-                }
-            },
-            {
-                "system": false,
-                "id": "field_url",
-                "name": "url",
-                "type": "url",
-                "required": true,
-                "presentable": true,
-                "unique": false,
-                "options": {
-                    "exceptDomains": [],
-                    "onlyDomains": []
-                }
-            },
-            {
-                "system": false,
-                "id": "field_embed",
-                "name": "embed_code",
-                "type": "text",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "field_caption",
-                "name": "caption",
-                "type": "text",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "field_active",
-                "name": "is_active",
-                "type": "bool",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {}
-            }
-        ],
-        "indexes": [],
-        "listRule": "is_active = true",
-        "viewRule": "is_active = true",
-        "createRule": "@request.auth.id != ''",
-        "updateRule": "@request.auth.id != ''",
-        "deleteRule": "@request.auth.id != ''",
-        "options": {}
-    },
-    {
-        "id": "pbc_products",
-        "name": "products",
-        "type": "base",
-        "system": false,
-        "schema": [
-            {
-                "system": false,
-                "id": "field_name",
-                "name": "name",
-                "type": "text",
-                "required": true,
-                "presentable": true,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "field_slug",
-                "name": "slug",
-                "type": "text",
-                "required": true,
-                "presentable": true,
-                "unique": true,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "field_type",
-                "name": "type",
-                "type": "select",
-                "required": true,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "maxSelect": 1,
-                    "values": [
-                        "saving",
-                        "financing",
-                        "gold"
-                    ]
-                }
-            },
-            {
-                "system": false,
-                "id": "field_desc",
-                "name": "description",
-                "type": "editor",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "convertUrls": false
-                }
-            },
-            {
-                "system": false,
-                "id": "field_icon",
-                "name": "icon",
-                "type": "file",
-                "required": false,
-                "presentable": true,
-                "unique": false,
-                "options": {
-                    "mimeTypes": [
-                        "image/png",
-                        "image/jpeg",
-                        "image/svg+xml"
-                    ],
-                    "thumbs": [],
-                    "maxSelect": 1,
-                    "maxSize": 5242880,
-                    "protected": false
-                }
-            },
-            {
-                "system": false,
-                "id": "field_featured",
-                "name": "is_featured",
-                "type": "bool",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {}
-            }
-        ],
-        "indexes": [
-            "CREATE UNIQUE INDEX `idx_product_slug` ON `products` (`slug`)"
+        "fields": [
+            { "name": "company_name", "type": "text", "required": true, "presentable": true },
+            { "name": "nib", "type": "text" },
+            { "name": "address", "type": "text" },
+            { "name": "phone_wa", "type": "text" },
+            { "name": "email_official", "type": "email" },
+            { "name": "welcome_text", "type": "editor" },
+            { "name": "total_members", "type": "text" },
+            { "name": "total_assets", "type": "text" }
         ],
         "listRule": "",
         "viewRule": "",
-        "createRule": "@request.auth.id != ''",
-        "updateRule": "@request.auth.id != ''",
-        "deleteRule": "@request.auth.id != ''",
-        "options": {}
+        "updateRule": "@request.auth.id != ''"
     },
     {
-        "id": "pbc_news",
         "name": "news",
         "type": "base",
         "system": false,
-        "schema": [
-            {
-                "system": false,
-                "id": "field_title",
-                "name": "title",
-                "type": "text",
-                "required": true,
-                "presentable": true,
-                "unique": false,
-                "options": {
-                    "min": 5,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "field_slug",
-                "name": "slug",
-                "type": "text",
-                "required": true,
-                "presentable": false,
-                "unique": true,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "field_content",
-                "name": "content",
-                "type": "editor",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "convertUrls": false
-                }
-            },
-            {
-                "system": false,
-                "id": "field_thumb",
-                "name": "thumbnail",
-                "type": "file",
-                "required": false,
-                "presentable": true,
-                "unique": false,
-                "options": {
-                    "mimeTypes": [
-                        "image/jpeg",
-                        "image/png",
-                        "image/webp"
-                    ],
-                    "thumbs": [
-                        "400x300"
-                    ],
-                    "maxSelect": 1,
-                    "maxSize": 5242880,
-                    "protected": false
-                }
-            },
-            {
-                "system": false,
-                "id": "field_published",
-                "name": "published",
-                "type": "bool",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {}
-            }
+        "fields": [
+            { "name": "title", "type": "text", "required": true, "presentable": true },
+            { "name": "slug", "type": "text", "required": true, "unique": true },
+            { "name": "content", "type": "editor" },
+            { "name": "thumbnail", "type": "file", "options": { "maxSelect": 1 } },
+            { "name": "published", "type": "bool" },
+            { "name": "category", "type": "select", "options": { "maxSelect": 1, "values": ["Berita", "Pengumuman", "Kegiatan"] } }
         ],
-        "indexes": [
-            "CREATE UNIQUE INDEX `idx_news_slug` ON `news` (`slug`)"
-        ],
-        "listRule": "published = true",
-        "viewRule": "published = true",
+        "listRule": "",
+        "viewRule": "",
         "createRule": "@request.auth.id != ''",
-        "updateRule": "@request.auth.id != ''",
-        "deleteRule": "@request.auth.id != ''",
-        "options": {}
+        "updateRule": "@request.auth.id != ''"
     },
     {
-        "id": "pbc_hero",
         "name": "hero_banners",
         "type": "base",
         "system": false,
-        "schema": [
-            {
-                "system": false,
-                "id": "field_title",
-                "name": "title",
-                "type": "text",
-                "required": true,
-                "presentable": true,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "field_subtitle",
-                "name": "subtitle",
-                "type": "text",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "field_image",
-                "name": "image_desktop",
-                "type": "file",
-                "required": true,
-                "presentable": true,
-                "unique": false,
-                "options": {
-                    "mimeTypes": [
-                        "image/jpeg",
-                        "image/png",
-                        "image/webp"
-                    ],
-                    "thumbs": [],
-                    "maxSelect": 1,
-                    "maxSize": 5242880,
-                    "protected": false
-                }
-            },
-            {
-                "system": false,
-                "id": "field_active",
-                "name": "active",
-                "type": "bool",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {}
-            },
-            {
-                "system": false,
-                "id": "field_order",
-                "name": "order",
-                "type": "number",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "noDecimal": true
-                }
-            }
+        "fields": [
+            { "name": "title", "type": "text", "required": true },
+            { "name": "subtitle", "type": "text" },
+            { "name": "image_desktop", "type": "file", "required": true, "options": { "maxSelect": 1 } },
+            { "name": "active", "type": "bool" }
         ],
-        "indexes": [],
-        "listRule": "active = true",
-        "viewRule": "active = true",
+        "listRule": "",
+        "viewRule": "",
         "createRule": "@request.auth.id != ''",
-        "updateRule": "@request.auth.id != ''",
-        "deleteRule": "@request.auth.id != ''",
-        "options": {}
+        "updateRule": "@request.auth.id != ''"
     },
     {
-        "id": "pbc_analytics",
-        "name": "analytics_events",
+        "name": "perangkat_desa",
         "type": "base",
         "system": false,
-        "schema": [
-            {
-                "system": false,
-                "id": "field_session",
-                "name": "session_id",
-                "type": "text",
-                "required": true,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "field_event",
-                "name": "event_type",
-                "type": "text",
-                "required": true,
-                "presentable": true,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "field_path",
-                "name": "path",
-                "type": "text",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "pattern": ""
-                }
-            },
-            {
-                "system": false,
-                "id": "field_duration",
-                "name": "duration",
-                "type": "number",
-                "required": false,
-                "presentable": false,
-                "unique": false,
-                "options": {
-                    "min": null,
-                    "max": null,
-                    "noDecimal": true
-                }
-            }
+        "fields": [
+            { "name": "nama", "type": "text", "required": true, "presentable": true },
+            { "name": "jabatan", "type": "text", "required": true },
+            { "name": "nip", "type": "text" },
+            { "name": "foto", "type": "file", "options": { "maxSelect": 1 } },
+            { "name": "is_active", "type": "bool" }
         ],
-        "indexes": [],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "@request.auth.id != ''",
+        "updateRule": "@request.auth.id != ''"
+    },
+    {
+        "name": "bku_transaksi",
+        "type": "base",
+        "system": false,
+        "fields": [
+            { "name": "type", "type": "select", "required": true, "options": { "maxSelect": 1, "values": ["masuk", "keluar", "pindah"] } },
+            { "name": "amount", "type": "number", "required": true },
+            { "name": "tanggal", "type": "date", "required": true },
+            { "name": "uraian", "type": "text", "required": true },
+            { "name": "bukti_foto", "type": "file", "options": { "maxSelect": 1 } }
+        ],
         "listRule": "@request.auth.id != ''",
         "viewRule": "@request.auth.id != ''",
-        "createRule": "",
-        "updateRule": null,
-        "deleteRule": null,
-        "options": {}
+        "createRule": "@request.auth.id != ''",
+        "updateRule": "@request.auth.id != ''"
+    },
+    {
+        "name": "pajak_log",
+        "type": "base",
+        "system": false,
+        "fields": [
+            { "name": "bku_id", "type": "relation", "required": true, "options": { "collectionId": "pbc_bku", "maxSelect": 1 } },
+            { "name": "jenis", "type": "select", "options": { "maxSelect": 1, "values": ["ppn", "pph"] } },
+            { "name": "nominal", "type": "number", "required": true },
+            { "name": "is_disetor", "type": "bool" }
+        ],
+        "listRule": "@request.auth.id != ''",
+        "viewRule": "@request.auth.id != ''",
+        "createRule": "@request.auth.id != ''",
+        "updateRule": "@request.auth.id != ''"
+    },
+    {
+        "name": "surat_keluar",
+        "type": "base",
+        "system": false,
+        "fields": [
+            { "name": "nomor_agenda", "type": "number" },
+            { "name": "kode_surat", "type": "text", "required": true },
+            { "name": "tujuan", "type": "text", "required": true },
+            { "name": "tanggal_surat", "type": "date", "required": true }
+        ],
+        "listRule": "@request.auth.id != ''",
+        "viewRule": "@request.auth.id != ''",
+        "createRule": "@request.auth.id != ''",
+        "updateRule": "@request.auth.id != ''"
+    },
+    {
+        "name": "tanah_desa",
+        "type": "base",
+        "system": false,
+        "fields": [
+            { "name": "lokasi", "type": "text", "required": true },
+            { "name": "luas_m2", "type": "number" },
+            { "name": "pemegang_hak", "type": "text" }
+        ],
+        "listRule": "",
+        "viewRule": "",
+        "createRule": "@request.auth.id != ''",
+        "updateRule": "@request.auth.id != ''"
     }
 ]

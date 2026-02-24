@@ -1,6 +1,6 @@
 {
-  "name": "web-bmtnulumajang",
-  "version": "0.1.0",
+  "name": "sid-magang",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev -p 3040",

@@ -20,7 +20,7 @@ export interface SiteConfig {
 export const DEFAULT_SITE_CONFIG: SiteConfig = {
     id: "default",
     company_name: "Pemerintah Desa Sumberanyar",
-    address: "Jl. Raya Sumberanyar No. 1, Sumberanyar, Lumajang",
+    address: "Jl. Raya Sumberanyar No. 1, Sumberanyar, Pasuruan",
     phone_wa: "+62-812-3456-7890",
     email_official: "desa@sumberanyar.id",
     total_assets: "Rp 2,5 M+", // Realisasi APBDes

@@ -84,7 +84,7 @@ export default function BeritaPage() {
                 <div className="relative z-10 max-w-3xl mx-auto">
                     <SectionHeading
                         title="Kabar & Artikel"
-                        subtitle="Informasi terbaru seputar kegiatan, edukasi keuangan syariah, dan promo menarik dari BMT NU Lumajang."
+                        subtitle="Informasi terbaru seputar kegiatan, pelayanan, dan pembangunan Desa Sumberanyar."
                         lightMode
                     />
 

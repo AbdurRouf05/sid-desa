@@ -74,8 +74,8 @@ export async function Footer() {
                         <h3 className="text-white font-bold text-lg font-heading">Pemerintahan</h3>
                         <ul className="space-y-2 text-slate-400">
                             <li><strong className="text-slate-300">Kepala Desa:</strong> {config.kepala_desa || "-"}</li>
-                            <li><strong className="text-slate-300">Kecamatan:</strong> Rowokangkung</li>
-                            <li><strong className="text-slate-300">Kabupaten:</strong> Lumajang</li>
+                            <li><strong className="text-slate-300">Kecamatan:</strong> Nguling</li>
+                            <li><strong className="text-slate-300">Kabupaten:</strong> Pasuruan</li>
                         </ul>
                         <div className="pt-4">
                             {/* Placeholder for OJK/Logo */}
@@ -92,7 +92,7 @@ export async function Footer() {
                         <ul className="space-y-4">
                             <li className="flex gap-3 items-start">
                                 <MapPin className="shrink-0 text-desa-accent mt-1" size={18} />
-                                <span className="text-slate-400 leading-snug">{config.alamat || "Lumajang, Jawa Timur"}</span>
+                                <span className="text-slate-400 leading-snug">{config.alamat || "Nguling, Pasuruan, Jawa Timur"}</span>
                             </li>
                             <li className="flex gap-3 items-center">
                                 <Phone className="shrink-0 text-desa-accent" size={18} />
@@ -100,7 +100,7 @@ export async function Footer() {
                             </li>
                             <li className="flex gap-3 items-center">
                                 <Mail className="shrink-0 text-desa-accent" size={18} />
-                                <span className="text-slate-400">{config.email_official || "desa-sumberanyar@lumajangkab.go.id"}</span>
+                                <span className="text-slate-400">{config.email_official || "desa-sumberanyar@pasuruankab.go.id"}</span>
                             </li>
                             <li className="flex gap-3 items-center">
                                 <Clock className="shrink-0 text-desa-accent" size={18} />

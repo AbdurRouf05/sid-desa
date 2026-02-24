@@ -65,12 +65,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     if (!record) return { title: 'Berita Tidak Ditemukan' };
 
     const excerpt = record.content.replace(/<[^>]*>?/gm, '').substring(0, 160);
-    const seoTitle = record.seo_title || `${record.title} - BMT NU Lumajang`;
+    const seoTitle = record.seo_title || `${record.title} - SID Sumberanyar`;
     const seoDesc = record.seo_desc || excerpt;
 
     const imageUrl = record.thumbnail
         ? getAssetUrl(record, record.thumbnail)
-        : "https://bmtnu-lumajang.id/og-default.jpg";
+        : "/og-default.jpg";
 
     return {
         title: seoTitle,
@@ -80,7 +80,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             description: seoDesc,
             type: 'article',
             publishedTime: record.created,
-            authors: ['BMT NU Lumajang'],
+            authors: ['SID Sumberanyar'],
             images: [{
                 url: imageUrl,
                 width: 1200,
@@ -119,8 +119,8 @@ export default async function NewsDetailPage({ params }: Props) {
         articleBody: record.content.replace(/<[^>]*>?/gm, ''), // Strip HTML for schema body
         author: [{
             "@type": "Organization", // or Person if we had author field
-            name: "BMT NU Lumajang",
-            url: "https://bmtnu-lumajang.id"
+            name: "SID Sumberanyar",
+            url: process.env.NEXT_PUBLIC_APP_URL || "http://sumberanyar.local:3000"
         }]
     };
 

@@ -16,7 +16,7 @@ export function ShareButton({ title, text, url, className }: ShareButtonProps) {
     const handleShare = async () => {
         const shareData = {
             title: title,
-            text: text || "Cek info menarik ini dari BMT NU Lumajang!",
+            text: text || "Cek info menarik ini dari SID Sumberanyar!",
             url: url || window.location.href,
         };
 

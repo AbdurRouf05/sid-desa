@@ -35,7 +35,7 @@ export default function MasterUIKit() {
                                 <span className="text-gold">Fintech Experience</span>
                             </h1>
                             <p className="text-lg text-green-50 max-w-xl leading-relaxed opacity-90">
-                                A premium design system for Islamic Fintech featuring geometric textures, tactile interactions, and deep emerald tones tailored for BMT NU Lumajang.
+                                A premium design system featuring geometric textures, tactile interactions, and deep emerald tones tailored for SID Sumberanyar.
                             </p>
                             <div className="flex flex-wrap gap-4 pt-2">
                                 <TactileButton variant="secondary" icon={<Download className="w-5 h-5" />}>

@@ -411,7 +411,7 @@ export default function SettingsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">Nama Instansi</label>
-                            <input {...register("company_name")} className="w-full p-2 border rounded-lg" placeholder="BMT NU Lumajang" />
+                            <input {...register("company_name")} className="w-full p-2 border rounded-lg" placeholder="Pemerintah Desa Sumberanyar" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">Total Aset (Text)</label>
@@ -448,19 +448,19 @@ export default function SettingsPage() {
                             <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-2">
                                 <Instagram className="w-4 h-4 text-pink-600" /> Instagram Profile
                             </label>
-                            <input {...register("instagram_url")} className="w-full p-2 border rounded-lg font-mono text-sm" placeholder="https://www.instagram.com/bmtnu_lmj/" />
+                            <input {...register("instagram_url")} className="w-full p-2 border rounded-lg font-mono text-sm" placeholder="https://www.instagram.com/desa_sumberanyar/" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-2">
                                 <Facebook className="w-4 h-4 text-blue-600" /> Facebook Page
                             </label>
-                            <input {...register("facebook_url")} className="w-full p-2 border rounded-lg font-mono text-sm" placeholder="https://www.facebook.com/BMTNULUMAJANG/" />
+                            <input {...register("facebook_url")} className="w-full p-2 border rounded-lg font-mono text-sm" placeholder="https://www.facebook.com/DesaSumberanyar/" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-2">
                                 <Video className="w-4 h-4 text-black" /> TikTok Profile
                             </label>
-                            <input {...register("tiktok_url")} className="w-full p-2 border rounded-lg font-mono text-sm" placeholder="https://www.tiktok.com/@bmtnu_lmj" />
+                            <input {...register("tiktok_url")} className="w-full p-2 border rounded-lg font-mono text-sm" placeholder="https://www.tiktok.com/@desa_sumberanyar" />
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-2">
@@ -484,7 +484,7 @@ export default function SettingsPage() {
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">Email Official</label>
-                            <input {...register("email_official")} className="w-full p-2 border rounded-lg" placeholder="info@bmtnu.id" />
+                            <input {...register("email_official")} className="w-full p-2 border rounded-lg" placeholder="desa@sumberanyar.id" />
                         </div>
                         <div className="md:col-span-2">
                             <label className="block text-sm font-medium text-slate-700 mb-1">Alamat Kantor Pusat</label>

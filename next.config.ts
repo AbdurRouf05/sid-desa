@@ -5,11 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'db-bmtnulmj.sagamuda.cloud',
-      },
-      {
-        protocol: 'https',
-        hostname: 'bmtnulumajang.id',
+        hostname: 'sid-magang.sagamuda.cloud',
       },
       {
         protocol: 'http',
@@ -53,7 +49,7 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: {
-      allowedOrigins: ['bmtnulumajang.id', 'localhost:3040', 'bmtnulmj.local:3040', 'cp.bmtnulmj.local:3040']
+      allowedOrigins: ['sumberanyar.local:3000', 'localhost:3040', 'cp.sumberanyar.local:3000']
     }
   }
 };

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { pb } from "@/lib/pb";
 
 // Security: Require a secret key to run this generic "cron" task
-const CRON_SECRET = process.env.CRON_SECRET || "bmt-nu-archive-key-v1";
+const CRON_SECRET = process.env.CRON_SECRET || "sid-archive-key-v1";
 
 export async function POST(req: NextRequest) {
     try {

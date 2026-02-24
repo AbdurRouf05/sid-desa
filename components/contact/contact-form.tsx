@@ -76,7 +76,7 @@ export function ContactForm() {
                     required
                     rows={4}
                     className="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all resize-none"
-                    placeholder="Tuliskan pertanyaan Anda mengenai produk atau layanan BMT NU..."
+                    placeholder="Tuliskan pertanyaan Anda mengenai layanan atau informasi desa..."
                 ></textarea>
             </div>
 

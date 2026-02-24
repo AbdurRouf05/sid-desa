@@ -26,7 +26,7 @@ export interface Product {
     id: string;
     name: string;
     slug: string;
-    type: 'saving' | 'financing' | 'gold';
+    type: 'administrasi' | 'kesehatan' | 'pendidikan' | 'umum';
     description: string;
     brochure: string;
     icon: string;
