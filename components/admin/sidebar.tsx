@@ -21,7 +21,9 @@ import {
     PieChart,
     Wallet,
     Share2,
-    Receipt
+    Receipt,
+    Map,
+    Package
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -52,6 +54,13 @@ const MENU_GROUPS = [
         items: [
             { href: "/panel/dashboard/mutasi", icon: Users, label: "Mutasi Penduduk" },
             { href: "/panel/dashboard/perangkat-desa", icon: Users, label: "Perangkat Desa" },
+        ]
+    },
+    {
+        label: "Aset & Inventaris",
+        items: [
+            { href: "/panel/dashboard/aset/tanah", icon: Map, label: "Aset Tanah Desa" },
+            { href: "/panel/dashboard/aset/inventaris", icon: Package, label: "Inventaris Barang" },
         ]
     },
     {

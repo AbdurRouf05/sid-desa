@@ -161,9 +161,9 @@ Merampingkan sisa modul pelengkap, membersihkan beban basis data, lalu Go-Live.
 
 **Target**: Membuat catatan administrasi barang inventaris meja, PC, dan kapling tanah secara hierarkis.
 
-- [ ] **[FE] Modul Daftarkan Aset**:
+- [x] **[FE] Modul Daftarkan Aset**:
   - Mencatat aset Tanah, Bangunan, dan Inventaris Kantor beserta Luas/Kuantitas.
-- [ ] **[FE] Manajemen Kondisi Mutasi Aset**:
+- [x] **[FE] Manajemen Kondisi Mutasi Aset**:
   - _Update Status_ aset secara berkala (Semula "Baik", dua tahun kemudian dirubah ke "Rusak Berat" atau "Di-Hapus/Lelang").
 
 ### Minggu 2: Hook Cleanup Storage (Optimasi Backend)

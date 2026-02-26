@@ -129,3 +129,14 @@ export interface PajakLog {
         bku_id?: BkuTransaksi;
     };
 }
+
+export interface InventarisDesa {
+    id: string;
+    nama_barang: string;
+    kategori: 'Bangunan' | 'Kendaraan' | 'Elektronik' | 'Mebel' | 'Lainnya';
+    tahun_perolehan: number;
+    kuantitas: number;
+    kondisi: 'Baik' | 'Rusak Ringan' | 'Rusak Berat' | 'Dihapus/Lelang';
+    created: string;
+    updated: string;
+}
