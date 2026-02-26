@@ -51,8 +51,18 @@ export const PajakLogSchema = z.object({
   jenis_pajak: z.string().min(1, { message: "Jenis pajak wajib diisi" }),
   nominal_pajak: z.number().min(0, { message: "Nominal pajak minimal 0" }),
   status: z.enum(["Belum Disetor", "Sudah Disetor"]).default("Belum Disetor"),
+  ntpn: z.string().optional(),
+  bukti_setor: z.any().optional(),
   created: z.string().optional(),
   updated: z.string().optional(),
+}).refine(data => {
+  if (data.status === "Sudah Disetor" && (!data.ntpn || data.ntpn.trim() === "")) {
+      return false;
+  }
+  return true;
+}, {
+  message: "NTPN wajib diisi jika status sudah disetor",
+  path: ["ntpn"]
 });
 
 export type BkuTransactionForm = z.infer<typeof BkuTransactionSchema>;

@@ -121,23 +121,11 @@ export interface PajakLog {
     jenis_pajak: string;
     nominal_pajak: number;
     status: 'Belum Disetor' | 'Sudah Disetor';
+    ntpn?: string;
+    bukti_setor?: string;
     created: string;
     updated: string;
     expand?: {
         bku_id?: BkuTransaksi;
     };
 }
-
-export interface PajakLog {
-    id: string;
-    bku_id: string;
-    jenis_pajak: string;
-    nominal_pajak: number;
-    status: 'Belum Disetor' | 'Sudah Disetor';
-    created: string;
-    updated: string;
-    expand?: {
-        bku_id?: BkuTransaksi;
-    };
-}
-
