@@ -41,7 +41,7 @@ export default function BannersPage() {
 
     return (
         <main>
-            <div className="mb-8 p-6 rounded-2xl bg-gradient-to-br from-bmt-green-700 to-primary-dark text-white relative overflow-hidden shadow-lg flex justify-between items-center">
+            <div className="mb-8 p-6 rounded-2xl bg-gradient-to-br from-desa-primary to-desa-primary-dark text-white relative overflow-hidden shadow-lg flex justify-between items-center">
                 <div className="relative z-10">
                     <h1 className="text-3xl font-bold font-display">Hero Banners</h1>
                     <p className="text-emerald-100 mt-2">Kelola gambar slide halaman depan.</p>

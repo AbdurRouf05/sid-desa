@@ -5,8 +5,8 @@ import { ArrowLeft } from 'lucide-react';
 import { getSiteConfig } from '@/lib/config';
 
 export const metadata = {
-    title: 'Kebijakan Privasi & Lisensi | BMT NU Lumajang',
-    description: 'Ketentuan hukum, hak cipta, dan kebijakan privasi penggunaan sistem informasi BMT NU Lumajang.',
+    title: 'Kebijakan Privasi & Lisensi | SID Sumberanyar',
+    description: 'Ketentuan hukum, hak cipta, dan kebijakan privasi penggunaan sistem informasi SID Sumberanyar.',
     robots: 'noindex, nofollow' // Legal pages often don't need to be indexed
 };
 
@@ -36,7 +36,7 @@ export default async function LegalPage() {
                                 Kebijakan Privasi, Hak Cipta & Lisensi
                             </h1>
                             <p className="text-emerald-200 text-lg font-medium">
-                                Perjanjian Penggunaan Layanan Sistem Informasi BMT NU Lumajang
+                                Perjanjian Penggunaan Layanan Sistem Informasi Cerdas Desa Sumberanyar
                             </p>
                             <p className="text-emerald-400 text-sm mt-4 uppercase tracking-wider">
                                 Terakhir Diperbarui: {currentDate}
@@ -48,7 +48,7 @@ export default async function LegalPage() {
                     <div className="px-8 py-12 sm:px-12 prose prose-slate max-w-none prose-headings:font-heading prose-headings:text-emerald-900 prose-a:text-emerald-600">
 
                         <p className="lead text-lg text-slate-600">
-                            Dokumen ini mengatur hak kepemilikan intelektual, lisensi penggunaan perangkat lunak (software), serta kebijakan privasi data antara PENGEMBANG (Sagamuda.id) dan PENGGUNA (BMT NU Lumajang).
+                            Dokumen ini mengatur hak kepemilikan intelektual, lisensi penggunaan perangkat lunak (software), serta kebijakan privasi data antara PENGEMBANG (Sagamuda.id) dan PENGGUNA (Desa Sumberanyar).
                         </p>
 
                         <hr className="border-slate-200 my-8" />
@@ -63,7 +63,7 @@ export default async function LegalPage() {
 
                             <h3>Pasal 2: Hak Kepemilikan Data Klien</h3>
                             <p>
-                                Klien (BMT NU Lumajang) memegang <strong>HAK MENYELURUH</strong> atas seluruh Data Transaksi, Data Anggota, Konten Berita, dan Informasi Produk yang diinput ke dalam sistem. Pengembang tidak memiliki hak klaim atas data bisnis Klien.
+                                Klien (Desa Sumberanyar) memegang <strong>HAK MENYELURUH</strong> atas seluruh Data Transaksi, Data Warga, Konten Berita, dan Informasi yang diinput ke dalam sistem. Pengembang tidak memiliki hak klaim atas data Klien.
                             </p>
 
                             <h3>Pasal 3: Perlindungan Hukum</h3>
@@ -77,7 +77,7 @@ export default async function LegalPage() {
 
                             <h3>Pasal 4: Ruang Lingkup Lisensi</h3>
                             <p>
-                                Pengembang memberikan <strong>"Non-Exclusive, Non-Transferable, Limited License"</strong> (Lisensi Terbatas, Tidak Eksklusif, Tidak Dapat Dipindahtangankan) kepada Klien untuk menggunakan perangkat lunak ini semata-mata untuk keperluan operasional internal bisnis BMT NU Lumajang.
+                                Pengembang memberikan <strong>"Non-Exclusive, Non-Transferable, Limited License"</strong> (Lisensi Terbatas, Tidak Eksklusif, Tidak Dapat Dipindahtangankan) kepada Klien untuk menggunakan perangkat lunak ini semata-mata untuk keperluan operasional internal Desa Sumberanyar.
                             </p>
 
                             <h3>Pasal 5: Larangan Penjualan Kembali</h3>
@@ -145,12 +145,12 @@ export default async function LegalPage() {
 
                             <h3>Pasal 13: Komitmen Kerahasiaan</h3>
                             <p>
-                                Pengembang berkomitmen menjaga kerahasiaan data anggota BMT NU Lumajang. Akses ke database hanya dilakukan atas izin Klien untuk keperluan perbaikan (debugging) atau pemeliharaan.
+                                Pengembang berkomitmen menjaga kerahasiaan data warga Desa Sumberanyar. Akses ke database hanya dilakukan atas izin Klien untuk keperluan perbaikan (debugging) atau pemeliharaan.
                             </p>
 
                             <h3>Pasal 14: Tidak Ada Penjualan Data</h3>
                             <p>
-                                Pengembang menjamin <strong>TIDAK AKAN</strong> menjual, membagikan, atau menyewakan data pribadi anggota BMT NU Lumajang kepada pihak ketiga manapun (Advertiser/Data Broker).
+                                Pengembang menjamin <strong>TIDAK AKAN</strong> menjual, membagikan, atau menyewakan data pribadi warga kepada pihak ketiga manapun (Advertiser/Data Broker).
                             </p>
                         </section>
 
@@ -164,7 +164,7 @@ export default async function LegalPage() {
                         </div>
                         <div className="text-center sm:text-right">
                             <span className="block font-bold text-slate-700">Licensee:</span>
-                            <span>KSPPS BMT NU Lumajang - {new Date().getFullYear()}</span>
+                            <span>Pemerintah Desa Sumberanyar - {new Date().getFullYear()}</span>
                         </div>
                     </div>
 

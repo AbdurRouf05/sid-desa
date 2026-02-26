@@ -88,13 +88,13 @@ export default async function RootLayout({
   };
 
   return (
-    <html lang="id" className="scroll-smooth" data-scroll-behavior="smooth">
+    <html lang="id" className="scroll-smooth" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body className={cn(
         inter.variable,
         merriweather.variable,
         manrope.variable,
         "font-sans bg-background text-foreground antialiased"
-      )}>
+      )} suppressHydrationWarning>
         <JsonLd type="Organization" data={orgSchema} />
         <Suspense fallback={null}>
           <AnalyticsTracker />

@@ -19,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
             priority: 0.8,
         },
         {
-            url: `${BASE_URL}/produk`,
+            url: `${BASE_URL}/tentang-kami`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.8,
@@ -40,7 +40,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // Dynamic Routes from PocketBase
     let newsRoutes: MetadataRoute.Sitemap = [];
-    let productRoutes: MetadataRoute.Sitemap = [];
 
     try {
         // Fetch all published news
@@ -59,22 +58,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         console.error('Error fetching news for sitemap:', error);
     }
 
-    try {
-        // Fetch all published products
-        const products = await pb.collection('products').getFullList({
-            filter: 'published = true',
-            fields: 'slug,updated',
-        });
-
-        productRoutes = products.map((item) => ({
-            url: `${BASE_URL}/produk/${item.slug}`,
-            lastModified: new Date(item.updated),
-            changeFrequency: 'weekly',
-            priority: 0.8,
-        }));
-    } catch (error) {
-        console.error('Error fetching products for sitemap:', error);
-    }
-
-    return [...staticRoutes, ...newsRoutes, ...productRoutes];
+    return [...staticRoutes, ...newsRoutes];
 }

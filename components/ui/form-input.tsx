@@ -9,10 +9,11 @@ interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     icon?: React.ReactNode;
     currencyPrefix?: string;
     numeric?: boolean;
+    error?: string;
 }
 
 export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
-    ({ className, label, icon, currencyPrefix, numeric, value, onChange, ...props }, ref) => {
+    ({ className, label, icon, currencyPrefix, numeric, error, value, onChange, ...props }, ref) => {
 
         const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             if (numeric) {
@@ -83,6 +84,7 @@ export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
                         {...props}
                     />
                 </div>
+                {error && <span className="text-red-500 text-sm font-medium mt-1 inline-block">{error}</span>}
             </label>
         );
     }

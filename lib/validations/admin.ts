@@ -5,7 +5,8 @@ export const PerangkatDesaSchema = z.object({
   nama: z.string().min(2),
   jabatan: z.string(),
   nip: z.string().optional(),
-  is_active: z.boolean().default(true),
+  foto: z.string().optional(),
+  is_aktif: z.boolean().default(true),
 });
 
 export const SuratKeluarSchema = z.object({
@@ -13,9 +14,9 @@ export const SuratKeluarSchema = z.object({
   nomor_agenda: z.number().int().positive(),
   kode_surat: z.string(),
   tujuan: z.string(),
-  tanggal_surat: z.string().datetime(),
+  tanggal_surat: z.string().or(z.date()),
   file_arsip: z.string().optional(),
-  signed_by: z.string(), // ID of PerangkatDesa
+  perangkat_id: z.string().optional(), // ID of PerangkatDesa
 });
 
 export type PerangkatDesa = z.infer<typeof PerangkatDesaSchema>;

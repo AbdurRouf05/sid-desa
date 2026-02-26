@@ -37,7 +37,7 @@ export default function NotFound() {
                         </div>
                         <h1 className="text-4xl md:text-5xl font-bold leading-tight font-heading">
                             <span className="block text-slate-900 dark:text-white mb-2">Halaman Tidak</span>
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-bmt-green-700 to-bmt-gold-500">Ditemukan</span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-desa-primary to-desa-accent">Ditemukan</span>
                         </h1>
                         <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed font-sans">
                             Mohon maaf, halaman yang Anda cari mungkin telah dihapus, dipindahkan, atau sedang tidak tersedia saat ini.

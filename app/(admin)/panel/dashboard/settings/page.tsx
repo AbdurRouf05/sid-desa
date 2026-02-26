@@ -106,7 +106,7 @@ export default function SettingsPage() {
                     setTimeout(() => reject(new Error("Timeout loading config")), 10000)
                 );
 
-                const recordsPromise = pb.collection('site_config').getList(1, 1);
+                const recordsPromise = pb.collection('profil_desa').getList(1, 1);
 
                 // Race the fetch against timeout
                 const records = await Promise.race([recordsPromise, timeoutPromise]) as any;
@@ -257,15 +257,15 @@ export default function SettingsPage() {
 
             // Check for existing record to enforce Singleton
             // Always fetch the latest to be sure, or rely on configId if we trust it doesn't change
-            const existing = await pb.collection('site_config').getList(1, 1);
+            const existing = await pb.collection('profil_desa').getList(1, 1);
             if (existing.items.length > 0) {
 
                 const targetId = existing.items[0].id; // Ensure we use the correct ID from DB
                 setConfigId(targetId);
-                record = await pb.collection('site_config').update(targetId, formData);
+                record = await pb.collection('profil_desa').update(targetId, formData);
             } else {
 
-                record = await pb.collection('site_config').create(formData);
+                record = await pb.collection('profil_desa').create(formData);
                 setConfigId(record.id);
             }
 
@@ -296,7 +296,7 @@ export default function SettingsPage() {
 
     return (
         <main>
-            <div className="mb-8 p-6 rounded-2xl bg-gradient-to-br from-bmt-green-700 to-primary-dark text-white relative overflow-hidden shadow-lg">
+            <div className="mb-8 p-6 rounded-2xl bg-gradient-to-br from-desa-primary to-desa-primary-dark text-white relative overflow-hidden shadow-lg">
                 <div className="absolute inset-0 bg-arabesque-grid bg-grid-24 opacity-10 pointer-events-none"></div>
                 <div className="relative z-10">
                     <h1 className="text-3xl font-bold font-display">Pengaturan Situs</h1>

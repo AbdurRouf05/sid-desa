@@ -3,7 +3,7 @@ import { ModernNavbar } from "@/components/layout/modern-navbar";
 import { ModernFooter } from "@/components/layout/modern-footer";
 import Link from "next/link";
 import { getAssetUrl } from "@/lib/cdn";
-import { Calendar, ChevronRight, Search, FileText, ShoppingBag } from "lucide-react";
+import { Calendar, ChevronRight, Search, FileText } from "lucide-react";
 import Image from "next/image";
 import { formatDate } from "@/lib/number-utils";
 
@@ -57,35 +57,21 @@ export default async function SearchPage({
                                     {/* Thumbnail */}
                                     <div className="w-full md:w-48 h-32 bg-slate-100 rounded-lg overflow-hidden relative flex-shrink-0">
                                         {item.thumbnail ? (
-                                            item.type === 'produk' && !item.thumbnail.startsWith('http') ? (
-                                                // For products where thumbnail might be an icon name or filename
-                                                <div className="w-full h-full flex items-center justify-center bg-desa-primary/5 text-desa-primary/20">
-                                                    <ShoppingBag className="w-12 h-12" />
-                                                </div>
-                                            ) : (
-                                                <Image
-                                                    src={getAssetUrl(item, item.thumbnail)}
-                                                    alt={item.title}
-                                                    fill
-                                                    className="object-cover group-hover:scale-110 transition-transform duration-500"
-                                                />
-                                            )
+                                            <Image
+                                                src={getAssetUrl(item, item.thumbnail)}
+                                                alt={item.title}
+                                                fill
+                                                className="object-cover group-hover:scale-110 transition-transform duration-500"
+                                            />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center bg-desa-primary/5 text-desa-primary/20">
-                                                {item.type === 'produk' ? (
-                                                    <ShoppingBag className="w-12 h-12" />
-                                                ) : (
-                                                    <FileText className="w-12 h-12" />
-                                                )}
+                                                <FileText className="w-12 h-12" />
                                             </div>
                                         )}
 
                                         <div className="absolute top-2 right-2">
-                                            <span className={`px-2 py-1 text-xs font-bold rounded shadow-sm ${item.type === 'produk'
-                                                    ? 'bg-blue-100 text-blue-700'
-                                                    : 'bg-desa-primary/10 text-desa-primary-dark'
-                                                }`}>
-                                                {item.type === 'produk' ? 'LAYANAN' : 'KABAR DESA'}
+                                            <span className="px-2 py-1 text-xs font-bold rounded shadow-sm bg-desa-primary/10 text-desa-primary-dark">
+                                                KABAR DESA
                                             </span>
                                         </div>
                                     </div>

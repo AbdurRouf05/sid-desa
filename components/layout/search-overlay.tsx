@@ -26,7 +26,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             document.body.style.overflow = "hidden";
 
             // Fetch Logo Secondary (White)
-            pb.collection('site_config').getFirstListItem("").then(config => {
+            pb.collection('profil_desa').getFirstListItem("").then(config => {
                 if (config.logo_secondary) {
                     setLogoUrl(pb.files.getURL(config, config.logo_secondary));
                 }

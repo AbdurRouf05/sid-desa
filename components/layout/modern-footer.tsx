@@ -40,7 +40,7 @@ export function ModernFooter() {
     useEffect(() => {
         const fetchConfig = async () => {
             try {
-                const config = await pb.collection('site_config').getFirstListItem("");
+                const config = await pb.collection('profil_desa').getFirstListItem("");
                 if (config) {
                     setContactInfo({
                         address: config.address || "Jl. Raya Sumberanyar No. 1, Sumberanyar, Pasuruan",

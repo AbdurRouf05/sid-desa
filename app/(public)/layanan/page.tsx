@@ -4,7 +4,7 @@ import { ModernNavbar } from "@/components/layout/modern-navbar";
 import { ModernFooter } from "@/components/layout/modern-footer";
 import { ArabesqueCard } from "@/components/ui/arabesque-card";
 import { TactileButton } from "@/components/ui/tactile-button";
-import { Smartphone, Building, CreditCard, Banknote, ArrowRight, MapPin } from "lucide-react";
+import { CheckCircle, Clock, ChevronRight, FileText, FileSearch, HelpCircle, Smartphone, Building, CreditCard, Banknote, ArrowRight, MapPin } from "lucide-react";
 import { JsonLd } from "@/components/seo/json-ld";
 
 export default function ServicesPage() {
@@ -14,13 +14,13 @@ export default function ServicesPage() {
             <JsonLd
                 type="CollectionPage"
                 data={{
-                    name: "Layanan & Produk BMT NU Lumajang",
-                    description: "Daftar lengkap layanan digital dan produk keuangan syariah BMT NU Lumajang.",
+                    name: "Layanan Desa Sumberanyar",
+                    description: "Daftar lengkap layanan surat menyurat dan administrasi Desa Sumberanyar.",
                     hasPart: [
                         {
                             "@type": "Service",
-                            name: "BMT NU Mobile",
-                            description: "Mobile banking untuk transaksi real-time."
+                            name: "Layanan Surat Pengantar",
+                            description: "Pengajuan surat pengantar KTP, KK, dan lainnya."
                         },
                         {
                             "@type": "Service",
@@ -41,10 +41,10 @@ export default function ServicesPage() {
                 <div className="absolute inset-0 bg-arabesque-grid bg-grid-24 opacity-10 pointer-events-none"></div>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
                     <h1 className="text-4xl md:text-5xl font-bold mb-6 tracking-tight font-display">
-                        Layanan Prima BMT NU
+                        Layanan Kelurahan & Administrasi
                     </h1>
                     <p className="text-xl text-emerald-100 max-w-3xl mx-auto font-light leading-relaxed">
-                        Nikmati kemudahan bertransaksi baik secara digital maupun layanan personal di jaringan kantor kami.
+                        Nikmati kemudahan layanan administrasi kependudukan dan persuratan di Balai Desa Sumberanyar.
                     </p>
                 </div>
             </section>
@@ -61,36 +61,36 @@ export default function ServicesPage() {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <ArabesqueCard title="BMT NU Mobile" icon={<Smartphone className="w-8 h-8 text-emerald-600" />}>
+                        <ArabesqueCard title="Surat Pengantar RT/RW" icon={<FileText className="w-8 h-8 text-emerald-600" />}>
                             <p className="text-slate-600 mb-6 text-sm leading-relaxed">
-                                Aplikasi mobile banking untuk cek saldo, mutasi rekening, dan transfer antar rekening BMT NU secara real-time.
+                                Pengajuan surat pengantar ketua RT/RW setempat sebagai syarat utama pelayanan di Balai Desa.
                             </p>
                             <ul className="space-y-2 mb-6 text-sm text-slate-700">
-                                <li className="flex items-center gap-2">✅ Cek Saldo & Mutasi</li>
-                                <li className="flex items-center gap-2">✅ Transfer Antar Anggota</li>
-                                <li className="flex items-center gap-2">✅ Notifikasi WA Realcheck</li>
+                                <li className="flex items-center gap-2">✅ Pengantar KTP / KK</li>
+                                <li className="flex items-center gap-2">✅ Pengantar SKCK</li>
+                                <li className="flex items-center gap-2">✅ Surat Domisili</li>
                             </ul>
                         </ArabesqueCard>
 
-                        <ArabesqueCard title="PPOB & Pembayaran" icon={<CreditCard className="w-8 h-8 text-blue-600" />}>
+                        <ArabesqueCard title="Surat Keterangan Usaha" icon={<Building className="w-8 h-8 text-blue-600" />}>
                             <p className="text-slate-600 mb-6 text-sm leading-relaxed">
-                                Bayar tagihan bulanan dan isi ulang pulsa/data dengan mudah lewat layanan PPOB kami.
+                                Penerbitan SKU bagi warga yang memiliki usaha mikro/kecil untuk keperluan perbankan atau izin.
                             </p>
                             <ul className="space-y-2 mb-6 text-sm text-slate-700">
-                                <li className="flex items-center gap-2">✅ Pulsa & Kuota Data</li>
-                                <li className="flex items-center gap-2">✅ Token Listrik PLN</li>
-                                <li className="flex items-center gap-2">✅ BPJS & PDAM</li>
+                                <li className="flex items-center gap-2">✅ Cepat & Mudah</li>
+                                <li className="flex items-center gap-2">✅ Gratis (Tanpa Pungutan)</li>
+                                <li className="flex items-center gap-2">✅ Bisa ditunggu</li>
                             </ul>
                         </ArabesqueCard>
 
-                        <ArabesqueCard title="QRIS Merchant" icon={<span className="text-2xl font-bold">QR</span>}>
+                        <ArabesqueCard title="Surat Keterangan Tidak Mampu" icon={<FileText className="w-8 h-8 text-yellow-600" />}>
                             <p className="text-slate-600 mb-6 text-sm leading-relaxed">
-                                Solusi pembayaran non-tunai untuk usaha Anda. Terima pembayaran dari semua e-wallet dengan satu kode QR.
+                                Penerbitan SKTM untuk keperluan pendidikan (KIP), pendaftaran BPJS Kesehatan, atau keringanan biaya.
                             </p>
                             <ul className="space-y-2 mb-6 text-sm text-slate-700">
-                                <li className="flex items-center gap-2">✅ Transaksi Cepat</li>
-                                <li className="flex items-center gap-2">✅ Tanpa Uang Kembalian</li>
-                                <li className="flex items-center gap-2">✅ Laporan Otomatis</li>
+                                <li className="flex items-center gap-2">✅ Syarat KTP/KK</li>
+                                <li className="flex items-center gap-2">✅ Foto Rumah</li>
+                                <li className="flex items-center gap-2">✅ Verifikasi Cepat</li>
                             </ul>
                         </ArabesqueCard>
                     </div>
@@ -103,28 +103,28 @@ export default function ServicesPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div>
                             <span className="text-gold-600 font-bold uppercase tracking-wider text-sm mb-2 block">Layanan Kantor</span>
-                            <h2 className="text-3xl font-bold text-slate-900 mb-6">Pelayanan Personal Sepenuh Hati</h2>
+                            <h2 className="text-3xl font-bold text-slate-900 mb-6">Pelayanan Tatap Muka di Balai Desa</h2>
                             <p className="text-lg text-slate-600 mb-8 leading-relaxed">
-                                Kunjungi jaringan kantor kami untuk layanan perbankan yang lebih personal. Petugas kami siap membantu segala kebutuhan finansial Anda.
+                                Kunjungi Balai Desa Sumberanyar untuk layanan administrasi kependudukan yang membutuhkan verifikasi langsung. Petugas kami siap membantu melayani keperluan Anda pada jam kerja.
                             </p>
 
                             <div className="space-y-6">
                                 <div className="flex gap-4">
                                     <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center text-emerald-700 flex-shrink-0">
-                                        <Banknote className="w-6 h-6" />
+                                        <FileText className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-slate-900 text-lg">Setor & Tarik Tunai</h3>
-                                        <p className="text-slate-600 text-sm">Layanan kasir untuk transaksi tunai yang aman dan cepat di semua kantor cabang.</p>
+                                        <h3 className="font-bold text-slate-900 text-lg">Perekaman E-KTP</h3>
+                                        <p className="text-slate-600 text-sm">Layanan perekaman biometrik E-KTP baru bagi warga yang telah menginjak usia 17 tahun.</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-4">
                                     <div className="w-12 h-12 rounded-full bg-white shadow-sm flex items-center justify-center text-emerald-700 flex-shrink-0">
-                                        <CreditCard className="w-6 h-6" />
+                                        <Building className="w-6 h-6" />
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-slate-900 text-lg">Pembukaan Rekening</h3>
-                                        <p className="text-slate-600 text-sm">Proses mudah menjadi anggota dan membuka rekening tabungan atau deposito.</p>
+                                        <h3 className="font-bold text-slate-900 text-lg">Konsultasi Pelayanan</h3>
+                                        <p className="text-slate-600 text-sm">Konsultasi persyaratan pembuatan KK baru, akta kelahiran, dan perpindahan domisili.</p>
                                     </div>
                                 </div>
                             </div>
@@ -144,7 +144,7 @@ export default function ServicesPage() {
                                 {/* Placeholder for Office Service Image */}
                                 <img
                                     src="https://images.pexels.com/photos/34528447/pexels-photo-34528447.jpeg"
-                                    alt="Layanan Kantor BMT NU"
+                                    alt="Layanan Desa Sumberanyar"
                                     className="w-full h-full object-cover"
                                 />
                             </div>
@@ -161,7 +161,7 @@ export default function ServicesPage() {
                 <div className="container mx-auto px-4">
                     <h2 className="text-3xl font-bold mb-6">Butuh Bantuan Lebih Lanjut?</h2>
                     <p className="text-emerald-100 max-w-2xl mx-auto mb-10">
-                        Tim Customer Service kami siap menjawab pertanyaan Anda mengenai produk dan layanan BMT NU Lumajang.
+                        Tim Customer Service kami siap menjawab pertanyaan Anda mengenai persyaratan administrasi atau pelaporan.
                     </p>
                     <Link href="/kontak">
                         <TactileButton variant="secondary" className="px-8 py-4 h-auto text-lg">

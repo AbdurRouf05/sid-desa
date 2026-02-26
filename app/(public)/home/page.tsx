@@ -12,7 +12,6 @@ import { ExternalLink } from "lucide-react";
 import { HeroSlider, HeroSlide } from "@/components/home/hero-slider";
 import { StatsDashboard } from "@/components/home/stats-dashboard";
 import { FeaturesGrid } from "@/components/home/features-grid";
-import { ProductsShowcase } from "@/components/home/products-showcase";
 import { SocialWall } from "@/components/home/social-wall";
 import { NewsFeed } from "@/components/home/news-feed";
 import { LocationsMap } from "@/components/home/locations-map";
@@ -29,7 +28,6 @@ export default function Home() {
         branches: "4 Dusun"
     });
     const [news, setNews] = useState<any[]>([]);
-    const [products, setProducts] = useState<any[]>([]);
     const [newsLoading, setNewsLoading] = useState(true);
     const [mapUrl, setMapUrl] = useState("");
     const [phone, setPhone] = useState("");
@@ -42,7 +40,7 @@ export default function Home() {
         import("@/lib/pb").then(async ({ pb }) => {
             try {
                 // 1. Config
-                const configPromise = pb.collection('site_config').getFirstListItem("");
+                const configPromise = pb.collection('profil_desa').getFirstListItem("");
 
                 // 2. Banners
                 const bannersPromise = pb.collection('hero_banners').getList(1, 10, {
@@ -56,18 +54,11 @@ export default function Home() {
                     filter: 'published = true'
                 });
 
-                // 4. Products
-                const productsPromise = pb.collection('products').getList(1, 6, {
-                    sort: '-created',
-                    filter: 'published = true && is_featured = true'
-                });
-
                 // Resolve promises
-                const [config, banners, newsResult, productsResult] = await Promise.all([
+                const [config, banners, newsResult] = await Promise.all([
                     configPromise.catch(() => null),
                     bannersPromise.catch(() => null),
-                    newsPromise.catch(() => null),
-                    productsPromise.catch(() => null)
+                    newsPromise.catch(() => null)
                 ]);
 
                 if (config) {
@@ -109,7 +100,6 @@ export default function Home() {
                 }
 
                 setNews(newsResult?.items || []);
-                setProducts(productsResult?.items || []);
 
             } catch (e) {
                 console.error("Home fetch error:", e);
@@ -151,9 +141,6 @@ export default function Home() {
                     <SocialWall />
                 </div>
             </section>
-
-            {/* 5. PRODUCTS */}
-            <ProductsShowcase products={products} />
 
             {/* 6. NEWS */}
             <NewsFeed news={news} loading={newsLoading} />

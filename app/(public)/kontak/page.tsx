@@ -35,7 +35,7 @@ export default function ContactPage() {
             setIsLoadingBranches(true);
             try {
                 // Config
-                const configRecords = await pb.collection('site_config').getList(1, 1);
+                const configRecords = await pb.collection('profil_desa').getList(1, 1);
                 if (configRecords.items.length > 0) {
                     setConfig(configRecords.items[0]);
                 }
@@ -112,11 +112,11 @@ export default function ContactPage() {
             <JsonLd
                 type="ContactPage"
                 data={{
-                    name: "Hubungi Kami - BMT NU Lumajang",
-                    description: "Hubungi layanan pelanggan BMT NU Lumajang via WhatsApp, Email, atau kunjungi kantor cabang kami.",
+                    name: "Hubungi Kami - SID Sumberanyar",
+                    description: "Hubungi layanan pelanggan SID Sumberanyar via WhatsApp, Email, atau kunjungi kantor cabang kami.",
                     mainEntity: {
                         "@type": "Organization",
-                        name: "BMT NU Lumajang",
+                        name: "SID Sumberanyar",
                         address: {
                             "@type": "PostalAddress",
                             streetAddress: address,
@@ -137,7 +137,7 @@ export default function ContactPage() {
             />
 
             {/* Hero Section */}
-            <section className="pt-32 pb-16 bg-gradient-to-br from-bmt-green-700 to-primary-dark text-white relative overflow-hidden">
+            <section className="pt-32 pb-16 bg-gradient-to-br from-desa-primary to-desa-primary-dark text-white relative overflow-hidden">
                 <div className="absolute inset-0 bg-arabesque-grid bg-grid-24 opacity-10 pointer-events-none"></div>
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
                     <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight font-display">
@@ -313,7 +313,7 @@ export default function ContactPage() {
                     <div className="text-center mb-12">
                         <h2 className="text-3xl font-bold text-slate-900 mb-4">Jaringan Kantor Layanan</h2>
                         <p className="text-slate-600 max-w-2xl mx-auto">
-                            Temukan kantor layanan BMT NU Lumajang terdekat di kota Anda.
+                            Temukan kantor serta pos pelayanan desa kami untuk mendapatkan informasi langsung secara tatap muka.
                             Kami hadir lebih dekat untuk melayani kebutuhan finansial Anda.
                         </p>
                     </div>

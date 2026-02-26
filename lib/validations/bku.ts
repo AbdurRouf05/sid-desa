@@ -1,30 +1,60 @@
 import { z } from "zod";
 
-export const BkuTypeSchema = z.enum(["masuk", "keluar", "pindah"]);
+export const BkuTypeSchema = z.enum(["Masuk", "Keluar", "Pindah Buku"]);
 
 export const BkuTransactionSchema = z.object({
   id: z.string().optional(),
-  type: BkuTypeSchema,
-  amount: z.number().positive(),
-  tanggal: z.string().datetime(),
-  uraian: z.string().min(3),
-  bukti_foto: z.string().optional(), // File name/ID in PocketBase
-  kode_anggaran: z.string().optional(),
+  tipe_transaksi: BkuTypeSchema,
+  nominal: z.number().positive({ message: "Nominal harus lebih dari 0" }),
+  tanggal: z.string().min(1, { message: "Tanggal wajib diisi" }),
+  uraian: z.string().min(3, { message: "Uraian terlalu pendek" }),
+  rekening_sumber_id: z.string().optional(),
+  rekening_tujuan_id: z.string().optional(),
+  bukti_file: z.any().optional(), // For file inputs
+  
+  // Frontend-only tax fields
+  has_pajak: z.boolean().optional(),
+  jenis_pajak: z.string().optional(),
+  nominal_pajak: z.number().optional(),
+
   created: z.string().optional(),
   updated: z.string().optional(),
+}).refine(data => {
+  if (data.tipe_transaksi === "Masuk" && !data.rekening_tujuan_id) {
+    return false;
+  }
+  if (data.tipe_transaksi === "Keluar" && !data.rekening_sumber_id) {
+    return false;
+  }
+  if (data.tipe_transaksi === "Pindah Buku" && (!data.rekening_sumber_id || !data.rekening_tujuan_id || data.rekening_sumber_id === data.rekening_tujuan_id)) {
+    return false;
+  }
+  return true;
+}, {
+  message: "Pilihan rekening tidak valid untuk tipe transaksi ini",
+  path: ["tipe_transaksi"]
 });
 
-export const PajakJenisSchema = z.enum(["ppn", "pph"]);
+export const RekeningJenisSchema = z.enum(["Tunai", "Bank"]);
+
+export const RekeningKasSchema = z.object({
+  id: z.string().optional(),
+  nama_rekening: z.string().min(3, { message: "Nama rekening minimal 3 karakter" }),
+  jenis: RekeningJenisSchema,
+});
+
+export const PajakJenisSchema = z.enum(["PPN 11%", "PPh 21", "PPh 22", "PPh 23"]);
 
 export const PajakLogSchema = z.object({
   id: z.string().optional(),
-  bku_id: z.string(),
-  jenis: PajakJenisSchema,
-  nominal: z.number().nonnegative(),
-  is_disetor: z.boolean().default(false),
+  bku_id: z.string().min(1, { message: "Data BKU tidak valid" }),
+  jenis_pajak: z.string().min(1, { message: "Jenis pajak wajib diisi" }),
+  nominal_pajak: z.number().min(0, { message: "Nominal pajak minimal 0" }),
+  status: z.enum(["Belum Disetor", "Sudah Disetor"]).default("Belum Disetor"),
   created: z.string().optional(),
   updated: z.string().optional(),
 });
 
-export type BkuTransaction = z.infer<typeof BkuTransactionSchema>;
-export type PajakLog = z.infer<typeof PajakLogSchema>;
+export type BkuTransactionForm = z.infer<typeof BkuTransactionSchema>;
+export type RekeningKasForm = z.infer<typeof RekeningKasSchema>;
+export type PajakLogForm = z.infer<typeof PajakLogSchema>;

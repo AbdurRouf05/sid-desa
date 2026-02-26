@@ -30,7 +30,7 @@ export function ModernNavbar() {
 
         const fetchConfig = async () => {
             try {
-                const records = await pb.collection('site_config').getList(1, 1);
+                const records = await pb.collection('profil_desa').getList(1, 1);
                 if (records.items.length > 0) {
                     const data = records.items[0];
                     if (data.logo_primary) {
@@ -56,8 +56,12 @@ export function ModernNavbar() {
 
     const navLinks = [
         { name: getLabel('nav_home', 'Beranda'), href: "/", visible: isVisible('nav_home') },
-        { name: getLabel('nav_products', 'Produk'), href: "/produk", visible: isVisible('nav_products') },
-        { name: getLabel('nav_news', 'Berita'), href: "/berita", visible: isVisible('nav_news') },
+        { name: "Profil Desa", href: "/#profil", visible: true },
+        { name: "Perangkat Desa", href: "/#perangkat", visible: true },
+        { name: "APBDes", href: "/transparansi", visible: true },
+        { name: "Persuratan", href: "/layanan/persuratan", visible: true },
+        { name: "Pengaduan", href: "/pengaduan", visible: true },
+        { name: "Transparansi", href: "/transparansi", visible: true },
         { name: getLabel('nav_about', 'Tentang Kami'), href: "/tentang-kami", visible: isVisible('nav_about') },
         { name: getLabel('nav_contact', 'Kontak'), href: "/kontak", visible: isVisible('nav_contact') },
     ].filter(link => link.visible);

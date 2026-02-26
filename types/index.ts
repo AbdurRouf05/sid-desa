@@ -43,3 +43,101 @@ export interface News {
     published: boolean;
     created: string; // ISO Date
 }
+
+export interface ApbdesRealisasi {
+    id: string;
+    tahun_anggaran: number;
+    kategori: 'Pendapatan' | 'Belanja' | 'Pembiayaan';
+    nama_bidang: string;
+    anggaran: number;
+    realisasi: number;
+    created: string;
+    updated: string;
+}
+
+export interface PengaduanWarga {
+    id: string;
+    nama_pelapor: string;
+    tempat_tinggal: string;
+    isi_laporan: string;
+    status: 'Baru' | 'Diproses' | 'Selesai';
+    created: string;
+    updated: string;
+}
+
+export interface MutasiPenduduk {
+    id: string;
+    nik?: string;
+    nama_lengkap: string;
+    jenis_mutasi: 'Lahir' | 'Mati' | 'Datang' | 'Pergi';
+    tanggal_mutasi: string;
+    keterangan?: string;
+    dokumen_bukti?: string;
+    created: string;
+    updated: string;
+}
+
+export interface SuratKeluar {
+    id: string;
+    nomor_agenda: string;
+    nik_pemohon: string;
+    nama_pemohon: string;
+    jenis_surat: 'Pengantar' | 'SKTM' | 'Domisili' | 'Keterangan Usaha' | 'Lainnya';
+    tanggal_dibuat: string;
+    keterangan?: string;
+    file_pdf?: string;
+    created: string;
+    updated: string;
+}
+
+export interface RekeningKas {
+    id: string;
+    nama_rekening: string;
+    jenis: 'Tunai' | 'Bank';
+    created: string;
+    updated: string;
+}
+
+export interface BkuTransaksi {
+    id: string;
+    tipe_transaksi: 'Masuk' | 'Keluar' | 'Pindah Buku';
+    tanggal: string;
+    rekening_sumber_id?: string;
+    rekening_tujuan_id?: string;
+    nominal: number;
+    uraian: string;
+    bukti_file?: string;
+    created: string;
+    updated: string;
+    expand?: {
+        rekening_sumber_id?: RekeningKas;
+        rekening_tujuan_id?: RekeningKas;
+    };
+}
+
+export interface PajakLog {
+    id: string;
+    bku_id: string;
+    jenis_pajak: string;
+    nominal_pajak: number;
+    status: 'Belum Disetor' | 'Sudah Disetor';
+    created: string;
+    updated: string;
+    expand?: {
+        bku_id?: BkuTransaksi;
+    };
+}
+
+export interface PajakLog {
+    id: string;
+    bku_id: string;
+    jenis_pajak: string;
+    nominal_pajak: number;
+    status: 'Belum Disetor' | 'Sudah Disetor';
+    created: string;
+    updated: string;
+    expand?: {
+        bku_id?: BkuTransaksi;
+    };
+}
+

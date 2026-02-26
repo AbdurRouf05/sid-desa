@@ -25,13 +25,13 @@ export function middleware(request: NextRequest) {
     default-src 'self';
     script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.tawk.to https://embed.tawk.to https://analytics.google.com https://www.instagram.com https://platform.instagram.com https://www.tiktok.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    img-src 'self' blob: data: https://db-desa.sumberanyar.id https://db-bmtnulmj.sagamuda.cloud https://images.unsplash.com https://img.youtube.com https://*.cdninstagram.com;
+    img-src 'self' blob: data: https://sid-magang.sagamuda.cloud https://images.unsplash.com https://img.youtube.com https://*.cdninstagram.com;
     font-src 'self' https://fonts.gstatic.com;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
     frame-src 'self' https://www.youtube.com https://www.tiktok.com https://www.instagram.com https://embed.tawk.to;
-    connect-src 'self' https://db-desa.sumberanyar.id https://db-bmtnulmj.sagamuda.cloud https://analytics.google.com wss://*.tawk.to;
+    connect-src 'self' https://sid-magang.sagamuda.cloud https://analytics.google.com wss://*.tawk.to;
     frame-ancestors 'none';
     block-all-mixed-content;
     upgrade-insecure-requests;

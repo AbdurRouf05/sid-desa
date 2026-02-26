@@ -42,7 +42,7 @@ export const getSiteConfig = unstable_cache(
         try {
             // Fetch with a timeout to prevent build hangs
             // Reduced timeout to 3s because config should be fast
-            const fetchPromise = pb.collection('site_config').getFirstListItem("");
+            const fetchPromise = pb.collection('profil_desa').getFirstListItem("");
             const timeoutPromise = new Promise((_, reject) =>
                 setTimeout(() => reject(new Error("Timeout")), 3000)
             );
@@ -69,6 +69,6 @@ export const getSiteConfig = unstable_cache(
     ['site-config-v2'], // Cache Key
     {
         revalidate: 60, // 60 Seconds
-        tags: ['site_config']
+        tags: ['profil_desa']
     }
 );

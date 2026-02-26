@@ -13,7 +13,7 @@ export default function TentangKamiPage() {
     useEffect(() => {
         const fetchConfig = async () => {
             try {
-                const records = await pb.collection('site_config').getList(1, 1);
+                const records = await pb.collection('profil_desa').getList(1, 1);
                 if (records.items.length > 0) {
                     setConfig(records.items[0]);
                 }
@@ -25,13 +25,13 @@ export default function TentangKamiPage() {
     }, []);
 
     // Defaults if loading / empty
-    const assets = config?.total_assets || "28 M+";
-    const members = config?.total_members || "6.000+";
-    const branches = config?.total_branches || "16";
-    const address = config?.address || "Jl. Alun-alun Timur No 3, Jogotrunan, Lumajang";
-    const phone = config?.phone_wa || "6281...";
-    const legalBH = config?.legal_bh || "BH.AHU.0008492.AH.01.26 TH.2021";
-    const nib = config?.nib || "Terverifikasi atas nama KSPPS BMT NU LUMAJANG";
+    const assets = "10 M+";
+    const members = config?.total_members || "3.500+";
+    const branches = config?.total_branches || "5";
+    const address = config?.address || "Jl. Raya Sumberanyar No. 1, Sumberanyar, Pasuruan";
+    const phone = config?.phone_wa || "081234567890";
+    const legalBH = config?.legal_bh || "PEMERINTAH DESA SUMBERANYAR";
+    const nib = config?.nib || "1234567890";
 
     return (
         <main className="min-h-screen bg-slate-50 font-sans">
@@ -39,24 +39,24 @@ export default function TentangKamiPage() {
             <JsonLd
                 type="AboutPage"
                 data={{
-                    name: "Tentang Kami - BMT NU Lumajang",
-                    description: "KSPPS BMT NU Lumajang adalah lembaga keuangan syariah yang mandiri, sehat, dan kuat, berkhidmat untuk ekonomi umat.",
+                    name: "Tentang Kami - SID Sumberanyar",
+                    description: "SID Sumberanyar adalah portal informasi dan layanan desa yang mandiri, transparan, dan akuntabel.",
                     mainEntity: {
                         "@type": "Organization",
-                        name: "BMT NU Lumajang",
+                        name: "SID Sumberanyar",
                         foundingDate: "2020-08",
-                        legalName: "KSPPS BMT NU LUMAJANG",
-                        logo: "https://bmtnulumajang.id/logo.png",
+                        legalName: "Pemerintah Desa Sumberanyar",
+                        logo: "https://sumberanyar.id/logo.png",
                         sameAs: [
-                            "https://www.facebook.com/bmtnulumajang",
-                            "https://www.instagram.com/bmtnulumajang"
+                            "https://www.facebook.com/PemerintahDesaSumberanyar",
+                            "https://www.instagram.com/pemerintahdesasumberanyar"
                         ]
                     }
                 }}
             />
 
             {/* Hero Section */}
-            <section className="pt-32 pb-16 bg-gradient-to-br from-bmt-green-700 to-primary-dark text-white relative overflow-hidden">
+            <section className="pt-32 pb-16 bg-gradient-to-br from-desa-primary to-desa-primary-dark text-white relative overflow-hidden">
                 {/* Arabesque Pattern Overlay */}
                 <div className="absolute inset-0 bg-arabesque-grid bg-grid-24 opacity-10 pointer-events-none"></div>
 
@@ -81,19 +81,19 @@ export default function TentangKamiPage() {
                     <div className="space-y-6">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-100 text-yellow-800 text-sm font-semibold">
                             <Building2 className="w-4 h-4" />
-                            <span>Est. Agustus 2020</span>
+                            <span>Pemerintahan Desa</span>
                         </div>
                         <h2 className="text-3xl font-bold text-slate-900">
-                            KSPPS BMT NU LUMAJANG
+                            Pemerintah Desa Sumberanyar
                         </h2>
 
                         {/* History & Philosophy */}
                         <div className="prose prose-lg text-slate-600">
                             <p>
-                                Berdiri kokoh di bawah komando <strong>PCNU Lumajang</strong>, kami hadir sebagai amanah Konferensi PCNU 2016 untuk membangun kemandirian ekonomi umat. Resmi beroperasi sejak <strong>Agustus 2020</strong>, kami membawa misi besar: <strong>Gerakan Pembebasan</strong> warga dari jerat rentenir.
+                                Desa Sumberanyar adalah desa yang berkomitmen untuk memberikan pelayanan terbaik bagi warga. Melalui inovasi Sistem Informasi Desa (SID), kami menghadirkan transparansi dan kemudahan akses informasi publik menuju tata kelola pemerintahan yang baik.
                             </p>
                             <p>
-                                Dengan filosofi <em>"Mudah, Murah, Berkah dengan cara Syariah"</em>, setiap rupiah yang Anda simpan bukan sekadar investasi, melainkan kontribusi nyata bagi kebangkitan ekonomi warga Nahdliyin.
+                                Dengan filosofi melayani sepenuhnya, kami terus berupaya meningkatkan kualitas infrastruktur, ekonomi, dan kesejahteraan masyarakat Desa Sumberanyar.
                             </p>
                         </div>
 
@@ -102,7 +102,7 @@ export default function TentangKamiPage() {
                             <div>
                                 <h3 className="text-lg font-bold text-emerald-800 mb-2">Visi Kami</h3>
                                 <p className="text-sm text-emerald-900/80 italic">
-                                    "Menjadi Lembaga keuangan yang Mandiri, Sehat, dan Kuat serta mampu berperan untuk membantu memakmurkan kehidupan anggota dan ummat manusia pada umumnya."
+                                    "Mewujudkan Desa Sumberanyar yang Mandiri, Sejahtera, dan Berbudaya berbasis Keunggulan Lokal."
                                 </p>
                             </div>
                             <div>
@@ -110,19 +110,19 @@ export default function TentangKamiPage() {
                                 <ul className="space-y-2 text-sm text-emerald-900/80">
                                     <li className="flex gap-2">
                                         <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                                        <span>Mengembangkan BMT yang maju, terpercaya, aman, dan transparan.</span>
+                                        <span>Meningkatkan kualitas pelayanan publik secara transparan.</span>
                                     </li>
                                     <li className="flex gap-2">
                                         <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                                        <span>Pengelolaan dana dengan prinsip kehati-hatian (prudent).</span>
+                                        <span>Pemberdayaan ekonomi masyarakat berbasis potensi desa.</span>
                                     </li>
                                     <li className="flex gap-2">
                                         <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                                        <span>Mewujudkan gerakan pembebasan anggota dari rentenir.</span>
+                                        <span>Meningkatkan kualitas infrastruktur desa.</span>
                                     </li>
                                     <li className="flex gap-2">
                                         <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                                        <span>Membangun struktur masyarakat yang adil & berkemakmuran.</span>
+                                        <span>Melestarikan budaya dan nilai gotong royong warga.</span>
                                     </li>
                                 </ul>
                             </div>
@@ -132,13 +132,13 @@ export default function TentangKamiPage() {
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                         <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
                             <ShieldCheck className="w-5 h-5 text-emerald-600" />
-                            Legalitas Resmi
+                            Informasi Legalitas
                         </h3>
                         <div className="space-y-3">
                             <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
                                 <FileText className="w-5 h-5 text-slate-400 mt-0.5" />
                                 <div>
-                                    <p className="text-xs text-slate-500 uppercase font-semibold">Badan Hukum</p>
+                                    <p className="text-xs text-slate-500 uppercase font-semibold">Instansi</p>
                                     <p className="font-mono text-slate-700 font-medium break-all">
                                         {legalBH}
                                     </p>
@@ -147,7 +147,8 @@ export default function TentangKamiPage() {
                             <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
                                 <CheckCircle2 className="w-5 h-5 text-slate-400 mt-0.5" />
                                 <div>
-                                    <p className="text-xs text-slate-500 uppercase font-semibold">NIB (Nomor Induk Berusaha)</p>
+                                    <p className="text-xs text-slate-500 uppercase font-semibold">Kode Wilayah</p>
+
                                     <p className="text-slate-700 font-medium">{nib}</p>
                                 </div>
                             </div>
@@ -162,7 +163,7 @@ export default function TentangKamiPage() {
                             <Building2 className="w-6 h-6" />
                         </div>
                         <h4 className="text-4xl font-bold text-slate-900 mb-1">{assets}</h4>
-                        <p className="text-sm text-slate-500 font-medium uppercase tracking-wide">Total Aset (Rp)</p>
+                        <p className="text-sm text-slate-500 font-medium uppercase tracking-wide">Dana APBDes</p>
                     </div>
 
                     <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col justify-center text-center hover:-translate-y-1 transition-transform duration-300">
@@ -170,7 +171,7 @@ export default function TentangKamiPage() {
                             <Users className="w-6 h-6" />
                         </div>
                         <h4 className="text-4xl font-bold text-slate-900 mb-1">{members}</h4>
-                        <p className="text-sm text-slate-500 font-medium uppercase tracking-wide">Anggota</p>
+                        <p className="text-sm text-slate-500 font-medium uppercase tracking-wide">Warga Desa</p>
                     </div>
 
                     <div className="bg-white p-6 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col justify-center text-center hover:-translate-y-1 transition-transform duration-300 sm:col-span-2">
@@ -178,7 +179,7 @@ export default function TentangKamiPage() {
                             <Calendar className="w-6 h-6" />
                         </div>
                         <h4 className="text-4xl font-bold text-slate-900 mb-1">{branches}</h4>
-                        <p className="text-sm text-slate-500 font-medium uppercase tracking-wide">Kantor Layanan</p>
+                        <p className="text-sm text-slate-500 font-medium uppercase tracking-wide">Wilayah Dusun</p>
                     </div>
                 </div>
 
@@ -186,7 +187,7 @@ export default function TentangKamiPage() {
                 {/* Location / Contact Snippet */}
                 <section className="bg-emerald-900 rounded-3xl p-8 md:p-12 text-white text-center md:text-left flex flex-col md:flex-row items-center justify-between gap-8">
                     <div>
-                        <h3 className="text-2xl font-bold mb-2">Lokasi Kantor Pusat</h3>
+                        <h3 className="text-2xl font-bold mb-2">Lokasi Balai Desa</h3>
                         <p className="text-emerald-100 text-lg">
                             {address}
                         </p>

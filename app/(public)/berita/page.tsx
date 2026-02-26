@@ -11,7 +11,7 @@ import { pb } from "@/lib/pb";
 import { getAssetUrl } from "@/lib/cdn";
 import { formatDate } from "@/lib/number-utils";
 
-const CATEGORIES = ["Semua", "Berita", "Edukasi", "Promo"];
+const CATEGORIES = ["Semua", "Berita", "Edukasi", "Pengumuman"];
 
 export default function BeritaPage() {
     const [activeCategory, setActiveCategory] = useState("Semua");
@@ -77,7 +77,7 @@ export default function BeritaPage() {
             <ModernNavbar />
 
             {/* Header */}
-            <section className="pt-32 pb-16 bg-gradient-to-br from-bmt-green-700 to-primary-dark text-white text-center px-4 relative overflow-hidden">
+            <section className="pt-32 pb-16 bg-gradient-to-br from-desa-primary to-desa-primary-dark text-white text-center px-4 relative overflow-hidden">
                 <div className="absolute inset-0 bg-arabesque-grid bg-grid-24 opacity-10 pointer-events-none"></div>
                 <div className="absolute -bottom-16 left-0 right-0 h-16 bg-slate-50 rounded-t-[50%] scale-x-150"></div>
 

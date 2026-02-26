@@ -16,9 +16,12 @@ import {
     Menu,
     MapPin,
     FolderOpen,
-    Share2,
     Users,
-    FileText
+    FileText,
+    PieChart,
+    Wallet,
+    Share2,
+    Receipt
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -27,22 +30,37 @@ const MENU_GROUPS = [
         label: "Utama",
         items: [
             { href: "/panel/dashboard", icon: LayoutDashboard, label: "Dashboard", exact: true },
-            { href: "/panel/dashboard/inquiries", icon: MessageSquare, label: "Pesan Masuk" },
+        ]
+    },
+    {
+        label: "Layanan & Pengaduan",
+        items: [
+            { href: "/panel/dashboard/inquiries", icon: MessageSquare, label: "Pengaduan Warga" },
+            { href: "/panel/dashboard/surat", icon: FileText, label: "Agenda Surat Keluar" },
         ]
     },
     {
         label: "Konten & Tampilan",
         items: [
-            { href: "/panel/dashboard/berita", icon: Newspaper, label: "Berita & Artikel" },
+            { href: "/panel/dashboard/berita", icon: Newspaper, label: "Berita Desa" },
             { href: "/panel/dashboard/banners", icon: ImageIcon, label: "Hero Banners" },
             // { href: "/panel/dashboard/assets", icon: FolderOpen, label: "File Manager" },
         ]
     },
     {
-        label: "Produk & Layanan",
+        label: "Kependudukan & Wilayah",
         items: [
-            { href: "/panel/dashboard/produk", icon: ShoppingBag, label: "Layanan Desa" },
-            { href: "/panel/dashboard/cabang", icon: MapPin, label: "Wilayah Dusun" },
+            { href: "/panel/dashboard/mutasi", icon: Users, label: "Mutasi Penduduk" },
+            { href: "/panel/dashboard/perangkat-desa", icon: Users, label: "Perangkat Desa" },
+        ]
+    },
+    {
+        label: "Keuangan & Transparansi",
+        items: [
+            { href: "/panel/dashboard/bku/transaksi", icon: Wallet, label: "Log Transaksi BKU" },
+            { href: "/panel/dashboard/bku/rekening", icon: FolderOpen, label: "Master Rekening Desa" },
+            { href: "/panel/dashboard/bku/pajak", icon: Receipt, label: "Buku Pembantu Pajak" },
+            { href: "/panel/dashboard/apbdes", icon: PieChart, label: "Transparansi APBDes" },
         ]
     },
     {
@@ -121,7 +139,7 @@ export function AdminSidebar({ collapsed, setCollapsed, mobileOpen = false, setM
                                     </h3>
                                 )}
                                 <div className="space-y-1">
-                                    {group.items.map((item) => {
+                                    {group.items.map((item: any) => {
                                         // Strict check for exact match if specified, else prefix
                                         const isActive = item.exact
                                             ? pathname === item.href

@@ -25,7 +25,7 @@ export default function AdminLoginPage() {
     useEffect(() => {
         const fetchLogo = async () => {
             try {
-                const records = await pb.collection('site_config').getList(1, 1);
+                const records = await pb.collection('profil_desa').getList(1, 1);
                 if (records.items.length > 0) {
                     const data = records.items[0];
                     if (data.logo_secondary) {
@@ -71,7 +71,8 @@ export default function AdminLoginPage() {
                 id: "dev-admin", 
                 email: "admin@sumberanyar.id",
                 name: "Administrator Desa",
-                collectionId: "_pb_install_view_" 
+                collectionId: "_pb_install_view_",
+                collectionName: "_pb_install_view_" 
             });
             router.push("/panel/dashboard");
             return;

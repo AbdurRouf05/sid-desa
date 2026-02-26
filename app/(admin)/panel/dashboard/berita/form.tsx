@@ -141,7 +141,7 @@ export default function NewsEditorPage({ isEdit = false }: { isEdit?: boolean })
 
     // Fetch Site Config for Watermark Logo
     useEffect(() => {
-        pb.collection('site_config').getFirstListItem("")
+        pb.collection('profil_desa').getFirstListItem("")
             .then(config => {
                 // Use logo_secondary (white) and getSecureAssetUrl logic via getAssetUrl helper
                 if (config.logo_secondary) {
@@ -351,7 +351,7 @@ ${contentText}`;
                             >
                                 <option value="Berita">Berita</option>
                                 <option value="Edukasi">Edukasi</option>
-                                <option value="Promo">Promo</option>
+                                <option value="Pengumuman">Pengumuman</option>
                             </select>
                         </div>
 

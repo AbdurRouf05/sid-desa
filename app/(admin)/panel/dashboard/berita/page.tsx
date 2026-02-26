@@ -91,8 +91,8 @@ export default function AdminNewsPage() {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Berita & Artikel</h1>
-                    <p className="text-slate-500">Kelola konten berita dan artikel edukasi.</p>
+                    <h1 className="text-2xl font-bold text-slate-900">Berita Desa</h1>
+                    <p className="text-slate-500">Kelola konten berita, pengumuman, dan artikel edukasi desa.</p>
                 </div>
                 <Link
                     href="/panel/dashboard/berita/baru"

@@ -31,7 +31,7 @@ export default function DashboardPage() {
                 const news = await pb.collection('news').getList(1, 1, { filter: 'published=true' });
                 const products = await pb.collection('products').getList(1, 1);
                 // Config usually fetched from singleton
-                const config = await pb.collection('site_config').getFirstListItem("").catch(() => null);
+                const config = await pb.collection('profil_desa').getFirstListItem("").catch(() => null);
 
                 setStats({
                     newsCount: news?.totalItems || 0,

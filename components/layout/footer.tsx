@@ -8,14 +8,14 @@ export async function Footer() {
     const currentYear = new Date().getFullYear();
     const config = await getSiteConfig();
 
-    // Parse social links (they are stored as JSON in site_config)
+    // Parse social links (they are stored as JSON in profil_desa)
     // db-audit shows: "social_links" type: "json"
     // Expected format: { instagram: "url", facebook: "url", youtube: "url", tiktok: "url" }
     const socials = config.social_links || {};
 
     // Format WA Number for Link (remove + or 0, ensure 62)
     // Assuming config.whatsapp_number is stored plain or with symbols
-    const waRaw = config.phone_wa?.replace(/\D/g, '') || "6282334812239"; 
+    const waRaw = config.kontak_telp?.replace(/\D/g, '') || "6282334812239"; 
     const waLink = `https://wa.me/${waRaw}`;
 
     return (
@@ -40,17 +40,17 @@ export async function Footer() {
                             Sistem Informasi Desa Sumberanyar memberikan keterbukaan informasi dan pelayanan terbaik bagi warga.
                         </p>
                         <div className="flex gap-4 pt-4">
-                            {socials.instagram && (
+                            {!!socials?.instagram && (
                                 <Link href={socials.instagram} target="_blank" className="bg-slate-800 p-2 rounded-full hover:bg-pink-600 hover:text-white transition-all transform hover:scale-110">
                                     <Instagram size={18} />
                                 </Link>
                             )}
-                            {socials.facebook && (
+                            {!!socials?.facebook && (
                                 <Link href={socials.facebook} target="_blank" className="bg-slate-800 p-2 rounded-full hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110">
                                     <Facebook size={18} />
                                 </Link>
                             )}
-                            {socials.youtube && (
+                            {!!socials?.youtube && (
                                 <Link href={socials.youtube} target="_blank" className="bg-slate-800 p-2 rounded-full hover:bg-red-600 hover:text-white transition-all transform hover:scale-110">
                                     <Youtube size={18} />
                                 </Link>
@@ -92,15 +92,15 @@ export async function Footer() {
                         <ul className="space-y-4">
                             <li className="flex gap-3 items-start">
                                 <MapPin className="shrink-0 text-desa-accent mt-1" size={18} />
-                                <span className="text-slate-400 leading-snug">{config.alamat || "Nguling, Pasuruan, Jawa Timur"}</span>
+                                <span className="text-slate-400 leading-snug">{config.alamat_lengkap || "Nguling, Pasuruan, Jawa Timur"}</span>
                             </li>
                             <li className="flex gap-3 items-center">
                                 <Phone className="shrink-0 text-desa-accent" size={18} />
-                                <span className="text-slate-400">{config.phone_wa || "-"}</span>
+                                <span className="text-slate-400">{config.kontak_telp || "-"}</span>
                             </li>
                             <li className="flex gap-3 items-center">
                                 <Mail className="shrink-0 text-desa-accent" size={18} />
-                                <span className="text-slate-400">{config.email_official || "desa-sumberanyar@pasuruankab.go.id"}</span>
+                                <span className="text-slate-400">{config.kontak_email || "desa-sumberanyar@pasuruankab.go.id"}</span>
                             </li>
                             <li className="flex gap-3 items-center">
                                 <Clock className="shrink-0 text-desa-accent" size={18} />
