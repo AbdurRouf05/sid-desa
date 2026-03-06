@@ -40,8 +40,10 @@ export function ModernFooter() {
     useEffect(() => {
         const fetchConfig = async () => {
             try {
-                const config = await pb.collection('profil_desa').getFirstListItem("");
-                if (config) {
+                // Use getList instead of getFirstListItem to avoid 404 throw if collection is empty
+                const result = await pb.collection('profil_desa').getList(1, 1);
+                if (result.items.length > 0) {
+                    const config = result.items[0];
                     setContactInfo({
                         address: config.address || "Jl. Raya Sumberanyar No. 1, Sumberanyar, Pasuruan",
                         phone: config.phone_wa || "0812-3456-7890",

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { formatThousand, cleanNumber } from "@/lib/number-utils";
 
@@ -13,52 +13,49 @@ interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
-    ({ className, label, icon, currencyPrefix, numeric, error, value, onChange, ...props }, ref) => {
+    ({ className, label, icon, currencyPrefix, numeric, error, value, defaultValue, onChange, ...props }, ref) => {
+
+        const [localValue, setLocalValue] = useState<string>(() => {
+            if (value !== undefined) return numeric ? formatThousand(value as string | number) : String(value);
+            if (defaultValue !== undefined) return numeric ? formatThousand(defaultValue as string | number) : String(defaultValue);
+            return "";
+        });
+
+        useEffect(() => {
+            if (value !== undefined) {
+                setLocalValue(numeric ? formatThousand(value as string | number) : String(value));
+            }
+        }, [value, numeric]);
 
         const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             if (numeric) {
-                // Get the raw input
                 const rawInput = e.target.value;
-
-                // Clean it to get just numbers
                 const cleaned = cleanNumber(rawInput);
-
-                // Special handling for "0" and leading zeros logic
-                // If the cleaned string is "05", we want "5". 
-                // We use parseInt to strip leading zeros, unless it IS just "0" and we want to allow typing? 
-                // User said: "saat diketik di depan angka nol maka akan otomatis tampil normal tanpa nol di depannya"
-                // E.g. [0] -> type 5 at front -> [50]. Correct.
-                // E.g. [0] -> type 5 at back -> [05] -> should be [5].
 
                 let finalValue = cleaned;
                 if (cleaned.length > 1 && cleaned.startsWith("0")) {
                     finalValue = parseInt(cleaned, 10).toString();
-                } else if (cleaned === "0" && rawInput.length > 1) {
-                    // If user typed something to make "0" become "05" or "50"?
-                    // Wait, cleanNumber("05") is "05".
-                    // The logic above `parseInt` handles "05" -> "5".
                 }
 
-                // Create a synthetic event with the cleaned value to send to parent
+                setLocalValue(formatThousand(finalValue));
+
                 const syntheticEvent = {
                     ...e,
                     target: {
                         ...e.target,
                         value: finalValue,
-                        name: e.target.name // preserve name
+                        name: e.target.name
                     }
                 };
 
                 onChange?.(syntheticEvent as React.ChangeEvent<HTMLInputElement>);
             } else {
+                setLocalValue(e.target.value);
                 onChange?.(e);
             }
         };
 
-        // Determine display value
-        // If numeric, we format the incoming value (which should be raw from parent state)
-        // If the user is typing "1000", parent state gets "1000", we display "1.000".
-        const displayValue = numeric ? formatThousand(value as string | number) : value;
+        const displayValue = value !== undefined ? (numeric ? formatThousand(value as string | number) : value) : localValue;
 
         return (
             <label className="block space-y-1.5">
