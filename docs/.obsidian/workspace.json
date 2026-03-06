@@ -27,16 +27,28 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "DIAGRAM_BOILERPLATE.md",
+                "file": "MASTER_ROADMAP.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "DIAGRAM_BOILERPLATE"
+              "title": "MASTER_ROADMAP"
+            }
+          },
+          {
+            "id": "cf497791a666284e",
+            "type": "leaf",
+            "state": {
+              "type": "release-notes",
+              "state": {
+                "currentVersion": "1.12.4"
+              },
+              "icon": "lucide-book-up",
+              "title": "Release Notes 1.12.4"
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -109,7 +121,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "DIAGRAM_BOILERPLATE.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -119,7 +130,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for DIAGRAM_BOILERPLATE"
+              "title": "Backlinks"
             }
           },
           {
@@ -184,8 +195,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -198,11 +208,12 @@
       "bases:Create new base": false
     }
   },
-  "active": "fd5ff43579ecbc0b",
+  "active": "cf497791a666284e",
   "lastOpenFiles": [
+    "PROJECT_OVERVIEW.md",
+    "DIAGRAM_BOILERPLATE.md",
     "RENCANA_REUSE_DAN_PEMBERSIHAN.md",
     "Untitled.md",
-    "DIAGRAM_BOILERPLATE.md",
     "SETUP_REQUIREMENTS.md",
     "MASTER_ROADMAP.md",
     "DIAGRAM_APLIKASI.md",

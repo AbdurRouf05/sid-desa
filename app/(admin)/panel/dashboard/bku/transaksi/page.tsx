@@ -5,13 +5,18 @@ import Link from "next/link";
 import { pb } from "@/lib/pb";
 import { BkuTransaksi } from "@/types";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { Plus, Trash2, ArrowDownCircle, ArrowUpCircle, RefreshCw, FileText, Download, Printer } from "lucide-react";
+import { Plus, Trash2, ArrowDownCircle, ArrowUpCircle, RefreshCw, FileText, Download, Printer, FileSpreadsheet } from "lucide-react";
 import { TactileButton } from "@/components/ui/tactile-button";
+import { TableSkeleton } from "@/components/ui/table-skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PajakLog } from "@/types";
+import { exportBkuToXlsx } from "@/lib/export-bku-xlsx";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
 export default function TransaksiBkuPage() {
     const [data, setData] = useState<BkuTransaksi[]>([]);
+    const [pajakData, setPajakData] = useState<PajakLog[]>([]);
     const [loading, setLoading] = useState(true);
     
     // PDF Export Filters
@@ -27,6 +32,13 @@ export default function TransaksiBkuPage() {
                 expand: "rekening_sumber_id,rekening_tujuan_id"
             });
             setData(records);
+
+            // Fetch pajak data for XLSX export
+            const pajakRecords = await pb.collection("pajak_log").getFullList<PajakLog>({
+                sort: "-created",
+                expand: "bku_id"
+            });
+            setPajakData(pajakRecords);
         } catch (error) {
             console.error("Error fetching bku_transaksi", error);
         } finally {
@@ -39,8 +51,12 @@ export default function TransaksiBkuPage() {
     }, []);
 
     const handleDelete = async (id: string) => {
-        if (!window.confirm(`Hapus permanen log transaksi ini? Aksi ini akan mempengaruhi jumlah saldo berjalan.`)) return;
+        if (!window.confirm(`Hapus permanen log transaksi ini? Data pajak terkait juga akan dihapus. Aksi ini akan mempengaruhi jumlah saldo berjalan.`)) return;
         try {
+            // Cascade: delete related pajak_log records first
+            const relatedPajak = await pb.collection("pajak_log").getFullList({ filter: `bku_id = "${id}"` });
+            await Promise.all(relatedPajak.map(p => pb.collection("pajak_log").delete(p.id)));
+
             await pb.collection("bku_transaksi").delete(id);
             fetchData();
         } catch (error) {
@@ -180,7 +196,14 @@ export default function TransaksiBkuPage() {
                             disabled={data.length === 0}
                             className="h-10 px-4 flex items-center gap-2 bg-slate-800 text-white text-sm font-medium rounded-lg hover:bg-slate-700 transition-colors disabled:opacity-50"
                         >
-                            <Printer className="w-4 h-4" /> Cetak BKU
+                            <Printer className="w-4 h-4" /> Cetak PDF
+                        </button>
+                        <button 
+                            onClick={() => exportBkuToXlsx({ transactions: data, pajakData, bulan: filterBulan, tahun: filterTahun })}
+                            disabled={data.length === 0}
+                            className="h-10 px-4 flex items-center gap-2 bg-emerald-700 text-white text-sm font-medium rounded-lg hover:bg-emerald-600 transition-colors disabled:opacity-50"
+                        >
+                            <FileSpreadsheet className="w-4 h-4" /> Ekspor Excel
                         </button>
                     </div>
                     
@@ -207,21 +230,14 @@ export default function TransaksiBkuPage() {
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {loading ? (
-                                <tr>
-                                    <td colSpan={5} className="p-8 text-center text-slate-500">Memuat log Buku Kas Umum...</td>
-                                </tr>
+                                <TableSkeleton columns={5} rows={5} />
                             ) : data.length === 0 ? (
-                                <tr>
-                                    <td colSpan={5} className="p-12 text-center text-slate-500">
-                                        <div className="flex flex-col items-center">
-                                            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                                                <FileText className="w-8 h-8 text-slate-400" />
-                                            </div>
-                                            <p className="font-semibold text-slate-700">Buku Kas masih kosong</p>
-                                            <p className="text-sm mt-1">Belum ada catatan aktivitas masuk/keluar terkait dana kas dompet.</p>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <EmptyState
+                                    colSpan={5}
+                                    icon={FileText}
+                                    title="Buku Kas masih kosong"
+                                    description="Belum ada catatan aktivitas masuk/keluar terkait dana kas dompet."
+                                />
                             ) : (
                                 data.map((item) => (
                                     <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">

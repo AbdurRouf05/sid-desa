@@ -42,14 +42,14 @@ export function Navbar() {
             <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
                 {/* Logo */}
                 <Link href="/" className="flex items-center gap-2">
-                    <div className="w-10 h-10 bg-bmt-green-700 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                    <div className="w-10 h-10 bg-desa-primary rounded-lg flex items-center justify-center text-white font-bold text-xl">
                         S
                     </div>
                     <div className="flex flex-col">
-                        <span className={cn("font-bold text-lg leading-none", isScrolled ? "text-bmt-green-900" : "text-bmt-green-900 md:text-white")}>
+                        <span className={cn("font-bold text-lg leading-none", isScrolled ? "text-slate-900" : "text-slate-900 md:text-white")}>
                             SID
                         </span>
-                        <span className={cn("text-xs font-medium", isScrolled ? "text-bmt-green-700" : "text-bmt-green-200")}>
+                        <span className={cn("text-xs font-medium", isScrolled ? "text-desa-primary" : "text-emerald-200")}>
                             Sumberanyar
                         </span>
                     </div>
@@ -62,9 +62,9 @@ export function Navbar() {
                             key={link.href}
                             href={link.href}
                             className={cn(
-                                "text-sm font-medium transition-colors hover:text-bmt-gold-500",
+                                "text-sm font-medium transition-colors hover:text-desa-accent",
                                 isActive(link.href)
-                                    ? "text-bmt-gold-500 font-semibold"
+                                    ? "text-desa-accent font-semibold"
                                     : isScrolled
                                         ? "text-slate-600"
                                         : "text-white/90"

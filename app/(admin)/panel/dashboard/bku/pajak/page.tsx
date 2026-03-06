@@ -7,6 +7,8 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { CheckCircle2, CircleDashed, Receipt, Landmark, Upload, X, Loader2, FileText, Download } from "lucide-react";
 import { FormInput } from "@/components/ui/form-input";
 import { TactileButton } from "@/components/ui/tactile-button";
+import { TableSkeleton } from "@/components/ui/table-skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default function BukuPajakPage() {
     const [data, setData] = useState<PajakLog[]>([]);
@@ -112,21 +114,14 @@ export default function BukuPajakPage() {
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {loading ? (
-                                <tr>
-                                    <td colSpan={4} className="p-8 text-center text-slate-500">Memuat rekap pajak...</td>
-                                </tr>
+                                <TableSkeleton columns={4} rows={4} />
                             ) : data.length === 0 ? (
-                                <tr>
-                                    <td colSpan={4} className="p-12 text-center text-slate-500">
-                                        <div className="flex flex-col items-center">
-                                            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                                                <Landmark className="w-8 h-8 text-slate-400" />
-                                            </div>
-                                            <p className="font-semibold text-slate-700">Belum ada Log Potongan Pajak</p>
-                                            <p className="text-sm mt-1">Gunakan form transaksi (Kas Keluar) dan centang opsi pajak untuk mulai merekam titipan pajak.</p>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <EmptyState
+                                    colSpan={4}
+                                    icon={Landmark}
+                                    title="Belum ada Log Potongan Pajak"
+                                    description="Gunakan form transaksi (Kas Keluar) dan centang opsi pajak untuk mulai merekam titipan pajak."
+                                />
                             ) : (
                                 data.map((item) => {
                                     const bku = item.expand?.bku_id;

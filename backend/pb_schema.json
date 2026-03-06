@@ -1233,5 +1233,100 @@
       }
     ],
     "indexes": []
+  },
+  {
+    "id": "pbc_9999999999",
+    "name": "statistik_demografi",
+    "type": "base",
+    "system": false,
+    "listRule": "",
+    "viewRule": "",
+    "createRule": "@request.auth.id != ''",
+    "updateRule": "@request.auth.id != ''",
+    "deleteRule": "@request.auth.id != ''",
+    "fields": [
+      {
+        "autogeneratePattern": "[a-z0-9]{15}",
+        "hidden": false,
+        "id": "text3208210256",
+        "max": 15,
+        "min": 15,
+        "name": "id",
+        "pattern": "^[a-z0-9]+$",
+        "presentable": false,
+        "primaryKey": true,
+        "required": true,
+        "system": true,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "select_kategori_demo",
+        "maxSelect": 1,
+        "name": "kategori",
+        "presentable": true,
+        "required": true,
+        "system": false,
+        "type": "select",
+        "values": ["Jenis Kelamin", "Kelompok Usia", "Agama", "Pendidikan", "Pekerjaan"]
+      },
+      {
+        "autogeneratePattern": "",
+        "hidden": false,
+        "id": "text_label_demo",
+        "max": 0,
+        "min": 0,
+        "name": "label",
+        "pattern": "",
+        "presentable": true,
+        "primaryKey": false,
+        "required": true,
+        "system": false,
+        "type": "text"
+      },
+      {
+        "hidden": false,
+        "id": "number_jumlah_demo",
+        "max": null,
+        "min": 0,
+        "name": "jumlah",
+        "presentable": false,
+        "required": true,
+        "system": false,
+        "type": "number"
+      },
+      {
+        "hidden": false,
+        "id": "number_tahun_demo",
+        "max": 2100,
+        "min": 1900,
+        "name": "tahun",
+        "presentable": false,
+        "required": true,
+        "system": false,
+        "type": "number"
+      },
+      {
+        "hidden": false,
+        "id": "autodate2990389176",
+        "name": "created",
+        "onCreate": true,
+        "onUpdate": false,
+        "presentable": false,
+        "system": true,
+        "type": "autodate"
+      },
+      {
+        "hidden": false,
+        "id": "autodate3332085495",
+        "name": "updated",
+        "onCreate": true,
+        "onUpdate": true,
+        "presentable": false,
+        "system": true,
+        "type": "autodate"
+      }
+    ],
+    "indexes": []
   }
 ]

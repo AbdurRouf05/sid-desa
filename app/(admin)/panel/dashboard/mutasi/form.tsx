@@ -72,30 +72,49 @@ export default function MutasiFormPage({ isEdit = false, params }: { isEdit?: bo
     const onSubmit = async (data: MutasiData) => {
         setIsLoading(true);
         try {
-            const formData = new FormData();
+            // Debug: check auth status
+            console.log("Auth valid:", pb.authStore.isValid, "Token:", pb.authStore.token ? "present" : "missing");
             
-            // Append standard fields
-            if (data.nik) formData.append("nik", data.nik);
-            formData.append("nama_lengkap", data.nama_lengkap);
-            formData.append("jenis_mutasi", data.jenis_mutasi);
-            // Pocketbase expects UTC ISO 8601 string, but YYYY-MM-DD usually works if specified as Date object in collection or text
-            formData.append("tanggal_mutasi", new Date(data.tanggal_mutasi).toISOString()); 
-            if (data.keterangan) formData.append("keterangan", data.keterangan);
-            
-            // Append file if selected
+            // Build payload — use FormData only when a file is attached
             if (selectedFile) {
+                const formData = new FormData();
+                formData.append("nama_lengkap", data.nama_lengkap);
+                formData.append("jenis_mutasi", data.jenis_mutasi);
+                formData.append("tanggal_mutasi", new Date(data.tanggal_mutasi).toISOString());
+                if (data.nik && data.nik.trim()) formData.append("nik", data.nik.trim());
+                if (data.keterangan && data.keterangan.trim()) formData.append("keterangan", data.keterangan.trim());
                 formData.append("dokumen_bukti", selectedFile);
-            }
 
-            if (isEdit && params?.id) {
-                await pb.collection("mutasi_penduduk").update(params.id, formData);
+                if (isEdit && params?.id) {
+                    await pb.collection("mutasi_penduduk").update(params.id, formData);
+                } else {
+                    await pb.collection("mutasi_penduduk").create(formData);
+                }
             } else {
-                await pb.collection("mutasi_penduduk").create(formData);
+                // JSON payload (no file) — more reliable with PocketBase
+                const payload: Record<string, any> = {
+                    nama_lengkap: data.nama_lengkap,
+                    jenis_mutasi: data.jenis_mutasi,
+                    tanggal_mutasi: new Date(data.tanggal_mutasi).toISOString(),
+                };
+                if (data.nik && data.nik.trim()) payload.nik = data.nik.trim();
+                if (data.keterangan && data.keterangan.trim()) payload.keterangan = data.keterangan.trim();
+
+                console.log("Sending payload:", JSON.stringify(payload));
+
+                if (isEdit && params?.id) {
+                    await pb.collection("mutasi_penduduk").update(params.id, payload);
+                } else {
+                    await pb.collection("mutasi_penduduk").create(payload);
+                }
             }
             router.push("/panel/dashboard/mutasi");
         } catch (error: any) {
-            console.error("Error saving mutasi", error);
-            alert(`Gagal menyimpan data: ${error.message}`);
+            console.error("Error saving mutasi — full response:", JSON.stringify(error?.response));
+            const detail = error?.response?.data
+                ? Object.entries(error.response.data).map(([k, v]: any) => `${k}: ${v?.message}`).join(', ')
+                : error.message;
+            alert(`Gagal menyimpan data: ${detail}`);
         } finally {
             setIsLoading(false);
         }
@@ -116,7 +135,7 @@ export default function MutasiFormPage({ isEdit = false, params }: { isEdit?: bo
     }
 
     return (
-        <main className="max-w-4xl">
+        <main className="space-y-6">
             <div className="flex items-center gap-4 mb-8">
                 <Link href="/panel/dashboard/mutasi">
                     <button className="p-2 hover:bg-slate-100 rounded-full transition-colors">

@@ -13,9 +13,9 @@ const buttonVariants = cva(
     {
         variants: {
             variant: {
-                default: "bg-bmt-green-700 text-white hover:bg-bmt-green-800 shadow-lg shadow-bmt-green-900/10",
-                gold: "bg-gradient-to-r from-bmt-gold-400 to-bmt-gold-500 text-bmt-green-900 font-bold hover:shadow-md hover:scale-105",
-                outline: "border border-bmt-green-700 text-bmt-green-700 hover:bg-bmt-green-700/10 bg-transparent",
+                default: "bg-desa-primary text-white hover:bg-desa-primary-dark shadow-lg shadow-desa-primary/10",
+                gold: "bg-gradient-to-r from-desa-accent-light to-desa-accent text-white font-bold hover:shadow-md hover:scale-105",
+                outline: "border border-desa-primary text-desa-primary hover:bg-desa-primary/10 bg-transparent",
                 ghost: "hover:bg-slate-100 text-slate-700",
                 link: "text-primary underline-offset-4 hover:underline",
             },

@@ -7,6 +7,8 @@ import { SuratKeluar } from "@/types";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Plus, Search, Trash2, Edit2, FileText, Download, Printer } from "lucide-react";
 import { TactileButton } from "@/components/ui/tactile-button";
+import { TableSkeleton } from "@/components/ui/table-skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 import { formatDate } from "@/lib/number-utils";
 import { cn } from "@/lib/utils";
 
@@ -127,21 +129,14 @@ export default function SuratKeluarPage() {
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {loading ? (
-                                <tr>
-                                    <td colSpan={5} className="p-8 text-center text-slate-500">Memuat data agenda...</td>
-                                </tr>
+                                <TableSkeleton columns={5} rows={4} />
                             ) : filteredData.length === 0 ? (
-                                <tr>
-                                    <td colSpan={5} className="p-12 text-center text-slate-500">
-                                        <div className="flex flex-col items-center">
-                                            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                                                <FileText className="w-8 h-8 text-slate-400" />
-                                            </div>
-                                            <p className="font-semibold text-slate-700">Belum ada surat diregister</p>
-                                            <p className="text-sm mt-1">Draf surat keluar akan tampil di sini saat admin membuat surat.</p>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <EmptyState
+                                    colSpan={5}
+                                    icon={FileText}
+                                    title="Belum ada surat diregister"
+                                    description="Draf surat keluar akan tampil di sini saat admin membuat surat."
+                                />
                             ) : (
                                 filteredData.map((item) => (
                                     <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">

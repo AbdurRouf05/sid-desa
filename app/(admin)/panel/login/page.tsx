@@ -50,35 +50,8 @@ export default function AdminLoginPage() {
         setIsLoading(true);
         setError("");
 
-        // Development Bypass: Allow viewing panel without live backend
-        if (process.env.NODE_ENV === "development" && data.email === "admin@sumberanyar.id" && data.password === "admin123") {
-            console.warn("Dev Mode: Bypassing real authentication");
-            
-            // Create a valid-looking fake JWT (header.payload.signature)
-            // Payload: {"exp": 4800000000, "id": "dev-admin"} (exp is in year 2122)
-            const header = btoa(JSON.stringify({ alg: "HS256", typ: "JWT" }));
-            const payload = btoa(JSON.stringify({ 
-                exp: 4800000000, 
-                id: "dev-admin", 
-                collectionId: "_pb_install_view_",
-                email: "admin@sumberanyar.id",
-                name: "Administrator Desa"
-            }));
-            const fakeJwt = `${header}.${payload}.signature`;
-
-            // Save mock token to satisfy pb.authStore.isValid check in layout.tsx
-            pb.authStore.save(fakeJwt, { 
-                id: "dev-admin", 
-                email: "admin@sumberanyar.id",
-                name: "Administrator Desa",
-                collectionId: "_pb_install_view_",
-                collectionName: "_pb_install_view_" 
-            });
-            router.push("/panel/dashboard");
-            return;
-        }
-
         try {
+            // Try regular users collection first
             await pb.collection('users').authWithPassword(data.email, data.password);
             router.push("/panel/dashboard");
         } catch (err: any) {
@@ -87,9 +60,9 @@ export default function AdminLoginPage() {
                 console.error("Login Error:", err);
             }
 
-            // Fallback: Try Admin Auth (Super User)
+            // Fallback: Try Super User Auth (PocketBase v0.25+)
             try {
-                await pb.admins.authWithPassword(data.email, data.password);
+                await pb.collection('_superusers').authWithPassword(data.email, data.password);
                 router.push("/panel/dashboard");
             } catch (adminErr) {
                 setError("Email atau password salah.");

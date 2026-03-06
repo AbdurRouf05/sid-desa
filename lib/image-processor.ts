@@ -93,7 +93,7 @@ async function addWatermark(imageBlob: Blob, logoUrl?: string): Promise<Blob> {
                 }
             }
 
-            // Draw Text "bmtnulumajang.id"
+            // Draw Text "sumberanyar.id"
             ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
             ctx.shadowBlur = 4;
             ctx.shadowOffsetX = 2;

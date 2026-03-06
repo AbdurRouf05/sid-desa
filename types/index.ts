@@ -22,17 +22,6 @@ export interface HeroBanner {
     order: number;
 }
 
-export interface Product {
-    id: string;
-    name: string;
-    slug: string;
-    type: 'administrasi' | 'kesehatan' | 'pendidikan' | 'umum';
-    description: string;
-    brochure: string;
-    icon: string;
-    is_featured: boolean;
-}
-
 export interface News {
     id: string;
     title: string;

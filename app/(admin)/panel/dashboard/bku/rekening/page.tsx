@@ -7,6 +7,8 @@ import { RekeningKas } from "@/types";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Plus, Trash2, Edit2, Wallet, Building2, Coins } from "lucide-react";
 import { TactileButton } from "@/components/ui/tactile-button";
+import { TableSkeleton } from "@/components/ui/table-skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getSaldoRekening } from "@/lib/bku-utils";
 
 interface RekeningKasWithSaldo extends RekeningKas {
@@ -85,21 +87,14 @@ export default function RekeningKasPage() {
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {loading ? (
-                                <tr>
-                                    <td colSpan={4} className="p-8 text-center text-slate-500">Memuat data rekening...</td>
-                                </tr>
+                                <TableSkeleton columns={4} rows={3} />
                             ) : data.length === 0 ? (
-                                <tr>
-                                    <td colSpan={4} className="p-12 text-center text-slate-500">
-                                        <div className="flex flex-col items-center">
-                                            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                                                <Wallet className="w-8 h-8 text-slate-400" />
-                                            </div>
-                                            <p className="font-semibold text-slate-700">Belum ada Rekening</p>
-                                            <p className="text-sm mt-1">Tambahkan laci tunai kelurahan atau bank Kas Desa untuk memulai Buku Kas Umum.</p>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <EmptyState
+                                    colSpan={4}
+                                    icon={Wallet}
+                                    title="Belum ada Rekening"
+                                    description="Tambahkan laci tunai kelurahan atau bank Kas Desa untuk memulai Buku Kas Umum."
+                                />
                             ) : (
                                 data.map((item) => (
                                     <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">

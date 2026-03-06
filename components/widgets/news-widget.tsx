@@ -11,18 +11,18 @@ export function NewsWidget() {
             <div className="p-4 space-y-3">
                 {[
                     {
-                        tag: "PROMO",
+                        tag: "INFO",
                         tagColor: "bg-green-100 text-green-800",
-                        title: "Special Financing Rates for Ramadan",
-                        desc: "Get up to 2.5% margin reduction for all financing products.",
+                        title: "Jadwal Musrenbang Desa 2026",
+                        desc: "Diskusi perencanaan pembangunan desa akan dilaksanakan bulan depan.",
                         iconColor: "text-emerald-600",
                         bgIcon: "bg-emerald-50"
                     },
                     {
-                        tag: "SYSTEM",
+                        tag: "LAYANAN",
                         tagColor: "bg-blue-100 text-blue-800",
-                        title: "Mobile Banking App Update v2.4",
-                        desc: "New features including QRIS payments and scheduled transfers.",
+                        title: "Update Data Kependudukan",
+                        desc: "Segera laporkan perubahan data keluarga Anda ke kantor desa.",
                         iconColor: "text-yellow-600",
                         bgIcon: "bg-yellow-50"
                     }

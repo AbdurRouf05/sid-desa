@@ -1,6 +1,6 @@
 import React from 'react';
 
-type SchemaType = 'Organization' | 'FinancialProduct' | 'NewsArticle' | 'BreadcrumbList' | 'ContactPage' | 'AboutPage' | 'CollectionPage' | 'WebSite';
+type SchemaType = 'Organization' | 'GovernmentService' | 'NewsArticle' | 'BreadcrumbList' | 'ContactPage' | 'AboutPage' | 'CollectionPage' | 'WebSite';
 
 interface JsonLdProps {
     type: SchemaType;

@@ -23,14 +23,14 @@ export default function ServicesPage() {
                             description: "Pengajuan surat pengantar KTP, KK, dan lainnya."
                         },
                         {
-                            "@type": "Service",
-                            name: "PPOB & Pembayaran",
-                            description: "Bayar tagihan listrik, pulsa, dan BPJS."
+                            "@type": "GovernmentService",
+                            name: "Surat Keterangan Tidak Mampu",
+                            description: "Penerbitan SKTM untuk keperluan pendidikan dan kesehatan."
                         },
                         {
-                            "@type": "FinancialProduct",
-                            name: "Tabungan SIRELA",
-                            description: "Simpanan Sukarela yang likuid."
+                            "@type": "GovernmentService",
+                            name: "Pengaduan Warga",
+                            description: "Layanan pengaduan dan aspirasi masyarakat."
                         }
                     ]
                 }}
@@ -53,7 +53,7 @@ export default function ServicesPage() {
             <section className="py-20 bg-white">
                 <div className="container mx-auto px-4">
                     <div className="text-center max-w-2xl mx-auto mb-16">
-                        <span className="text-emerald-600 font-bold uppercase tracking-wider text-sm mb-2 block">Digital Banking</span>
+                        <span className="text-emerald-600 font-bold uppercase tracking-wider text-sm mb-2 block">Persuratan Desa</span>
                         <h2 className="text-3xl font-bold text-slate-900">Kemudahan Dalam Genggaman</h2>
                         <p className="text-slate-600 mt-4">
                             Layanan transaksi digital untuk memenuhi kebutuhan harian Anda, kapan saja dan di mana saja.

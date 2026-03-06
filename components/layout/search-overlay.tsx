@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Search, X, ArrowRight, Newspaper, Package, SearchSlash, Loader2 } from "lucide-react";
+import { Search, X, ArrowRight, Newspaper, SearchSlash, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { pb } from "@/lib/pb";
 import Link from "next/link";
@@ -14,7 +14,7 @@ interface SearchOverlayProps {
 
 export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     const [query, setQuery] = useState("");
-    const [results, setResults] = useState<{ products: any[], news: any[] }>({ products: [], news: [] });
+    const [results, setResults] = useState<{ news: any[] }>({ news: [] });
     const [loading, setLoading] = useState(false);
     const [logoUrl, setLogoUrl] = useState<string | null>(null);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -34,7 +34,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         } else {
             document.body.style.overflow = "unset";
             setQuery("");
-            setResults({ products: [], news: [] });
+            setResults({ news: [] });
         }
     }, [isOpen]);
 
@@ -50,7 +50,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     // Search logic with debounce
     useEffect(() => {
         if (query.length < 2) {
-            setResults({ products: [], news: [] });
+            setResults({ news: [] });
             return;
         }
 
@@ -60,19 +60,12 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 // Escape double quotes for PocketBase filter
                 const safeQuery = query.replace(/"/g, '\\"');
 
-                const [productsRes, newsRes] = await Promise.all([
-                    pb.collection('products').getList(1, 5, {
-                        filter: `published = true && (name ~ "${safeQuery}" || description ~ "${safeQuery}")`,
-                        sort: '-created'
-                    }),
-                    pb.collection('news').getList(1, 5, {
+                const newsRes = await pb.collection('news').getList(1, 10, {
                         filter: `published = true && (title ~ "${safeQuery}" || content ~ "${safeQuery}")`,
                         sort: '-created'
-                    })
-                ]);
+                    });
 
                 setResults({
-                    products: productsRes.items,
                     news: newsRes.items
                 });
             } catch (e) {
@@ -110,7 +103,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                                 type="text"
                                 value={query}
                                 onChange={(e) => setQuery(e.target.value)}
-                                placeholder="Cari layanan, produk, atau berita..."
+                                placeholder="Cari berita atau informasi desa..."
                                 className="w-full bg-transparent border-b-2 border-white/20 pb-4 pl-12 text-2xl md:text-4xl font-bold text-white placeholder:text-white/20 focus:outline-none focus:border-emerald-500 transition-colors"
                             />
                             {loading && (
@@ -119,43 +112,11 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         </div>
 
                         {/* Results Container */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                            {/* Products Results */}
+                        <div className="max-w-2xl mx-auto">
+                            {/* Berita Results */}
                             <div>
                                 <h3 className="text-emerald-400 font-bold uppercase tracking-widest text-xs mb-6 flex items-center gap-2">
-                                    <Package className="w-4 h-4" /> Produk & Layanan
-                                </h3>
-                                <div className="space-y-4">
-                                    {results.products.length > 0 ? (
-                                        results.products.map(product => {
-                                            const targetSlug = product.slug || product.id;
-                                            return (
-                                                <Link
-                                                    key={product.id}
-                                                    href={`/produk/${targetSlug}`}
-                                                    onClick={onClose}
-                                                    className="group block p-4 rounded-2xl border border-white/10 hover:bg-white/5 transition-all"
-                                                >
-                                                    <div className="flex justify-between items-center">
-                                                        <div>
-                                                            <p className="font-bold text-white group-hover:text-emerald-400 transition-colors uppercase text-sm mb-1">{product.name}</p>
-                                                            <p className="text-white/50 text-xs line-clamp-1">{product.description?.replace(/<[^>]*>/g, '')}</p>
-                                                        </div>
-                                                        <ArrowRight className="w-4 h-4 text-white/20 group-hover:translate-x-1 group-hover:text-white transition-all" />
-                                                    </div>
-                                                </Link>
-                                            );
-                                        })
-                                    ) : query.length >= 2 && !loading && (
-                                        <p className="text-white/20 text-sm italic">Tidak ada produk ditemukan.</p>
-                                    )}
-                                </div>
-                            </div>
-
-                            {/* News Results */}
-                            <div>
-                                <h3 className="text-emerald-400 font-bold uppercase tracking-widest text-xs mb-6 flex items-center gap-2">
-                                    <Newspaper className="w-4 h-4" /> Berita Terkini
+                                    <Newspaper className="w-4 h-4" /> Berita Desa
                                 </h3>
                                 <div className="space-y-4">
                                     {results.news.length > 0 ? (

@@ -7,6 +7,8 @@ import { MutasiPenduduk } from "@/types";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Plus, Search, Trash2, Edit2, FileText, Download, Users } from "lucide-react";
 import { TactileButton } from "@/components/ui/tactile-button";
+import { TableSkeleton } from "@/components/ui/table-skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 import { formatDate } from "@/lib/number-utils";
 import { cn } from "@/lib/utils";
 
@@ -65,7 +67,7 @@ export default function MutasiPendudukPage() {
     };
 
     return (
-        <main>
+        <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
                 <SectionHeading title="Mutasi Penduduk" subtitle="Kelola riwayat kelahiran, kematian, kedatangan, dan kepindahan warga." />
                 <div className="flex gap-2">
@@ -122,21 +124,14 @@ export default function MutasiPendudukPage() {
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {loading ? (
-                                <tr>
-                                    <td colSpan={5} className="p-8 text-center text-slate-500">Memuat data...</td>
-                                </tr>
+                                <TableSkeleton columns={5} rows={4} />
                             ) : filteredData.length === 0 ? (
-                                <tr>
-                                    <td colSpan={5} className="p-12 text-center text-slate-500">
-                                        <div className="flex flex-col items-center">
-                                            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                                                <Users className="w-8 h-8 text-slate-400" />
-                                            </div>
-                                            <p className="font-semibold text-slate-700">Tidak ada data mutasi</p>
-                                            <p className="text-sm mt-1">Data mutasi yang direkam akan tampil di sini.</p>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <EmptyState
+                                    colSpan={5}
+                                    icon={Users}
+                                    title="Tidak ada data mutasi"
+                                    description="Data mutasi yang direkam akan tampil di sini."
+                                />
                             ) : (
                                 filteredData.map((item) => (
                                     <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
@@ -200,6 +195,6 @@ export default function MutasiPendudukPage() {
                     </table>
                 </div>
             </div>
-        </main>
+        </div>
     );
 }

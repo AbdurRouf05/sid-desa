@@ -7,6 +7,8 @@ import { TanahDesa } from "@/lib/validations/aset";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Plus, Trash2, Pencil, Map } from "lucide-react";
 import { TactileButton } from "@/components/ui/tactile-button";
+import { TableSkeleton } from "@/components/ui/table-skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 
 export default function TanahDesaPage() {
     const [data, setData] = useState<(TanahDesa & { id: string, created: string })[]>([]);
@@ -68,20 +70,14 @@ export default function TanahDesaPage() {
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                             {loading ? (
-                                <tr>
-                                    <td colSpan={5} className="p-8 text-center text-slate-500">Memuat data tanah...</td>
-                                </tr>
+                                <TableSkeleton columns={5} rows={3} />
                             ) : data.length === 0 ? (
-                                <tr>
-                                    <td colSpan={5} className="p-12 text-center text-slate-500">
-                                        <div className="flex flex-col items-center">
-                                            <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                                                <Map className="w-8 h-8 text-slate-400" />
-                                            </div>
-                                            <p className="font-semibold text-slate-700">Belum ada data tanah desa</p>
-                                        </div>
-                                    </td>
-                                </tr>
+                                <EmptyState
+                                    colSpan={5}
+                                    icon={Map}
+                                    title="Belum ada data tanah desa"
+                                    description="Tambahkan data bidang tanah milik pemerintahan desa."
+                                />
                             ) : (
                                 data.map((item) => (
                                     <tr key={item.id} className="hover:bg-slate-50 transition-colors">

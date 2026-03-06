@@ -146,9 +146,9 @@ Mulai membangun gerbang pengarsipan Arus Keluar & Masuk APBDes Internal (Pembuku
 
 **Target**: Melunasi utang pajak dan mengekspor buku kas.
 
-- [ ] **[FE] Pelunasan Pajak**:
+- [x] **[FE] Pelunasan Pajak**:
   - Monitor tagihan pajak. Admin mengubah status menjadi "Sudah Disetor" disertai bukti slip setor/NTPN.
-- [ ] **[FE] Ekspor XLSX Arus Kas Laporan (End-of-Month)**:
+- [x] **[FE] Ekspor XLSX Arus Kas Laporan (End-of-Month)**:
   - Merangkum rumus (Kas Awal + Pemasukan - Pengeluaran - Pajak) menjadi Excel Bulanan Buku Kas Umum siap cetak.
 
 ---
@@ -170,25 +170,25 @@ Merampingkan sisa modul pelengkap, membersihkan beban basis data, lalu Go-Live.
 
 **Target**: Membersihkan file yatim piatu di Pocketbase demi menghemat hard-disk _server_.
 
-- [ ] **[BE] Skenario Cascade Delete Dokumen Nota BKU**:
+- [x] **[BE] Skenario Cascade Delete Dokumen Nota BKU**:
   - Script Trigger di PB: Memusnahkan file _image receipt_/PDF dari _storage server_ manakala Row Transaksi Kas tersebut dibatalkan/dihapus Admin.
-- [ ] **[BE] Skenario Cascade File Pengaduan & Surat**:
+- [x] **[BE] Skenario Cascade File Pengaduan & Surat**:
   - Membersihkan relasi file yang ditinggal mati oleh catatan agenda.
 
 ### Minggu 3: UI/UX Master Polishing & Empty States
 
 **Target**: Memberikan pengalaman interaksi pengguna yang premium.
 
-- [ ] **[FE] Animasi Loading (_Skeletons_)**:
+- [x] **[FE] Animasi Loading (_Skeletons_)**:
   - Mengurangi layout _jumps_ (CLS) saat data menunggu _fetching_ dari Pocketbase.
-- [ ] **[FE] Indikator _Empty States_ & Notifikasi**:
+- [x] **[FE] Indikator _Empty States_ & Notifikasi**:
   - Blok Ilustrasi Data Kosong jika APBDes/Pengaduan Masih Nol. Sistem Toast (_Sukses/Error_) yang andal.
 
 ### Minggu 4: E2E User Acceptance Testing & Deployment
 
 **Target**: Menguji aplikasi dari sudut pandang warga hingga bendahara, tanpa _bugs_.
 
-- [ ] **[Testing] Simulasi Peran Bendahara & Kependudukan**:
+- [x] **[Testing] Simulasi Peran Bendahara & Kependudukan**:
   - Uji alur pembuatan Surat berkelanjutan, perhitungan pajak BKU hingga mutasi penduduk tanpa _error crashing_.
-- [ ] **[Infrastruktur] Optimalisasi Lingkungan Build**:
+- [x] **[Infrastruktur] Optimalisasi Lingkungan Build**:
   - Resolusi _Lint/Build Warnings_. Pengerucutan _Production Build_ (`next build`) tanpa _Console logs_ untuk final rilis ke Publik.

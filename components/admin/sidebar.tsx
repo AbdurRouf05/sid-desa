@@ -8,7 +8,6 @@ import {
     LayoutDashboard,
     MessageSquare,
     Newspaper,
-    ShoppingBag,
     Image as ImageIcon,
     Settings,
     LogOut,
@@ -22,6 +21,7 @@ import {
     Wallet,
     Share2,
     Receipt,
+    BarChart3,
     Map,
     Package
 } from "lucide-react";
@@ -54,6 +54,7 @@ const MENU_GROUPS = [
         items: [
             { href: "/panel/dashboard/mutasi", icon: Users, label: "Mutasi Penduduk" },
             { href: "/panel/dashboard/perangkat-desa", icon: Users, label: "Perangkat Desa" },
+            { href: "/panel/dashboard/demografi", icon: BarChart3, label: "Statistik Demografi" },
         ]
     },
     {

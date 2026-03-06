@@ -131,7 +131,7 @@ export function ModernFooter() {
                         </ul>
                     </div>
 
-                    {/* Column 3: Products */}
+                    {/* Column 3: Layanan Publik */}
                     <div>
                         <h3 className="text-white font-bold text-lg mb-6 flex items-center gap-2">
                             <span className="w-8 h-1 bg-desa-accent rounded-full"></span>
@@ -139,7 +139,7 @@ export function ModernFooter() {
                         </h3>
                         <ul className="space-y-3 text-sm">
                             <li><Link href="/layanan" className="hover:text-desa-accent transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Layanan Surat</Link></li>
-                            <li><Link href="/transparan" className="hover:text-desa-accent transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Transparansi APBDes</Link></li>
+                            <li><Link href="/transparansi" className="hover:text-desa-accent transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Transparansi APBDes</Link></li>
                             <li><Link href="/pengaduan" className="hover:text-desa-accent transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Pengaduan Warga</Link></li>
                             <li><Link href="/berita" className="hover:text-desa-accent transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Agenda Desa</Link></li>
                         </ul>

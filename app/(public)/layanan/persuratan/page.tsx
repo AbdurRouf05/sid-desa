@@ -1,6 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { ModernNavbar } from "@/components/layout/modern-navbar";
+import { ModernFooter } from "@/components/layout/modern-footer";
 import { Breadcrumb } from "../../../../components/ui/breadcrumb";
 import { FileSignature, CheckCircle2, AlertCircle, Phone, Info } from "lucide-react";
 import Link from "next/link";
@@ -91,9 +93,10 @@ export default function PersuratanPage() {
     ];
 
     return (
-        <main className="min-h-screen bg-slate-50 pt-24 pb-20">
+        <main className="min-h-screen bg-slate-50">
+            <ModernNavbar />
             {/* Header Section */}
-            <section className="bg-emerald-900 text-white py-16 lg:py-24 relative overflow-hidden">
+            <section className="bg-emerald-900 text-white pt-32 pb-16 lg:pt-36 lg:pb-24 relative overflow-hidden">
                 <div className="absolute inset-0 z-0">
                     <div className="absolute inset-0 bg-emerald-900/90 mix-blend-multiply"></div>
                     <div className="absolute inset-0 bg-gradient-to-t from-emerald-950 via-emerald-900/80 to-transparent"></div>
@@ -231,6 +234,7 @@ export default function PersuratanPage() {
 
                 </div>
             </section>
+            <ModernFooter />
         </main>
     );
 }

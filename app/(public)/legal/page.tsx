@@ -104,7 +104,7 @@ export default async function LegalPage() {
                                 Klien wajib membayar biaya sewa server dan domain secara berkala (<em>Recurring Annually</em>) sebesar <strong>Rp 875.000,- / tahun</strong> (nominal dapat berubah sesuai tarif vendor) sebelum tanggal jatuh tempo.
                             </p>
                             <p>
-                                Masa aktif domain <code>bmtnulumajang.id</code> dapat diperiksa secara publik melalui <strong>Pandi.id</strong> atau WHOIS.
+                                Masa aktif domain <code>sumberanyar.desa.id</code> dapat diperiksa secara publik melalui <strong>Pandi.id</strong> atau WHOIS.
                                 <br />
                                 <span className="text-sm font-mono bg-slate-100 px-2 py-1 rounded mt-2 inline-block border border-slate-200">
                                     Jatuh Tempo Berikutnya: 2027-02-05T23:59:59Z

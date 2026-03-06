@@ -26,31 +26,17 @@ export default function ContactPage() {
     const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<InquiryForm>();
     const messageContent = watch("message", "");
 
-    const [branches, setBranches] = useState<any[]>([]);
-    const [isLoadingBranches, setIsLoadingBranches] = useState(true);
-    const [fetchError, setFetchError] = useState<string | null>(null);
+
 
     useEffect(() => {
         const fetchData = async () => {
-            setIsLoadingBranches(true);
             try {
-                // Config
                 const configRecords = await pb.collection('profil_desa').getList(1, 1);
                 if (configRecords.items.length > 0) {
                     setConfig(configRecords.items[0]);
                 }
-
-                // Branches
-                const branchRecords = await pb.collection('branches').getFullList({
-                    sort: 'sort_order',
-                    filter: 'is_active = true'
-                });
-                setBranches(branchRecords);
             } catch (e: any) {
                 console.error("Error fetching data", e);
-                setFetchError(e.message || "Gagal memuat data");
-            } finally {
-                setIsLoadingBranches(false);
             }
         };
         fetchData();
@@ -104,7 +90,7 @@ export default function ContactPage() {
     const mapUrl = config?.social_links?.map_embed_url || config?.map_embed_url || "";
     const address = config?.address || "Jl. Alun-alun Timur No 3, Jogotrunan, Lumajang";
     const phone = config?.phone_wa || "081234567890";
-    const email = config?.email_official || "info@bmtnu.id";
+    const email = config?.email_official || "desa@sumberanyar.id";
 
     return (
         <main className="min-h-screen bg-slate-50 font-sans">
@@ -144,7 +130,7 @@ export default function ContactPage() {
                         Hubungi Kami
                     </h1>
                     <p className="text-xl text-emerald-100 max-w-2xl mx-auto font-light">
-                        Kami siap membantu kebutuhan informasi dan layanan keuangan Anda.
+                        Kami siap membantu kebutuhan informasi dan layanan desa Anda.
                     </p>
                 </div>
             </section>
@@ -308,83 +294,7 @@ export default function ContactPage() {
                     </div>
                 </div>
 
-                {/* Branch Locator Section */}
-                <div className="mt-24">
-                    <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold text-slate-900 mb-4">Jaringan Kantor Layanan</h2>
-                        <p className="text-slate-600 max-w-2xl mx-auto">
-                            Temukan kantor serta pos pelayanan desa kami untuk mendapatkan informasi langsung secara tatap muka.
-                            Kami hadir lebih dekat untuk melayani kebutuhan finansial Anda.
-                        </p>
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {isLoadingBranches ? (
-                            <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-10 text-slate-400 bg-slate-50 rounded-xl animate-pulse">
-                                Memuat data cabang...
-                            </div>
-                        ) : fetchError ? (
-                            <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-10 text-red-400 bg-red-50 rounded-xl border border-red-100">
-                                Gagal memuat data: {fetchError}. <br />
-                                <span className="text-xs text-red-300">Pastikan API Rules untuk collection 'branches' sudah diatur Public.</span>
-                            </div>
-                        ) : branches.length > 0 ? (
-                            branches.map((branch) => (
-                                <div key={branch.id} className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 hover:shadow-md transition-shadow">
-                                    <div className="flex items-start justify-between mb-4">
-                                        <div>
-                                            <span className={`inline-block px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider mb-2 ${branch.type === 'Pusat' ? 'bg-emerald-100 text-emerald-800' :
-                                                branch.type === 'Kas' ? 'bg-blue-100 text-blue-800' : 'bg-slate-100 text-slate-600'
-                                                }`}>
-                                                {branch.type || "Cabang"}
-                                            </span>
-                                            <h3 className="font-bold text-lg text-slate-900">{branch.name}</h3>
-                                        </div>
-                                        <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400">
-                                            <MapPin className="w-4 h-4" />
-                                        </div>
-                                    </div>
-
-                                    <p className="text-sm text-slate-600 mb-4 h-10 line-clamp-2" title={branch.address}>
-                                        {branch.address}
-                                    </p>
-
-                                    {branch.phone_wa && (
-                                        <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-                                            <Phone className="w-3 h-3" />
-                                            <span>{branch.phone_wa}</span>
-                                        </div>
-                                    )}
-
-                                    <div className="grid grid-cols-2 gap-3">
-                                        <a
-                                            href={`https://maps.google.com/maps?q=${encodeURIComponent(branch.name + " " + branch.address + " Lumajang")}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="px-4 py-2 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-lg hover:bg-emerald-100 transition-colors text-center flex items-center justify-center gap-2"
-                                        >
-                                            <MapPin className="w-3 h-3" /> Navigasi
-                                        </a>
-                                        {branch.phone_wa && (
-                                            <a
-                                                href={`https://wa.me/${branch.phone_wa.replace(/\D/g, '')}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="px-4 py-2 bg-slate-50 text-slate-700 text-xs font-bold rounded-lg hover:bg-slate-100 transition-colors text-center flex items-center justify-center gap-2"
-                                            >
-                                                <Send className="w-3 h-3" /> WhatsApp
-                                            </a>
-                                        )}
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="col-span-1 md:col-span-2 lg:col-span-3 text-center py-10 text-slate-400 bg-slate-50 rounded-xl">
-                                Belum ada data kantor cabang.
-                            </div>
-                        )}
-                    </div>
-                </div>
             </div>
 
             <ModernFooter />

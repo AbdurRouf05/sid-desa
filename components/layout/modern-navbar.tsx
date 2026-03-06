@@ -56,13 +56,10 @@ export function ModernNavbar() {
 
     const navLinks = [
         { name: getLabel('nav_home', 'Beranda'), href: "/", visible: isVisible('nav_home') },
-        { name: "Profil Desa", href: "/#profil", visible: true },
-        { name: "Perangkat Desa", href: "/#perangkat", visible: true },
-        { name: "APBDes", href: "/transparansi", visible: true },
+        { name: "Profil Desa", href: "/tentang-kami", visible: true },
         { name: "Persuratan", href: "/layanan/persuratan", visible: true },
         { name: "Pengaduan", href: "/pengaduan", visible: true },
         { name: "Transparansi", href: "/transparansi", visible: true },
-        { name: getLabel('nav_about', 'Tentang Kami'), href: "/tentang-kami", visible: isVisible('nav_about') },
         { name: getLabel('nav_contact', 'Kontak'), href: "/kontak", visible: isVisible('nav_contact') },
     ].filter(link => link.visible);
 

@@ -22,13 +22,13 @@ import { pb } from "@/lib/pb";
 
 // Common predefined routes
 const STATIC_ROUTES = [
-    { value: "/", label: "Halaman Utama (Home)" },
-    { value: "/tentang-kami", label: "Tentang Kami (Profil)" },
-    { value: "/layanan", label: "Layanan & Produk" },
-    { value: "/berita", label: "Berita & Artikel" },
-    { value: "/kontak", label: "Hubungi Kami (Kontak)" },
-    { value: "/galeri", label: "Galeri Foto/Video" },
-    { value: "/karir", label: "Karir / Lowongan" },
+    { value: "/", label: "Beranda" },
+    { value: "/tentang-kami", label: "Tentang Desa" },
+    { value: "/layanan", label: "Layanan Desa" },
+    { value: "/berita", label: "Berita & Pengumuman" },
+    { value: "/kontak", label: "Kontak & Lokasi" },
+    { value: "/transparansi", label: "Transparansi APBDes" },
+    { value: "/pengaduan", label: "Pengaduan Warga" },
     { value: "#", label: "Link Kosong (#)" },
 ];
 
@@ -40,7 +40,6 @@ interface SmartLinkInputProps {
 export function SmartLinkInput({ value, onChange }: SmartLinkInputProps) {
     const [open, setOpen] = useState(false);
     const [news, setNews] = useState<{ value: string; label: string }[]>([]);
-    const [products, setProducts] = useState<{ value: string; label: string; type: string }[]>([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -49,7 +48,6 @@ export function SmartLinkInput({ value, onChange }: SmartLinkInputProps) {
         const fetchDynamicLinks = async () => {
             setLoading(true);
             try {
-                // 1. Fetch recent news
                 const newsResult = await pb.collection('news').getList(1, 10, {
                     sort: '-created',
                     filter: 'published = true',
@@ -61,21 +59,6 @@ export function SmartLinkInput({ value, onChange }: SmartLinkInputProps) {
                     label: item.title
                 }));
                 setNews(newsLinks);
-
-                // 2. Fetch products
-                const prodResult = await pb.collection('products').getList(1, 20, {
-                    sort: 'name',
-                    filter: 'published = true',
-                    fields: 'id,name,slug,product_type'
-                });
-
-                const prodLinks = prodResult.items.map((item: any) => ({
-                    value: `/produk/${item.slug}`,
-                    label: item.name,
-                    type: item.product_type // 'simpanan' or 'pembiayaan'
-                }));
-                setProducts(prodLinks);
-
             } catch (e) {
                 console.error("Failed to fetch dynamic links", e);
             } finally {
@@ -87,7 +70,7 @@ export function SmartLinkInput({ value, onChange }: SmartLinkInputProps) {
     }, [open]);
 
     // Check if current value matches a known option label
-    const combinedOptions = [...STATIC_ROUTES, ...news, ...products];
+    const combinedOptions = [...STATIC_ROUTES, ...news];
     const selectedItem = combinedOptions.find((opt) => opt.value === value);
     const selectedLabel = selectedItem ? selectedItem.label : value;
 
@@ -117,7 +100,7 @@ export function SmartLinkInput({ value, onChange }: SmartLinkInputProps) {
             </PopoverTrigger>
             <PopoverContent className="w-[400px] p-0" align="start">
                 <Command>
-                    <CommandInput placeholder="Cari halaman, produk, atau berita..." />
+                    <CommandInput placeholder="Cari halaman atau berita..." />
                     <CommandList className="max-h-[300px] overflow-y-auto custom-scrollbar">
                         <CommandEmpty>Link tidak ditemukan.</CommandEmpty>
 
@@ -140,44 +123,7 @@ export function SmartLinkInput({ value, onChange }: SmartLinkInputProps) {
                             ))}
                         </CommandGroup>
 
-                        <CommandGroup heading="Produk Simpanan">
-                            {loading && <CommandItem disabled>Loading...</CommandItem>}
-                            {products.filter(p => p.type === 'simpanan').map((item) => (
-                                <CommandItem
-                                    key={item.value}
-                                    value={item.label}
-                                    onSelect={() => {
-                                        onChange(item.value);
-                                        setOpen(false);
-                                    }}
-                                >
-                                    <Check className={cn("mr-2 h-4 w-4", value === item.value ? "opacity-100" : "opacity-0")} />
-                                    <div className="flex flex-col">
-                                        <span>{item.label}</span>
-                                        <span className="text-[10px] text-slate-400 font-mono">{item.value}</span>
-                                    </div>
-                                </CommandItem>
-                            ))}
-                        </CommandGroup>
 
-                        <CommandGroup heading="Produk Pembiayaan">
-                            {products.filter(p => p.type === 'pembiayaan').map((item) => (
-                                <CommandItem
-                                    key={item.value}
-                                    value={item.label}
-                                    onSelect={() => {
-                                        onChange(item.value);
-                                        setOpen(false);
-                                    }}
-                                >
-                                    <Check className={cn("mr-2 h-4 w-4", value === item.value ? "opacity-100" : "opacity-0")} />
-                                    <div className="flex flex-col">
-                                        <span>{item.label}</span>
-                                        <span className="text-[10px] text-slate-400 font-mono">{item.value}</span>
-                                    </div>
-                                </CommandItem>
-                            ))}
-                        </CommandGroup>
 
                         <CommandGroup heading="Berita Terbaru">
                             {news.map((item) => (

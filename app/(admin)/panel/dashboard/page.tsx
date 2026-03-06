@@ -5,7 +5,6 @@ import { pb } from "@/lib/pb";
 import {
     Users,
     FileText,
-    ShoppingBag,
     Eye,
     TrendingUp,
     AlertCircle,
@@ -20,7 +19,7 @@ import { AnalyticsStats } from "@/components/admin/analytics-stats";
 export default function DashboardPage() {
     const [stats, setStats] = useState({
         newsCount: 0,
-        productsCount: 0,
+        pengaduanCount: 0,
         membersCount: "loading...",
         assets: "loading..."
     });
@@ -29,13 +28,13 @@ export default function DashboardPage() {
         async function fetchStats() {
             try {
                 const news = await pb.collection('news').getList(1, 1, { filter: 'published=true' });
-                const products = await pb.collection('products').getList(1, 1);
+                const pengaduan = await pb.collection('pengaduan_warga').getList(1, 1).catch(() => ({ totalItems: 0 }));
                 // Config usually fetched from singleton
                 const config = await pb.collection('profil_desa').getFirstListItem("").catch(() => null);
 
                 setStats({
                     newsCount: news?.totalItems || 0,
-                    productsCount: products?.totalItems || 0,
+                    pengaduanCount: pengaduan?.totalItems || 0,
                     membersCount: config?.total_members || "4.500+",
                     assets: config?.total_assets || "Rp 2,5 M+"
                 });
@@ -87,10 +86,10 @@ export default function DashboardPage() {
                     color="bg-purple-100 text-purple-700"
                 />
                 <StatCard
-                    icon={ShoppingBag}
-                    label="Produk Layanan"
-                    value={stats.productsCount.toString()}
-                    color="bg-gold-100 text-gold-700"
+                    icon={MessageSquare}
+                    label="Pengaduan Masuk"
+                    value={stats.pengaduanCount.toString()}
+                    color="bg-amber-100 text-amber-700"
                 />
             </div>
 
@@ -133,9 +132,9 @@ export default function DashboardPage() {
                             hover="group-hover:bg-emerald-200"
                         />
                         <ShortcutBtn
-                            href="/panel/dashboard/produk/baru"
-                            icon={ShoppingBag}
-                            label="Tambah Produk"
+                            href="/panel/dashboard/surat/baru"
+                            icon={FileText}
+                            label="Buat Surat"
                             color="bg-blue-100 text-blue-600"
                             hover="group-hover:bg-blue-200"
                         />
