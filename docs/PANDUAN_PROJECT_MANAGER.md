@@ -76,15 +76,16 @@ git checkout main
 git pull origin main
 ```
 
-### Langkah 2: Buat Cabang (Branch) Baru
+### Langkah 2: Pindah ke Cabang (Branch) Modul Anda
 
-**JANGAN PERNAH NGSODING LANGSUNG DI BRANCH `main`!** Selalu buat branch pekerja baru untuk setiap tugas spesifik.
+**JANGAN PERNAH NGODING LANGSUNG DI BRANCH `main`!** Karena Branch Modul sudah disiapkan oleh Project Manager, Anda hanya perlu mengunduhnya dan berpindah ke sana.
 
 ```bash
-git checkout -b nama-fitur-baru
+git fetch origin
+git checkout nama-branch-modul-anda
 ```
 
-_(Contoh: `git checkout -b perbaikan-halaman-login` atau `git checkout -b fitur-tambah-berita`)_
+_(Contoh: `git checkout modul-bku` atau `git checkout modul-publik`. Pastikan bertanya ke PM Anda mendapat tugas modul apa)._
 
 ### Langkah 3: Ngoding Sepert Biasa & Simpan Perubahan (Commit)
 
@@ -102,13 +103,13 @@ _(Tips: Buat commit sesering mungkin setiap ada perubahan yang berfungsi dengan 
 
 ### Langkah 4: Upload Kode Anda ke GitHub (Push)
 
-Kirim branch yang ada di laptop Anda ke server GitHub agar bisa di-review.
+Kirim branch kerjaan Anda ke server GitHub agar tersimpan secara online.
 
 ```bash
-git push origin nama-fitur-baru
+git push origin nama-branch-modul-anda
 ```
 
-_(Ganti nama-fitur-baru dengan nama branch yang Anda buat di Langkah 2)._
+_(Ganti `nama-branch-modul-anda` sesuai nama branch Anda, misal: `git push origin modul-publik`)._
 
 ### Langkah 5: Minta Penggabungan Kode (Pull Request / PR)
 
