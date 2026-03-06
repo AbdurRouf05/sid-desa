@@ -5,26 +5,22 @@
 export function formatThousand(value: number | string | undefined | null): string {
     if (value === undefined || value === null || value === "") return "";
 
-    // Convert to string and split decimal if needed (though usually for simple IDR input we might restrict to integers)
-    const parts = value.toString().split(".");
-    const residue = parts.length > 1 ? "." + parts[1] : "";
-    const integerPart = parts[0];
+    // Convert to string
+    const stringValue = value.toString();
+    
+    // CRITICAL FIX: Remove ALL dots first (Indonesian thousand separators) before parsing
+    // This handles both raw numbers (22000000) and formatted input (22.000.000)
+    const withoutDots = stringValue.replace(/\./g, "");
+    
+    // Remove any non-digit characters
+    const cleanInteger = withoutDots.replace(/\D/g, "");
 
-    // Remove non-digit characters to be safe
-    const cleanInteger = integerPart.replace(/\D/g, "");
-
-    // If empty or zero-like issues tailored by specific requirements, handle here.
-    // Standard Intl implementation:
-    // return new Intl.NumberFormat("id-ID").format(Number(cleanInteger)); 
-
-    // Manual implementation for strict control over "user friendly" typing (e.g. handling "0" vs "")
     if (cleanInteger === "") return "";
 
-    // Logic: Leading zero removal is handled by parsing, but if we format "05", parseInt handles it.
     const number = parseInt(cleanInteger, 10);
     if (isNaN(number)) return "";
 
-    return number.toLocaleString("id-ID") + residue;
+    return number.toLocaleString("id-ID");
 }
 
 /**
