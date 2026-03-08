@@ -10,9 +10,10 @@ export default function EditBkuTransaksiPage() {
     return (
         <main>
             <div className="mb-8">
-                <SectionHeading 
-                    title="Ubah Log Transaksi" 
-                    subtitle="Koreksi nominal atau dokumen bukti dari transaksi BKU." 
+                <SectionHeading
+                    align="left"
+                    title="Ubah Log Transaksi"
+                    subtitle="Koreksi nominal atau dokumen bukti dari transaksi BKU."
                 />
             </div>
             <BkuTransaksiForm id={params.id as string} />

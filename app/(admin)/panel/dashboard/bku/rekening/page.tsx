@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { pb } from "@/lib/pb";
 import { RekeningKas } from "@/types";
-import { SectionHeading } from "@/components/ui/section-heading";
 import { Plus, Trash2, Edit2, Wallet, Building2, Coins } from "lucide-react";
 import { TactileButton } from "@/components/ui/tactile-button";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
@@ -58,20 +57,19 @@ export default function RekeningKasPage() {
     };
 
     return (
-        <main>
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-                <SectionHeading 
-                    title="Master Rekening Desa" 
-                    subtitle="Kelola dompet penyimpanan uang untuk Buku Kas Umum." 
-                />
-                <div className="flex gap-2">
-                    <Link href="/panel/dashboard/bku/rekening/baru">
-                        <TactileButton variant="primary">
-                            <Plus className="w-5 h-5 mr-2" />
-                            Tambah Rekening
-                        </TactileButton>
-                    </Link>
+        <div className="space-y-6">
+            {/* Header - Single Row */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900">Master Rekening Desa</h1>
+                    <p className="text-slate-500">Kelola dompet penyimpanan uang untuk Buku Kas Umum.</p>
                 </div>
+                <Link href="/panel/dashboard/bku/rekening/baru">
+                    <TactileButton variant="primary">
+                        <Plus className="w-5 h-5 mr-2" />
+                        Tambah Rekening
+                    </TactileButton>
+                </Link>
             </div>
 
             <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
@@ -147,6 +145,6 @@ export default function RekeningKasPage() {
                     </table>
                 </div>
             </div>
-        </main>
+        </div>
     );
 }
