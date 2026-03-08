@@ -10,9 +10,10 @@ export default function EditRekeningPage() {
     return (
         <main>
             <div className="mb-8">
-                <SectionHeading 
-                    title="Ubah Dompet Kas" 
-                    subtitle="Perbarui data rekening buku kas umum" 
+                <SectionHeading
+                    align="left"
+                    title="Ubah Dompet Kas"
+                    subtitle="Perbarui data rekening buku kas umum"
                 />
             </div>
             <RekeningKasForm id={params.id as string} />
