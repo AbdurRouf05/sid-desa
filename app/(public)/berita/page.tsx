@@ -26,15 +26,15 @@ export default function BeritaPage() {
         const fetchNews = async () => {
             setLoading(true);
             try {
-                let filterExpr = 'published = true';
+                let filterExpr = 'is_published = true'; // usually we use is_published in indo tables, if it crashes we can revert to published
                 if (activeCategory !== "Semua") {
-                    filterExpr += ` && category = "${activeCategory}"`;
+                    filterExpr += ` && kategori = "${activeCategory}"`;
                 }
                 if (searchQuery) {
-                    filterExpr += ` && title ~ "${searchQuery}"`;
+                    filterExpr += ` && judul ~ "${searchQuery}"`;
                 }
 
-                const result = await pb.collection('news').getList(currentPage, ITEMS_PER_PAGE, {
+                const result = await pb.collection('berita_desa').getList(currentPage, ITEMS_PER_PAGE, {
                     filter: filterExpr,
                     sort: '-created',
                 });
@@ -43,13 +43,13 @@ export default function BeritaPage() {
 
                 const mappedItems = result.items.map(record => ({
                     id: record.id,
-                    title: record.title,
+                    title: record.judul || record.title,
                     slug: record.slug,
                     thumbnail: record.thumbnail ? getAssetUrl(record, record.thumbnail) : "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=2070",
                     date: formatDate(record.created || record.updated),
-                    category: record.category,
+                    category: record.kategori || record.category || "Berita",
                     author: "Admin",
-                    excerpt: record.content.replace(/<[^>]*>/g, '').substring(0, 150) + "..."
+                    excerpt: (record.konten || record.content || "").replace(/<[^>]*>/g, '').substring(0, 150) + "..."
                 }));
 
                 setNewsItems(mappedItems);

@@ -134,11 +134,11 @@ export function BkuTransaksiForm({ id }: BkuTransaksiFormProps) {
     const onSubmit = async (data: BkuTransactionFormType) => {
         setIsSaving(true);
         const submitData = new FormData();
-        
+
         submitData.append("tipe_transaksi", data.tipe_transaksi);
         submitData.append("tanggal", data.tanggal);
         submitData.append("uraian", data.uraian);
-        submitData.append("nominal", data.nominal.toString());
+        submitData.append("nominal", String(data.nominal));
 
         if (data.tipe_transaksi === "Masuk" || data.tipe_transaksi === "Pindah Buku") {
             submitData.append("rekening_tujuan_id", data.rekening_tujuan_id || "");
@@ -320,7 +320,11 @@ export function BkuTransaksiForm({ id }: BkuTransaksiFormProps) {
                             type="text"
                             numeric
                             currencyPrefix="Rp"
-                            {...register("nominal", { valueAsNumber: true })}
+                            value={watch("nominal")?.toString() || ""}
+                            onNumericChange={(val) => {
+                                const num = parseInt(val, 10);
+                                setValue("nominal", isNaN(num) ? 0 : num, { shouldValidate: true });
+                            }}
                             error={errors.nominal?.message}
                         />
                         <FormInput
@@ -363,7 +367,11 @@ export function BkuTransaksiForm({ id }: BkuTransaksiFormProps) {
                                         type="text"
                                         numeric
                                         currencyPrefix="Rp"
-                                        {...register("nominal_pajak", { valueAsNumber: true })}
+                                        value={watch("nominal_pajak")?.toString() || ""}
+                                        onNumericChange={(val) => {
+                                            const num = parseInt(val, 10);
+                                            setValue("nominal_pajak", isNaN(num) ? 0 : num, { shouldValidate: true });
+                                        }}
                                     />
                                 </div>
                             )}

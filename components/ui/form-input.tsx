@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { formatThousand, cleanNumber } from "@/lib/number-utils";
 
@@ -10,55 +10,105 @@ interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     currencyPrefix?: string;
     numeric?: boolean;
     error?: string;
+    onNumericChange?: (value: string) => void; // Callback for numeric values
 }
 
 export const FormInput = React.forwardRef<HTMLInputElement, FormInputProps>(
-    ({ className, label, icon, currencyPrefix, numeric, error, value, onChange, ...props }, ref) => {
+    ({ className, label, icon, currencyPrefix, numeric, error, value, defaultValue, onChange, onNumericChange, ...props }, ref) => {
+
+        // Use ref to track raw numeric value for controlled inputs
+        const rawValueRef = useRef<string>("");
+        
+        const [localValue, setLocalValue] = useState<string>(() => {
+            if (value !== undefined) {
+                if (numeric) {
+                    // If value is already a number, format it
+                    const numVal = typeof value === 'number' ? value : parseInt(String(value), 10);
+                    rawValueRef.current = String(numVal);
+                    return formatThousand(numVal);
+                }
+                return String(value);
+            }
+            if (defaultValue !== undefined) {
+                if (numeric) {
+                    const numVal = typeof defaultValue === 'number' ? defaultValue : parseInt(String(defaultValue), 10);
+                    rawValueRef.current = String(numVal);
+                    return formatThousand(numVal);
+                }
+                return String(defaultValue);
+            }
+            return "";
+        });
+
+        useEffect(() => {
+            if (value !== undefined) {
+                if (numeric) {
+                    const numVal = typeof value === 'number' ? value : parseInt(String(value), 10);
+                    if (!isNaN(numVal)) {
+                        rawValueRef.current = String(numVal);
+                        setLocalValue(formatThousand(numVal));
+                    }
+                } else {
+                    setLocalValue(String(value));
+                }
+            }
+        }, [value, numeric]);
 
         const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             if (numeric) {
-                // Get the raw input
                 const rawInput = e.target.value;
-
-                // Clean it to get just numbers
-                const cleaned = cleanNumber(rawInput);
-
-                // Special handling for "0" and leading zeros logic
-                // If the cleaned string is "05", we want "5". 
-                // We use parseInt to strip leading zeros, unless it IS just "0" and we want to allow typing? 
-                // User said: "saat diketik di depan angka nol maka akan otomatis tampil normal tanpa nol di depannya"
-                // E.g. [0] -> type 5 at front -> [50]. Correct.
-                // E.g. [0] -> type 5 at back -> [05] -> should be [5].
-
-                let finalValue = cleaned;
-                if (cleaned.length > 1 && cleaned.startsWith("0")) {
-                    finalValue = parseInt(cleaned, 10).toString();
-                } else if (cleaned === "0" && rawInput.length > 1) {
-                    // If user typed something to make "0" become "05" or "50"?
-                    // Wait, cleanNumber("05") is "05".
-                    // The logic above `parseInt` handles "05" -> "5".
+                
+                // Get current raw value from ref, not from state
+                const currentRaw = rawValueRef.current;
+                
+                // If input is empty, reset
+                if (rawInput === "") {
+                    rawValueRef.current = "";
+                    setLocalValue("");
+                    
+                    // Call custom callback if provided (for setValue)
+                    onNumericChange?.("");
+                    
+                    const syntheticEvent = {
+                        ...e,
+                        target: { ...e.target, value: "", name: e.target.name }
+                    };
+                    onChange?.(syntheticEvent as React.ChangeEvent<HTMLInputElement>);
+                    return;
                 }
-
-                // Create a synthetic event with the cleaned value to send to parent
+                
+                // Clean the input (remove dots and non-digits)
+                const cleaned = cleanNumber(rawInput);
+                
+                // Update raw value ref
+                rawValueRef.current = cleaned;
+                
+                // Format for display
+                const formatted = formatThousand(cleaned);
+                setLocalValue(formatted);
+                
+                // Call custom callback if provided (for setValue)
+                onNumericChange?.(cleaned);
+                
+                // Send raw numeric string to react-hook-form
                 const syntheticEvent = {
                     ...e,
                     target: {
                         ...e.target,
-                        value: finalValue,
-                        name: e.target.name // preserve name
+                        value: cleaned,
+                        name: e.target.name
                     }
                 };
-
                 onChange?.(syntheticEvent as React.ChangeEvent<HTMLInputElement>);
             } else {
+                setLocalValue(e.target.value);
                 onChange?.(e);
             }
         };
 
-        // Determine display value
-        // If numeric, we format the incoming value (which should be raw from parent state)
-        // If the user is typing "1000", parent state gets "1000", we display "1.000".
-        const displayValue = numeric ? formatThousand(value as string | number) : value;
+        const displayValue = value !== undefined 
+            ? (numeric ? formatThousand(typeof value === 'number' ? value : parseInt(String(value), 10)) : value) 
+            : localValue;
 
         return (
             <label className="block space-y-1.5">
