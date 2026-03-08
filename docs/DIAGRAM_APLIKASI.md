@@ -231,23 +231,47 @@ graph LR
 
 ### D. Manajemen Aset Desa (Tanah & Inventaris)
 
-Mengelola aset yang dimiliki desa (contoh: tanah kas desa atau inventaris kantor) dan merekam siklus/kondisi aset tersebut.
+Mengelola aset yang dimiliki desa melalui **2 modul terpisah** untuk presisi data:
 
 ```mermaid
 graph TD
-    BukaAset[Buka Modul Aset] --> TambahAset[Tambah Data Aset Baru]
-    BukaAset --> ListAset[Tabel Aset yang Ada]
+    BukaAset[Buka Modul Aset] --> PilihanModul{"Pilih Jenis Aset"}
+    
+    PilihanModul -- "Inventaris Barang" --> Inventaris[Modul Inventaris Desa]
+    Inventaris --> FormInv["Input: Nama Barang, Kategori, Tahun Perolehan, Kuantitas, Kondisi"]
+    FormInv --> UpdateKondisi["Update Kondisi Berkala: Baik → Rusak Ringan → Rusak Berat"]
+    UpdateKondisi --> SDBInv[("Database: inventaris_desa")]
+    
+    PilihanModul -- "Tanah Kas Desa" --> Tanah[Modul Tanah Desa]
+    Tanah --> FormTanah["Input: Lokasi, Luas m², Peruntukan, Pemegang Hak"]
+    FormTanah --> SDBTanah[("Database: tanah_desa")]
 
-    TambahAset --> FormAset["Input Identitas Aset (Nama, Lokasi Tanah, Luas, Nilai Buku, dsb)"]
-    FormAset --> StatusAwal["Set Status Awal (Misal: Baik / Dimanfaatkan)"]
-    StatusAwal --> SDBAset[("Simpan Database")]
-
+    SDBInv --> ListAset[Tabel Daftar Aset]
+    SDBTanah --> ListAset
+    
     ListAset --> UpdateAset[Kelola Kondisi / Mutasi Aset]
     UpdateAset --> UbahStatus{"Ganti Kondisi Aset"}
-    UbahStatus -- "Masih Digunakan" --> SDBAset
-    UbahStatus -- "Rusak / Susut Nilai" --> SDBAset
-    UbahStatus -- "Dijual / Dihapus" --> TandaiArsip[Tandai Non-Aktif/Diarsipkan] --> SDBAset
+    UbahStatus -- "Masih Digunakan" --> SDBInv
+    UbahStatus -- "Rusak / Susut Nilai" --> SDBInv
+    UbahStatus -- "Dijual / Dihapus" --> TandaiArsip[Tandai Non-Aktif/Diarsipkan] --> SDBInv
 ```
+
+**Catatan Arsitektur:**
+
+Sistem menggunakan **2 collection terpisah** (`inventaris_desa` dan `tanah_desa`) bukan collection umum `aset_desa` karena:
+
+1. **Field Spesifik Berbeda:**
+   - Inventaris: `tahun_perolehan`, `kuantitas`, `kondisi`
+   - Tanah: `luas_m2`, `peruntukan`, `pemegang_hak`, `lokasi`
+
+2. **Validasi Lebih Ketat:**
+   - Inventaris: Kategori barang (Elektronik, Mebel, Kendaraan, dll)
+   - Tanah: Luas dalam m², peruntukan spesifik
+
+3. **Mudah Maintenance:**
+   - Update schema independen
+   - Query lebih efisien
+   - Report terpisah per jenis aset
 
 ---
 
