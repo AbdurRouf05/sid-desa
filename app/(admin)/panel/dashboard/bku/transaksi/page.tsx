@@ -4,9 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { pb } from "@/lib/pb";
 import { BkuTransaksi } from "@/types";
-import { SectionHeading } from "@/components/ui/section-heading";
 import { Plus, Trash2, ArrowDownCircle, ArrowUpCircle, RefreshCw, FileText, Download, Printer, FileSpreadsheet } from "lucide-react";
-import { TactileButton } from "@/components/ui/tactile-button";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PajakLog } from "@/types";
@@ -155,16 +153,18 @@ export default function TransaksiBkuPage() {
     };
 
     return (
-        <main>
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-                <SectionHeading 
-                    title="Buku Kas Umum" 
-                    subtitle="Monitor aliran dana Masuk (Debet) dan Keluar (Kredit) Pemerintahan Desa." 
-                />
-                <div className="flex flex-col sm:flex-row gap-2 items-end">
+        <div className="space-y-6">
+            {/* Header - Single Row */}
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900">Buku Kas Umum</h1>
+                    <p className="text-slate-500">Monitor aliran dana Masuk (Debet) dan Keluar (Kredit) Pemerintahan Desa.</p>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
+                    {/* Filter Bulan/Tahun */}
                     <div className="flex gap-2">
-                        <select 
-                            value={filterBulan} 
+                        <select
+                            value={filterBulan}
                             onChange={(e) => setFilterBulan(e.target.value)}
                             className="h-10 px-3 rounded-lg border border-slate-200 bg-white text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
                         >
@@ -181,8 +181,8 @@ export default function TransaksiBkuPage() {
                             <option value="11">November</option>
                             <option value="12">Desember</option>
                         </select>
-                        <select 
-                            value={filterTahun} 
+                        <select
+                            value={filterTahun}
                             onChange={(e) => setFilterTahun(e.target.value)}
                             className="h-10 px-3 rounded-lg border border-slate-200 bg-white text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
                         >
@@ -191,28 +191,29 @@ export default function TransaksiBkuPage() {
                                 return <option key={year} value={year}>{year}</option>
                             })}
                         </select>
-                        <button 
+                    </div>
+                    {/* Action Buttons */}
+                    <div className="flex gap-2">
+                        <button
                             onClick={handleExportPDF}
                             disabled={data.length === 0}
                             className="h-10 px-4 flex items-center gap-2 bg-slate-800 text-white text-sm font-medium rounded-lg hover:bg-slate-700 transition-colors disabled:opacity-50"
                         >
                             <Printer className="w-4 h-4" /> Cetak PDF
                         </button>
-                        <button 
+                        <button
                             onClick={() => exportBkuToXlsx({ transactions: data, pajakData, bulan: filterBulan, tahun: filterTahun })}
                             disabled={data.length === 0}
                             className="h-10 px-4 flex items-center gap-2 bg-emerald-700 text-white text-sm font-medium rounded-lg hover:bg-emerald-600 transition-colors disabled:opacity-50"
                         >
                             <FileSpreadsheet className="w-4 h-4" /> Ekspor Excel
                         </button>
+                        <Link href="/panel/dashboard/bku/transaksi/baru">
+                            <button className="h-10 px-4 flex items-center gap-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors">
+                                <Plus className="w-4 h-4" /> Catat Transaksi
+                            </button>
+                        </Link>
                     </div>
-                    
-                    <Link href="/panel/dashboard/bku/transaksi/baru">
-                        <TactileButton variant="primary">
-                            <Plus className="w-5 h-5 mr-2" />
-                            Catat Transaksi
-                        </TactileButton>
-                    </Link>
                 </div>
             </div>
 
@@ -316,6 +317,6 @@ export default function TransaksiBkuPage() {
                     </table>
                 </div>
             </div>
-        </main>
+        </div>
     );
 }

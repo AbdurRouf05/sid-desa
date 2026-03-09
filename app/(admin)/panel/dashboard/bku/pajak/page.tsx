@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { pb } from "@/lib/pb";
 import { PajakLog } from "@/types";
-import { SectionHeading } from "@/components/ui/section-heading";
 import { CheckCircle2, CircleDashed, Receipt, Landmark, Upload, X, Loader2, FileText, Download } from "lucide-react";
 import { FormInput } from "@/components/ui/form-input";
 import { TactileButton } from "@/components/ui/tactile-button";
@@ -93,12 +92,13 @@ export default function BukuPajakPage() {
     };
 
     return (
-        <main>
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-                <SectionHeading 
-                    title="Buku Pembantu Pajak" 
-                    subtitle="Monitor kewajiban potongan pajak PPN/PPh dari transaksi pengeluaran BKU." 
-                />
+        <div className="space-y-6">
+            {/* Header - Single Row */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900">Buku Pembantu Pajak</h1>
+                    <p className="text-slate-500">Monitor kewajiban potongan pajak PPN/PPh dari transaksi pengeluaran BKU.</p>
+                </div>
             </div>
 
             <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
@@ -259,10 +259,10 @@ export default function BukuPajakPage() {
                             >
                                 Batal
                             </button>
-                            <TactileButton 
-                                type="submit" 
-                                form="pelunasan-form" 
-                                variant="primary" 
+                            <TactileButton
+                                type="submit"
+                                form="pelunasan-form"
+                                variant="primary"
                                 disabled={isSaving || !ntpnInput.trim()}
                             >
                                 {isSaving ? (
@@ -275,6 +275,6 @@ export default function BukuPajakPage() {
                     </div>
                 </div>
             )}
-        </main>
+        </div>
     );
 }

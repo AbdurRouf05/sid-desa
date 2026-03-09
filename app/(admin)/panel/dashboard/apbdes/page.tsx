@@ -47,8 +47,9 @@ export default function AdminApbdesPage() {
     };
 
     return (
-        <main>
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div className="space-y-6">
+            {/* Header - Single Row */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900">Transparansi APBDes</h1>
                     <p className="text-slate-500">Kelola data anggaran dan realisasi (Pendapatan, Belanja, Pembiayaan).</p>
@@ -129,6 +130,6 @@ export default function AdminApbdesPage() {
                     </table>
                 </div>
             </div>
-        </main>
+        </div>
     );
 }

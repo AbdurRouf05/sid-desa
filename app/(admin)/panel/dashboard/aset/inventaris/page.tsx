@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { pb } from "@/lib/pb";
 import { InventarisDesa } from "@/types";
-import { SectionHeading } from "@/components/ui/section-heading";
 import { Plus, Trash2, Pencil, Package } from "lucide-react";
 import { TactileButton } from "@/components/ui/tactile-button";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
@@ -42,12 +41,13 @@ export default function InventarisDesaPage() {
     };
 
     return (
-        <main>
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-                <SectionHeading 
-                    title="Inventaris Aset" 
-                    subtitle="Manajemen dan siklus hidup aset barang & bangunan pemerintahan desa." 
-                />
+        <div className="space-y-6">
+            {/* Header - Single Row */}
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900">Inventaris Aset</h1>
+                    <p className="text-slate-500">Manajemen dan siklus hidup aset barang & bangunan pemerintahan desa.</p>
+                </div>
                 <Link href="/panel/dashboard/aset/inventaris/baru">
                     <TactileButton variant="primary">
                         <Plus className="w-5 h-5 mr-2" />
@@ -106,7 +106,7 @@ export default function InventarisDesaPage() {
                                                         <Pencil className="w-4 h-4" />
                                                     </button>
                                                 </Link>
-                                                <button 
+                                                <button
                                                     onClick={() => handleDelete(item.id, item.nama_barang)}
                                                     className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
                                                 >
@@ -121,6 +121,6 @@ export default function InventarisDesaPage() {
                     </table>
                 </div>
             </div>
-        </main>
+        </div>
     );
 }
