@@ -57,7 +57,8 @@ export function ModernNavbar() {
     const navLinks = [
         { name: getLabel('nav_home', 'Beranda'), href: "/", visible: isVisible('nav_home') },
         { name: "Profil Desa", href: "/tentang-kami", visible: true },
-        { name: "Persuratan", href: "/layanan/persuratan", visible: true },
+        { name: "Persuratan", href: "/layanan", visible: true },
+        { name: "Berita", href: "/berita", visible: true },
         { name: "Pengaduan", href: "/pengaduan", visible: true },
         { name: "Transparansi", href: "/transparansi", visible: true },
         { name: getLabel('nav_contact', 'Kontak'), href: "/kontak", visible: isVisible('nav_contact') },

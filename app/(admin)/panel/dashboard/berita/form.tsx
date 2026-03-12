@@ -14,11 +14,11 @@ import { processImageForUpload } from "@/lib/image-processor";
 import { getAssetUrl } from "@/lib/cdn";
 
 const newsSchema = z.object({
-    title: z.string().min(5, "Judul minimal 5 karakter"),
+    judul: z.string().min(5, "Judul minimal 5 karakter"),
     slug: z.string().min(3, "Slug otomatis terisi, tapi minimal 3 karakter"),
-    category: z.string().min(1, "Pilih kategori"),
-    content: z.string().min(10, "Konten berita tidak boleh kosong"),
-    published: z.boolean(),
+    kategori: z.string().min(1, "Pilih kategori"),
+    konten: z.string().min(10, "Konten berita tidak boleh kosong"),
+    is_published: z.boolean(),
     seo_title: z.string().optional(),
     seo_desc: z.string().optional(),
     thumbnail: z.any().optional(),
@@ -35,40 +35,40 @@ export default function NewsEditorPage({ isEdit = false }: { isEdit?: boolean })
     const { register, handleSubmit, control, setValue, watch, formState: { errors } } = useForm<NewsInputs>({
         resolver: zodResolver(newsSchema),
         defaultValues: {
-            title: "",
+            judul: "",
             slug: "",
-            category: "Berita",
-            content: "",
-            published: true,
+            kategori: "Berita",
+            konten: "",
+            is_published: true,
             seo_title: "",
             seo_desc: ""
         }
     });
 
-    const titleValue = watch("title");
+    const judulValue = watch("judul");
 
     // Slug generator
     useEffect(() => {
-        if (!isEdit && titleValue) {
-            const slug = titleValue
+        if (!isEdit && judulValue) {
+            const slug = judulValue
                 .toLowerCase()
                 .replace(/[^a-z0-9]+/g, "-")
                 .replace(/^-+|-+$/g, "");
             setValue("slug", slug);
         }
-    }, [titleValue, isEdit, setValue]);
+    }, [judulValue, isEdit, setValue]);
 
     // Fetch data if edit
     useEffect(() => {
         if (isEdit && params?.id) {
             const fetchNews = async () => {
                 try {
-                    const record = await pb.collection('news').getOne(params.id as string);
-                    setValue("title", record.title);
+                    const record = await pb.collection('berita_desa').getOne(params.id as string);
+                    setValue("judul", record.judul);
                     setValue("slug", record.slug);
-                    setValue("category", record.category);
-                    setValue("content", record.content);
-                    setValue("published", record.published);
+                    setValue("kategori", record.kategori);
+                    setValue("konten", record.konten);
+                    setValue("is_published", record.is_published);
                     setValue("seo_title", record.seo_title || "");
                     setValue("seo_desc", record.seo_desc || "");
 
@@ -89,16 +89,16 @@ export default function NewsEditorPage({ isEdit = false }: { isEdit?: boolean })
         setIsLoading(true);
         try {
             const formData = new FormData();
-            formData.append("title", data.title);
+            formData.append("judul", data.judul);
             formData.append("slug", data.slug);
-            formData.append("category", data.category);
-            formData.append("content", data.content);
-            formData.append("published", data.published.toString());
+            formData.append("kategori", data.kategori);
+            formData.append("konten", data.konten);
+            formData.append("is_published", data.is_published.toString());
 
             // Auto-fill SEO if empty
-            const seoTitle = data.seo_title || data.title;
+            const seoTitle = data.seo_title || data.judul;
             // Strip HTML tags for description
-            const seoDesc = data.seo_desc || data.content.replace(/<[^>]*>?/gm, '').substring(0, 150).trim() + "...";
+            const seoDesc = data.seo_desc || data.konten.replace(/<[^>]*>?/gm, '').substring(0, 150).trim() + "...";
 
             formData.append("seo_title", seoTitle);
             formData.append("seo_desc", seoDesc);
@@ -123,9 +123,9 @@ export default function NewsEditorPage({ isEdit = false }: { isEdit?: boolean })
             }
 
             if (isEdit && params?.id) {
-                await pb.collection('news').update(params.id as string, formData);
+                await pb.collection('berita_desa').update(params.id as string, formData);
             } else {
-                await pb.collection('news').create(formData);
+                await pb.collection('berita_desa').create(formData);
             }
 
             router.push("/panel/dashboard/berita");
@@ -199,11 +199,11 @@ export default function NewsEditorPage({ isEdit = false }: { isEdit?: boolean })
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-2">Judul Berita</label>
                                 <input
-                                    {...register("title")}
+                                    {...register("judul")}
                                     className="w-full text-lg font-bold placeholder:font-normal px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
                                     placeholder="Contoh: Rapat Anggota Tahunan 2024 Berjalan Lancar"
                                 />
-                                {errors.title && <p className="text-sm text-red-500 mt-1">{errors.title.message}</p>}
+                                {errors.judul && <p className="text-sm text-red-500 mt-1">{errors.judul.message}</p>}
                             </div>
 
                             <div>
@@ -218,7 +218,7 @@ export default function NewsEditorPage({ isEdit = false }: { isEdit?: boolean })
                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                             <label className="block text-sm font-bold text-slate-700 mb-4">Konten Artikel</label>
                             <Controller
-                                name="content"
+                                name="konten"
                                 control={control}
                                 render={({ field }) => (
                                     <RichTextEditor
@@ -228,7 +228,7 @@ export default function NewsEditorPage({ isEdit = false }: { isEdit?: boolean })
                                     />
                                 )}
                             />
-                            {errors.content && <p className="text-sm text-red-500 mt-1">{errors.content.message}</p>}
+                            {errors.konten && <p className="text-sm text-red-500 mt-1">{errors.konten.message}</p>}
                         </div>
 
 
@@ -239,7 +239,7 @@ export default function NewsEditorPage({ isEdit = false }: { isEdit?: boolean })
                                 <button
                                     type="button"
                                     onClick={async () => {
-                                        const contentText = watch("content")?.replace(/<[^>]*>?/gm, "") || "";
+                                        const contentText = watch("konten")?.replace(/<[^>]*>?/gm, "") || "";
                                         const prompt = `Bertindaklah sebagai SEO Specialist. Tolong buatkan:
 1. SEO Title (Max 60 chars, mengandung keyword, akhiri dengan "| SID Sumberanyar").
 2. SEO Description (Max 150 chars, ringkasan masalah + solusi + CTA).
@@ -304,7 +304,7 @@ ${contentText}`;
                                     <input
                                         {...register("seo_title")}
                                         className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 text-sm"
-                                        placeholder={watch("title") || "Judul khusus untuk mesin pencari"}
+                                        placeholder={watch("judul") || "Judul khusus untuk mesin pencari"}
                                     />
                                 </div>
                                 <div>
@@ -332,7 +332,7 @@ ${contentText}`;
                             <label className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
                                 <input
                                     type="checkbox"
-                                    {...register("published")}
+                                    {...register("is_published")}
                                     className="w-5 h-5 text-emerald-600 rounded focus:ring-emerald-500 border-gray-300"
                                 />
                                 <span className="font-medium text-slate-700">Publikasikan Sekarang</span>
@@ -346,12 +346,13 @@ ${contentText}`;
                         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                             <h3 className="font-bold text-slate-900 mb-4">Kategori</h3>
                             <select
-                                {...register("category")}
+                                {...register("kategori")}
                                 className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                             >
                                 <option value="Berita">Berita</option>
                                 <option value="Edukasi">Edukasi</option>
                                 <option value="Pengumuman">Pengumuman</option>
+                                <option value="Kegiatan">Kegiatan</option>
                             </select>
                         </div>
 

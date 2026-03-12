@@ -11,7 +11,7 @@ import { pb } from "@/lib/pb";
 import { getAssetUrl } from "@/lib/cdn";
 import { formatDate } from "@/lib/number-utils";
 
-const CATEGORIES = ["Semua", "Berita", "Edukasi", "Pengumuman"];
+const CATEGORIES = ["Semua", "Berita", "Pengumuman", "Kegiatan"];
 
 export default function BeritaPage() {
     const [activeCategory, setActiveCategory] = useState("Semua");

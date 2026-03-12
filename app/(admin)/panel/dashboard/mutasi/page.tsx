@@ -4,7 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { pb } from "@/lib/pb";
 import { MutasiPenduduk } from "@/types";
-import { SectionHeading } from "@/components/ui/section-heading";
+// import { SectionHeading } from "@/components/ui/section-heading"; // Removed to match requested layout
 import { Plus, Search, Trash2, Edit2, FileText, Download, Users } from "lucide-react";
 import { TactileButton } from "@/components/ui/tactile-button";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
@@ -68,8 +68,11 @@ export default function MutasiPendudukPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-                <SectionHeading title="Mutasi Penduduk" subtitle="Kelola riwayat kelahiran, kematian, kedatangan, dan kepindahan warga." />
+            <div className="flex justify-between items-center mb-8">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900">Mutasi Penduduk</h1>
+                    <p className="text-slate-500">Kelola riwayat kelahiran, kematian, kedatangan, dan kepindahan warga.</p>
+                </div>
                 <div className="flex gap-2">
                     <Link href="/panel/dashboard/mutasi/baru">
                         <TactileButton variant="primary">

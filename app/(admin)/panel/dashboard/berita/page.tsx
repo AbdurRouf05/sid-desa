@@ -40,11 +40,11 @@ export default function AdminNewsPage() {
                     requestKey: null
                 };
                 if (search && search.trim() !== "") {
-                    queryOptions.filter = `title ~ "${search}"`;
+                    queryOptions.filter = `judul ~ "${search}"`;
                 }
 
                 // Use authenticated client
-                const result = await pb.collection('news').getList(page, 10, queryOptions);
+                const result = await pb.collection('berita_desa').getList(page, 10, queryOptions);
                 setNews(result.items);
                 setTotalPages(result.totalPages);
             } catch (sortError: any) {
@@ -53,9 +53,9 @@ export default function AdminNewsPage() {
                     console.warn("News sort failed, retrying without sort...");
                     const fallbackOptions: any = { requestKey: null };
                     if (search && search.trim() !== "") {
-                        fallbackOptions.filter = `title ~ "${search}"`;
+                        fallbackOptions.filter = `judul ~ "${search}"`;
                     }
-                    const result = await pb.collection('news').getList(page, 10, fallbackOptions);
+                    const result = await pb.collection('berita_desa').getList(page, 10, fallbackOptions);
                     setNews(result.items);
                     setTotalPages(result.totalPages);
                 } else {
@@ -79,7 +79,7 @@ export default function AdminNewsPage() {
     const handleDelete = async (id: string) => {
         if (!window.confirm("Yakin ingin menghapus berita ini?")) return;
         try {
-            await pb.collection('news').delete(id);
+            await pb.collection('berita_desa').delete(id);
             fetchNews();
         } catch (e) {
             alert("Gagal menghapus berita");
@@ -146,20 +146,20 @@ export default function AdminNewsPage() {
                             news.map((item, index) => (
                                 <tr key={item.id} className={cn(
                                     "transition-colors group",
-                                    item.published ? "hover:bg-slate-50/50" : "bg-slate-50/80 grayscale-[0.5] hover:bg-slate-100/80"
+                                    item.is_published ? "hover:bg-slate-50/50" : "bg-slate-50/80 grayscale-[0.5] hover:bg-slate-100/80"
                                 )}>
                                     <td className="px-6 py-4 text-slate-500 text-sm">{(page - 1) * 10 + index + 1}</td>
                                     <td className="px-6 py-4">
-                                        <p className="font-bold text-slate-900 line-clamp-1">{item.title}</p>
+                                        <p className="font-bold text-slate-900 line-clamp-1">{item.judul}</p>
                                         <p className="text-xs text-slate-500 mt-0.5">/{item.slug}</p>
                                     </td>
                                     <td className="px-6 py-4">
                                         <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                                            {item.category}
+                                            {item.kategori}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        {item.published ? (
+                                        {item.is_published ? (
                                             <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700 border border-emerald-200 inline-flex items-center gap-1">
                                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
                                                 Published

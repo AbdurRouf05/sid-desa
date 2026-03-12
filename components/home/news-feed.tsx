@@ -42,7 +42,7 @@ export function NewsFeed({ news, loading }: NewsFeedProps) {
                                     {item.thumbnail ? (
                                         <Image
                                             src={getAssetUrl(item, item.thumbnail)}
-                                            alt={item.title}
+                                            alt={item.judul}
                                             fill
                                             className="object-cover group-hover:scale-110 transition-transform duration-500"
                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
@@ -54,7 +54,7 @@ export function NewsFeed({ news, loading }: NewsFeedProps) {
                                     )}
                                     <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/50 to-transparent"></div>
                                     <span className="absolute bottom-3 left-3 px-2 py-1 bg-white/90 backdrop-blur rounded text-xs font-bold text-desa-primary-dark">
-                                        {item.category || "KABAR DESA"}
+                                        {item.kategori || "KABAR DESA"}
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
@@ -64,11 +64,11 @@ export function NewsFeed({ news, loading }: NewsFeedProps) {
                                     </span>
                                 </div>
                                 <h3 className="font-bold text-lg text-slate-900 group-hover:text-desa-primary transition-colors line-clamp-2 mb-2 font-heading">
-                                    {item.title}
+                                    {item.judul}
                                 </h3>
                                 <p
                                     className="text-sm text-slate-500 line-clamp-2"
-                                    dangerouslySetInnerHTML={{ __html: item.content ? item.content.replace(/<[^>]*>/g, '') : "" }}
+                                    dangerouslySetInnerHTML={{ __html: item.konten ? item.konten.replace(/<[^>]*>/g, '') : "" }}
                                 />
                             </div>
                         ))

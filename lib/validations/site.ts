@@ -4,7 +4,7 @@ export const SiteConfigSchema = z.object({
   id: z.string().optional(),
   nama_desa: z.string().default("Sumberanyar"),
   alamat_lengkap: z.string().default("Jl. Raya Sumberanyar No. 1"),
-  kontak_email: z.string().email().optional(),
+  kontak_email: z.string().email().or(z.literal("")).optional(),
   kontak_telp: z.string().optional(),
   kepala_desa: z.string().optional(),
   logo_url: z.string().optional(),

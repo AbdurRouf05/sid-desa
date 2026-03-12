@@ -27,7 +27,7 @@ export default function DashboardPage() {
     useEffect(() => {
         async function fetchStats() {
             try {
-                const news = await pb.collection('news').getList(1, 1, { filter: 'published=true' });
+                const news = await pb.collection('berita_desa').getList(1, 1, { filter: 'is_published=true' });
                 const pengaduan = await pb.collection('pengaduan_warga').getList(1, 1).catch(() => ({ totalItems: 0 }));
                 // Config usually fetched from singleton
                 const config = await pb.collection('profil_desa').getFirstListItem("").catch(() => null);

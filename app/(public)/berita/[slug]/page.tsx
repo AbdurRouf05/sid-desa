@@ -18,17 +18,17 @@ type Props = {
 async function getNewsItem(slug: string) {
     try {
         // Try finding by slug first
-        let record = await pb.collection('news').getFirstListItem(`slug="${slug}" && published = true`, {
+        let record = await pb.collection('berita_desa').getFirstListItem(`slug="${slug}" && is_published = true`, {
             expand: 'author'
         });
         return record;
     } catch (e) {
         // Fallback: Try finding by ID directly
         try {
-            const record = await pb.collection('news').getOne(slug, {
+            const record = await pb.collection('berita_desa').getOne(slug, {
                 expand: 'author'
             });
-            return record.published ? record : null;
+            return record.is_published ? record : null;
         } catch (idErr) {
             return null;
         }
@@ -37,17 +37,17 @@ async function getNewsItem(slug: string) {
 
 async function getRecentNews() {
     try {
-        const result = await pb.collection('news').getList(1, 4, {
+        const result = await pb.collection('berita_desa').getList(1, 4, {
             sort: '-created',
-            filter: 'published = true'
+            filter: 'is_published = true'
         });
         return result.items;
     } catch (e) {
         // Fallback for missing index/field, just like in Home Page
         if ((e as any).status === 400) {
             try {
-                const result = await pb.collection('news').getList(1, 4, {
-                    filter: 'published = true'
+                const result = await pb.collection('berita_desa').getList(1, 4, {
+                    filter: 'is_published = true'
                 });
                 return result.items;
             } catch (fallbackError) {
@@ -64,8 +64,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const record = await getNewsItem(decodedSlug);
     if (!record) return { title: 'Berita Tidak Ditemukan' };
 
-    const excerpt = record.content.replace(/<[^>]*>?/gm, '').substring(0, 160);
-    const seoTitle = record.seo_title || `${record.title} - SID Sumberanyar`;
+    const excerpt = record.konten.replace(/<[^>]*>?/gm, '').substring(0, 160);
+    const seoTitle = record.seo_title || `${record.judul} - SID Sumberanyar`;
     const seoDesc = record.seo_desc || excerpt;
 
     const imageUrl = record.thumbnail
@@ -85,7 +85,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
                 url: imageUrl,
                 width: 1200,
                 height: 630,
-                alt: record.title
+                alt: record.judul
             }]
         },
         twitter: {
@@ -112,11 +112,11 @@ export default async function NewsDetailPage({ params }: Props) {
 
     // Prepare JSON-LD Schema
     const newsSchema = {
-        headline: record.title,
+        headline: record.judul,
         image: record.thumbnail ? [pb.files.getURL(record, record.thumbnail)] : [],
         datePublished: record.created,
         dateModified: record.updated,
-        articleBody: record.content.replace(/<[^>]*>?/gm, ''), // Strip HTML for schema body
+        articleBody: record.konten.replace(/<[^>]*>?/gm, ''), // Strip HTML for schema body
         author: [{
             "@type": "Organization", // or Person if we had author field
             name: "SID Sumberanyar",
@@ -142,12 +142,12 @@ export default async function NewsDetailPage({ params }: Props) {
                         <ChevronLeft className="w-4 h-4 mr-2" /> Kembali ke Berita
                     </Link>
                     <div className="flex items-center gap-3 text-sm text-gold-400 font-bold uppercase tracking-wider mb-3">
-                        <span>{record.category}</span>
+                        <span>{record.kategori}</span>
                         <span className="w-1 h-1 bg-slate-500 rounded-full"></span>
                         <span>{dateStr}</span>
                     </div>
                     <h1 className="text-2xl md:text-4xl font-bold leading-tight max-w-4xl">
-                        {record.title}
+                        {record.judul}
                     </h1>
                 </div>
             </div>
@@ -159,7 +159,7 @@ export default async function NewsDetailPage({ params }: Props) {
                         <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-lg mb-8">
                             <Image
                                 src={thumbnail}
-                                alt={record.title}
+                                alt={record.judul}
                                 fill
                                 className="object-cover"
                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 800px"
@@ -178,13 +178,13 @@ export default async function NewsDetailPage({ params }: Props) {
                                     <p className="text-xs text-slate-500">Penulis</p>
                                 </div>
                             </div>
-                            <ShareButton title={record.title} url="" />
+                            <ShareButton title={record.judul} url="" />
                         </div>
 
                         {/* HTML Content Render */}
                         <div
                             className="prose prose-slate prose-lg max-w-none prose-headings:font-bold prose-headings:text-emerald-950 prose-a:text-emerald-600 prose-img:rounded-xl"
-                            dangerouslySetInnerHTML={{ __html: record.content }}
+                            dangerouslySetInnerHTML={{ __html: record.konten }}
                         />
                     </article>
 
@@ -200,7 +200,7 @@ export default async function NewsDetailPage({ params }: Props) {
                                             {item.thumbnail ? (
                                                 <Image
                                                     src={getAssetUrl(item, item.thumbnail)}
-                                                    alt={item.title}
+                                                    alt={item.judul}
                                                     fill
                                                     className="object-cover group-hover:scale-110 transition-transform duration-500"
                                                     sizes="80px"
@@ -213,7 +213,7 @@ export default async function NewsDetailPage({ params }: Props) {
                                         </div>
                                         <div>
                                             <h4 className="text-sm font-bold text-slate-800 group-hover:text-emerald-700 line-clamp-2 mb-1">
-                                                {item.title}
+                                                {item.judul}
                                             </h4>
                                             <span className="text-xs text-slate-400">
                                                 {formatDate(item.created || item.updated, { day: 'numeric', month: 'short', year: 'numeric' })}

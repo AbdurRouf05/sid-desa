@@ -49,9 +49,9 @@ export default function Home() {
                 });
 
                 // 3. News
-                const newsPromise = pb.collection('news').getList(1, 3, {
+                const newsPromise = pb.collection('berita_desa').getList(1, 3, {
                     sort: '-created',
-                    filter: 'published = true'
+                    filter: 'is_published = true'
                 });
 
                 // Resolve promises

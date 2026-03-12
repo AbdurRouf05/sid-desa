@@ -43,8 +43,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     try {
         // Fetch all published news
-        const news = await pb.collection('news').getFullList({
-            filter: 'published = true',
+        const news = await pb.collection('berita_desa').getFullList({
+            filter: 'is_published = true',
             fields: 'slug,updated',
         });
 

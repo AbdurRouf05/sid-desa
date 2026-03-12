@@ -70,6 +70,11 @@ export default function ServicesPage() {
                                 <li className="flex items-center gap-2">✅ Pengantar SKCK</li>
                                 <li className="flex items-center gap-2">✅ Surat Domisili</li>
                             </ul>
+                            <Link href="/layanan/persuratan">
+                                <TactileButton variant="ghost" className="w-full justify-between group">
+                                    Lihat Detail Persyaratan <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                </TactileButton>
+                            </Link>
                         </ArabesqueCard>
 
                         <ArabesqueCard title="Surat Keterangan Usaha" icon={<Building className="w-8 h-8 text-blue-600" />}>
@@ -81,6 +86,11 @@ export default function ServicesPage() {
                                 <li className="flex items-center gap-2">✅ Gratis (Tanpa Pungutan)</li>
                                 <li className="flex items-center gap-2">✅ Bisa ditunggu</li>
                             </ul>
+                            <Link href="/layanan/persuratan#usaha">
+                                <TactileButton variant="ghost" className="w-full justify-between group">
+                                    Lihat Detail Persyaratan <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                </TactileButton>
+                            </Link>
                         </ArabesqueCard>
 
                         <ArabesqueCard title="Surat Keterangan Tidak Mampu" icon={<FileText className="w-8 h-8 text-yellow-600" />}>
@@ -92,6 +102,11 @@ export default function ServicesPage() {
                                 <li className="flex items-center gap-2">✅ Foto Rumah</li>
                                 <li className="flex items-center gap-2">✅ Verifikasi Cepat</li>
                             </ul>
+                            <Link href="/layanan/persuratan#sktm">
+                                <TactileButton variant="ghost" className="w-full justify-between group">
+                                    Lihat Detail Persyaratan <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                                </TactileButton>
+                            </Link>
                         </ArabesqueCard>
                     </div>
                 </div>
