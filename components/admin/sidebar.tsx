@@ -38,7 +38,9 @@ const MENU_GROUPS = [
         label: "Layanan & Pengaduan",
         items: [
             { href: "/panel/dashboard/inquiries", icon: MessageSquare, label: "Pengaduan Warga" },
+            { href: "/panel/dashboard/surat/pintar", icon: FileText, label: "Buat Surat Pintar" },
             { href: "/panel/dashboard/surat", icon: FileText, label: "Agenda Surat Keluar" },
+            { href: "/panel/dashboard/surat/templates", icon: FileText, label: "Draf Template Surat" },
         ]
     },
     {
@@ -52,6 +54,7 @@ const MENU_GROUPS = [
     {
         label: "Kependudukan & Wilayah",
         items: [
+            { href: "/panel/dashboard/penduduk", icon: Users, label: "Data Induk Penduduk" },
             { href: "/panel/dashboard/mutasi", icon: Users, label: "Mutasi Penduduk" },
             { href: "/panel/dashboard/perangkat-desa", icon: Users, label: "Perangkat Desa" },
             { href: "/panel/dashboard/demografi", icon: BarChart3, label: "Statistik Demografi" },
