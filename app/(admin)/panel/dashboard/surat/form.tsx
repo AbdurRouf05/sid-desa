@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pb } from "@/lib/pb";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { Save, ArrowLeft, Loader2, FileText, X } from "lucide-react";
+import { Save, ArrowLeft, Loader2, FileText, X, Users, Search, PieChart } from "lucide-react";
 import { TactileButton } from "@/components/ui/tactile-button";
 import Link from "next/link";
 import { SuratKeluarSchema, SuratKeluarData } from "@/lib/validations/surat";
@@ -17,9 +17,9 @@ export default function SuratFormPage({ isEdit = false, params }: { isEdit?: boo
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [pageLoading, setPageLoading] = useState(isEdit);
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [existingFile, setExistingFile] = useState<string | null>(null);
+    // Removed file states
     const [currentRecord, setCurrentRecord] = useState<SuratKeluar | null>(null);
+    const [lastAgenda, setLastAgenda] = useState<string | null>(null);
 
     const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<SuratKeluarData>({
         resolver: zodResolver(SuratKeluarSchema) as any,
@@ -28,8 +28,6 @@ export default function SuratFormPage({ isEdit = false, params }: { isEdit?: boo
             tanggal_dibuat: new Date().toISOString().split('T')[0],
         }
     });
-
-    const watchJenisSurat = watch("jenis_surat");
 
     useEffect(() => {
         const fetchRecord = async () => {
@@ -42,12 +40,6 @@ export default function SuratFormPage({ isEdit = false, params }: { isEdit?: boo
                     setValue("nama_pemohon", record.nama_pemohon);
                     setValue("jenis_surat", record.jenis_surat);
                     setValue("tanggal_dibuat", record.tanggal_dibuat.split(' ')[0]);
-                    
-                    // The backend does not have keterangan in the JSON schema, but we added it to our zod. Lets ignore if it errors, or let the request pass.
-                    
-                    if (record.file_pdf) {
-                        setExistingFile(pb.files.getUrl(record, record.file_pdf));
-                    }
                 } catch (error) {
                     console.error("Error fetching record:", error);
                     alert("Data tidak ditemukan.");
@@ -61,16 +53,6 @@ export default function SuratFormPage({ isEdit = false, params }: { isEdit?: boo
         fetchRecord();
     }, [isEdit, params?.id, setValue, router]);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length > 0) {
-            setSelectedFile(e.target.files[0]);
-        }
-    };
-
-    const removeFile = () => {
-        setSelectedFile(null);
-    };
-
     const onSubmit = async (data: SuratKeluarData) => {
         setIsLoading(true);
         try {
@@ -83,11 +65,6 @@ export default function SuratFormPage({ isEdit = false, params }: { isEdit?: boo
             formData.append("tanggal_dibuat", new Date(data.tanggal_dibuat).toISOString()); 
             
             if (data.keterangan) formData.append("keterangan", data.keterangan);
-            
-            if (selectedFile) {
-                formData.append("file_pdf", selectedFile);
-            }
-
             if (isEdit && params?.id) {
                 await pb.collection("surat_keluar").update(params.id, formData);
             } else {
@@ -107,191 +84,184 @@ export default function SuratFormPage({ isEdit = false, params }: { isEdit?: boo
     }
 
     return (
-        <main className="max-w-4xl">
-            <div className="flex items-center gap-4 mb-8">
-                <Link href="/panel/dashboard/surat">
-                    <button className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                        <ArrowLeft className="w-5 h-5 text-slate-600" />
-                    </button>
-                </Link>
-                <SectionHeading 
-                    title={isEdit ? "Edit Register Surat" : "Register Surat Baru"} 
-                    subtitle={isEdit ? "Perbarui detail registrasi surat keluar." : "Catat permohonan surat baru ke dalam buku agenda desa."} 
-                />
+        <main className="max-w-5xl mx-auto space-y-8 pb-20 px-4">
+            {/* Page Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 py-4">
+                <div className="flex items-center gap-4">
+                    <Link href="/panel/dashboard/surat">
+                        <button className="p-3 bg-white border border-slate-200 hover:bg-slate-50 rounded-2xl shadow-sm transition-all active:scale-95 group">
+                            <ArrowLeft className="w-5 h-5 text-slate-400 group-hover:text-slate-600 transition-colors" />
+                        </button>
+                    </Link>
+                    <div>
+                        <h1 className="text-2xl font-black text-slate-800 tracking-tight uppercase leading-none">
+                            {isEdit ? "Edit Register Surat" : "Register Surat Baru"}
+                        </h1>
+                        <p className="text-[11px] text-slate-400 font-bold uppercase tracking-widest mt-2 flex items-center gap-2">
+                            <span className="w-1 h-1 rounded-full bg-slate-300" />
+                            {isEdit ? "Perbarui detail registrasi surat keluar" : "Pencatatan surat keluar ke buku agenda desa"}
+                        </p>
+                    </div>
+                </div>
+                
+                {!isEdit && (
+                    <div className="flex items-center gap-2.5 px-4 py-2 bg-emerald-50 border border-emerald-100 rounded-2xl shadow-sm shadow-emerald-100/50">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                        <span className="text-[10px] font-black text-emerald-700 uppercase tracking-widest">Sistem Siap Catat</span>
+                    </div>
+                )}
             </div>
 
-            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                    
-                    {/* Grid Top */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-4 md:col-span-2">
-                             <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl space-y-6">
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Jenis Klasifikasi Surat <span className="text-red-500">*</span></label>
-                                    <div className="grid grid-cols-2 lg:grid-cols-5 gap-2">
-                                        {["Pengantar", "SKTM", "Domisili", "Keterangan Usaha", "Lainnya"].map((jns) => (
-                                            <label 
-                                                key={jns} 
-                                                className={cn(
-                                                    "cursor-pointer flex items-center justify-center py-2 px-1 border-2 rounded-xl text-xs font-bold transition-all text-center",
-                                                    watchJenisSurat === jns 
-                                                        ? "border-emerald-500 bg-emerald-500 text-white shadow-md shadow-emerald-500/20" 
-                                                        : "border-slate-200 bg-white text-slate-500 hover:border-emerald-200"
-                                                )}
-                                            >
-                                                <input type="radio" value={jns} {...register("jenis_surat")} className="sr-only" />
-                                                {jns}
-                                            </label>
-                                        ))}
-                                    </div>
-                                    {errors.jenis_surat && <p className="text-red-500 text-xs mt-1">{errors.jenis_surat.message}</p>}
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                    {/* Main Info Column */}
+                    <div className="lg:col-span-8 space-y-8">
+                        {/* Section 1: Identitas Pemohon */}
+                        <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 space-y-8">
+                            <div className="flex items-center gap-4">
+                                <div className="p-3 bg-blue-50 text-blue-500 rounded-2xl">
+                                    <Users className="w-6 h-6" />
                                 </div>
-                             </div>
-                        </div>
-
-                        {/* Nomor Agenda */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                                Nomor Agenda / Registrasi Surat <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                {...register("nomor_agenda")}
-                                placeholder="cth: 472.11/045/436.9.15/2026"
-                                className={cn(
-                                    "w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 transition-all font-mono text-sm",
-                                    errors.nomor_agenda ? "border-red-300 focus:ring-red-500/20 focus:border-red-500" : "border-slate-200 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                )}
-                            />
-                            {errors.nomor_agenda && <p className="text-red-500 text-xs">{errors.nomor_agenda.message}</p>}
-                        </div>
-
-                        {/* Tanggal */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700">Tanggal Pembuatan <span className="text-red-500">*</span></label>
-                            <input
-                                type="date"
-                                {...register("tanggal_dibuat")}
-                                className={cn(
-                                    "w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 transition-all",
-                                    errors.tanggal_dibuat ? "border-red-300 focus:ring-red-500/20 focus:border-red-500" : "border-slate-200 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                )}
-                            />
-                            {errors.tanggal_dibuat && <p className="text-red-500 text-xs">{errors.tanggal_dibuat.message}</p>}
-                        </div>
-
-
-                        {/* NIK */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                                NIK Pemohon <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                {...register("nik_pemohon")}
-                                placeholder="16 digit NIK"
-                                maxLength={16}
-                                className={cn(
-                                    "w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 transition-all",
-                                    errors.nik_pemohon ? "border-red-300 focus:ring-red-500/20 focus:border-red-500" : "border-slate-200 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                )}
-                            />
-                            {errors.nik_pemohon && <p className="text-red-500 text-xs">{errors.nik_pemohon.message}</p>}
-                            <p className="text-slate-400 text-xs">Pastikan 16 digit sesuai identitas.</p>
-                        </div>
-
-                        {/* Nama Lengkap */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                                Nama Pemohon <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                {...register("nama_pemohon")}
-                                placeholder="Nama lengkap warga"
-                                className={cn(
-                                    "w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 transition-all",
-                                    errors.nama_pemohon ? "border-red-300 focus:ring-red-500/20 focus:border-red-500" : "border-slate-200 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                )}
-                            />
-                            {errors.nama_pemohon && <p className="text-red-500 text-xs">{errors.nama_pemohon.message}</p>}
-                        </div>
-                    </div>
-
-                    <div className="border-t border-slate-100 pt-6"></div>
-
-                    {/* Arsip Dokumen */}
-                    <div className="grid grid-cols-1 gap-6">
-
-                        {/* Dokumen Arsip */}
-                        <div className="space-y-2 md:w-1/2">
-                            <label className="text-sm font-bold text-slate-700">Lampirkan Arsip Digital <span className="text-slate-400 font-normal">(Opsional)</span></label>
-                            <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center bg-slate-50 relative group min-h-[120px]">
-                                <input 
-                                    type="file" 
-                                    accept=".pdf"
-                                    onChange={handleFileChange}
-                                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                                    title="Pilih file dokumen"
-                                />
-                                
-                                {selectedFile ? (
-                                    <div className="flex flex-col items-center relative z-20 w-full">
-                                        <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100 w-full max-w-[250px]">
-                                            <FileText className="w-5 h-5 shrink-0" />
-                                            <span className="text-xs truncate flex-1 font-medium">{selectedFile.name}</span>
-                                            <button 
-                                                type="button" 
-                                                onClick={removeFile}
-                                                className="p-1 hover:bg-emerald-200 rounded-md shrink-0 text-emerald-700 transition-colors z-30 relative"
-                                            >
-                                                <X className="w-4 h-4" />
-                                            </button>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="text-center pointer-events-none">
-                                        <FileText className="w-8 h-8 text-slate-300 mx-auto mb-2 group-hover:text-emerald-500 transition-colors" />
-                                        <p className="text-sm font-medium text-slate-600">Klik / Tarik File Surat Jadi</p>
-                                        <p className="text-xs text-slate-400 mt-1">Hanya File Ext .PDF (Maks 5MB)</p>
-                                    </div>
-                                )}
+                                <h2 className="text-base font-black text-slate-800 uppercase tracking-tight">Identitas Pemohon</h2>
                             </div>
-                            
-                            {/* Tampilkan file yang sudah ada jika mode edit */}
-                            {isEdit && existingFile && !selectedFile && (
-                                <div className="mt-2 text-sm flex items-center justify-between bg-blue-50/50 p-2.5 rounded-lg border border-blue-100">
-                                    <span className="text-blue-700 flex items-center gap-2">
-                                        <FileText className="w-4 h-4" /> File tersimpan saat ini
-                                    </span>
-                                    <a href={existingFile} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline font-medium text-xs">
-                                        Unduh File
-                                    </a>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="space-y-3">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">NIK Pemohon <span className="text-rose-500">*</span></label>
+                                    <input
+                                        {...register("nik_pemohon")}
+                                        placeholder="16 Digit NIK Sesuai KTP"
+                                        maxLength={16}
+                                        className={cn(
+                                            "w-full px-6 py-4 bg-slate-50/50 border rounded-[1.25rem] focus:outline-none focus:ring-4 focus:bg-white transition-all text-sm font-bold tracking-tight",
+                                            errors.nik_pemohon ? "border-rose-300 focus:ring-rose-500/10 focus:border-rose-500" : "border-slate-200 focus:ring-blue-500/10 focus:border-blue-500"
+                                        )}
+                                    />
+                                    {errors.nik_pemohon && <p className="text-rose-500 text-[10px] font-bold uppercase mt-1 ml-1">{errors.nik_pemohon.message}</p>}
                                 </div>
-                            )}
+
+                                <div className="space-y-3">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Nama Lengkap <span className="text-rose-500">*</span></label>
+                                    <input
+                                        {...register("nama_pemohon")}
+                                        placeholder="Nama Lengkap Sesuai KTP"
+                                        className={cn(
+                                            "w-full px-6 py-4 bg-slate-50/50 border rounded-[1.25rem] focus:outline-none focus:ring-4 focus:bg-white transition-all text-sm font-bold tracking-tight",
+                                            errors.nama_pemohon ? "border-rose-300 focus:ring-rose-500/10 focus:border-rose-500" : "border-slate-200 focus:ring-blue-500/10 focus:border-blue-500"
+                                        )}
+                                    />
+                                    {errors.nama_pemohon && <p className="text-rose-500 text-[10px] font-bold uppercase mt-1 ml-1">{errors.nama_pemohon.message}</p>}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Section 2: Detail Surat */}
+                        <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 space-y-8">
+                            <div className="flex items-center gap-4">
+                                <div className="p-3 bg-emerald-50 text-emerald-500 rounded-2xl">
+                                    <FileText className="w-6 h-6" />
+                                </div>
+                                <h2 className="text-base font-black text-slate-800 uppercase tracking-tight">Detail Registrasi</h2>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div className="space-y-3">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Nomor Agenda <span className="text-rose-500">*</span></label>
+                                    <input
+                                        {...register("nomor_agenda")}
+                                        placeholder="cth: 472.11/045/..."
+                                        className={cn(
+                                            "w-full px-6 py-4 bg-slate-50/50 border rounded-[1.25rem] focus:outline-none focus:ring-4 focus:bg-white transition-all font-mono text-sm font-black uppercase tracking-tight",
+                                            errors.nomor_agenda ? "border-rose-300 focus:ring-rose-500/10 focus:border-rose-500" : "border-slate-200 focus:ring-emerald-500/10 focus:border-emerald-500"
+                                        )}
+                                    />
+                                    {errors.nomor_agenda && <p className="text-rose-500 text-[10px] font-bold uppercase mt-1 ml-1">{errors.nomor_agenda.message}</p>}
+                                </div>
+
+                                <div className="space-y-3">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-1">Tanggal Pembuatan <span className="text-rose-500">*</span></label>
+                                    <input
+                                        type="date"
+                                        {...register("tanggal_dibuat")}
+                                        className={cn(
+                                            "w-full px-6 py-4 bg-slate-50/50 border rounded-[1.25rem] focus:outline-none focus:ring-4 focus:bg-white transition-all text-sm font-bold",
+                                            errors.tanggal_dibuat ? "border-rose-300 focus:ring-rose-500/10 focus:border-rose-500" : "border-slate-200 focus:ring-emerald-500/10 focus:border-emerald-500"
+                                        )}
+                                    />
+                                    {errors.tanggal_dibuat && <p className="text-rose-500 text-[10px] font-bold uppercase mt-1 ml-1">{errors.tanggal_dibuat.message}</p>}
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div className="pt-6 border-t border-slate-100 flex justify-end gap-3">
-                        <Link href="/panel/dashboard/surat">
-                            <TactileButton variant="secondary" type="button" disabled={isLoading}>
-                                Batal
-                            </TactileButton>
-                        </Link>
-                        <TactileButton variant="primary" type="submit" disabled={isLoading}>
-                            {isLoading ? (
-                                <>
-                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                    Menyimpan...
-                                </>
-                            ) : (
-                                <>
-                                    <Save className="w-4 h-4 mr-2" />
-                                    Simpan Pencatatan
-                                </>
-                            )}
-                        </TactileButton>
+                    {/* Sidebar Column */}
+                    <div className="lg:col-span-4 space-y-6">
+                        {/* Classification Card */}
+                        <div className="bg-slate-900 text-white rounded-[2rem] p-8 shadow-xl shadow-slate-900/10 space-y-6 relative overflow-hidden group">
+                            <div className="absolute -right-8 -top-8 w-40 h-40 bg-white/5 rounded-full transition-transform group-hover:scale-110" />
+                            <div className="relative z-10 space-y-6">
+                                <div className="flex items-center gap-3">
+                                    <div className="w-1.5 h-6 bg-emerald-400 rounded-full" />
+                                    <label className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em] block">Klasifikasi Surat</label>
+                                </div>
+                                
+                                <div className="relative">
+                                    <select 
+                                        {...register("jenis_surat")}
+                                        className={cn(
+                                            "w-full px-6 py-4 bg-white/10 border border-white/20 rounded-2xl appearance-none focus:outline-none focus:bg-white focus:text-slate-900 transition-all text-sm font-black shadow-inner",
+                                            errors.jenis_surat ? "border-rose-400" : ""
+                                        )}
+                                    >
+                                        <option value="" disabled className="text-slate-900">Pilih Jenis Surat...</option>
+                                        {["Pengantar", "SKTM", "Domisili", "Keterangan Usaha", "Surat Kuasa", "Keterangan Berkelakuan Baik", "Keterangan Penghasilan Orang Tua", "Lainnya"].map((jns) => (
+                                            <option key={jns} value={jns} className="text-slate-900">{jns}</option>
+                                        ))}
+                                    </select>
+                                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-white/50">
+                                        <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                                    </div>
+                                </div>
+                                {errors.jenis_surat && <p className="text-rose-300 text-[10px] font-bold uppercase">{errors.jenis_surat.message}</p>}
+                                
+                                <p className="text-[10px] text-slate-400 font-medium leading-relaxed italic">
+                                    Harap pastikan klasifikasi surat sesuai dengan isi dokumen yang diregistrasikan.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Action Card */}
+                        <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-slate-100 space-y-4">
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-300 text-white font-black py-5 rounded-[1.25rem] shadow-lg shadow-emerald-200 transition-all active:scale-95 flex items-center justify-center gap-3 uppercase tracking-widest text-sm"
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                        Menyimpan...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Save className="w-5 h-5" />
+                                        Simpan Agenda
+                                    </>
+                                )}
+                            </button>
+                            <Link href="/panel/dashboard/surat" className="w-full">
+                                <button
+                                    type="button"
+                                    disabled={isLoading}
+                                    className="w-full bg-slate-50 hover:bg-slate-100 text-slate-500 font-black py-4 rounded-[1.25rem] transition-all active:scale-95 text-[10px] uppercase tracking-[0.2em]"
+                                >
+                                    Batal / Kembali
+                                </button>
+                            </Link>
+                        </div>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </main>
     );
 }

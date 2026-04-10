@@ -61,17 +61,11 @@ export default function PengaduanAdminPage() {
     if (isLoading) return <div className="p-8 text-center text-slate-500">Memuat pengaduan...</div>;
 
     return (
-        <main>
-            <div className="mb-8 p-6 rounded-2xl bg-gradient-to-br from-desa-primary to-desa-primary-dark text-white relative overflow-hidden shadow-lg">
-                <div className="absolute inset-0 bg-arabesque-grid bg-grid-24 opacity-10 pointer-events-none"></div>
-                <div className="relative z-10 flex items-center justify-between">
-                    <div>
-                        <h1 className="text-3xl font-bold font-display">Pengaduan Warga</h1>
-                        <p className="text-emerald-100 mt-2">Daftar pengaduan, laporan, dan pesan dari warga.</p>
-                    </div>
-                    <div className="bg-white/10 p-3 rounded-full backdrop-blur-sm">
-                        <MessageSquare className="w-8 h-8 text-white" />
-                    </div>
+        <main className="space-y-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 className="text-2xl font-bold text-slate-900">Pengaduan Warga</h1>
+                    <p className="text-slate-500 mt-1">Daftar pengaduan, laporan, dan pesan dari warga.</p>
                 </div>
             </div>
 
@@ -82,59 +76,66 @@ export default function PengaduanAdminPage() {
                     <p className="text-slate-500">Pengaduan dari formulir laporan warga akan muncul di sini.</p>
                 </div>
             ) : (
-                <div className="grid gap-6">
-                    {inquiries.map((item) => (
-                        <div key={item.id} className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow group relative">
-                            {/* Status Indicator Stripe */}
-                            <div className={`absolute left-0 top-6 bottom-6 w-1 rounded-r-full ${item.status === 'Baru' ? 'bg-blue-500' : item.status === 'Diproses' ? 'bg-yellow-500' : 'bg-slate-200'}`}></div>
-
-                            <div className="flex flex-col md:flex-row gap-6">
-                                {/* Header / Meta */}
-                                <div className="md:w-1/4 space-y-3 pl-4">
-                                    <h3 className="font-bold text-slate-900 line-clamp-1" title={item.nama_pelapor}>{item.nama_pelapor}</h3>
-                                    <div className="flex flex-col gap-1 text-xs text-slate-500">
-                                        <div className="flex items-center gap-2">
-                                            <MapPin className="w-3 h-3 shrink-0" />
+                <div className="flex flex-col gap-4 text-sm">
+                    {inquiries.map((item) => {
+                        return (
+                            <div key={item.id} className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 hover:shadow-md transition-all flex flex-col md:flex-row gap-4 md:gap-6">
+                                {/* Header / Meta (Identitas & Tanggal) */}
+                                <div className="w-full md:w-56 shrink-0">
+                                    <div className="flex justify-between items-start md:block">
+                                        <p className="font-bold text-slate-900 text-base mb-2 select-all line-clamp-1 truncate" title={item.nama_pelapor}>{item.nama_pelapor}</p>
+                                        <div className="md:hidden">
+                                            {statusBadge(item.status)}
+                                        </div>
+                                    </div>
+                                    <div className="space-y-1.5 text-xs text-slate-500 font-medium">
+                                        <div className="flex items-center gap-1.5">
+                                            <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                                             <span className="truncate" title={item.tempat_tinggal}>{item.tempat_tinggal || "-"}</span>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <Calendar className="w-3 h-3 shrink-0" />
+                                        <div className="flex items-center gap-1.5">
+                                            <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                                             <span>{formatDate(item.created, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
                                         </div>
                                     </div>
-                                    <div className="pt-2">
+                                </div>
+
+                                {/* Content Laporan */}
+                                <div className="flex-1 flex flex-col min-w-0 text-slate-700">
+                                    <div className="hidden md:block mb-2">
                                         {statusBadge(item.status)}
                                     </div>
+                                    <p className="leading-relaxed whitespace-pre-wrap">{item.isi_laporan}</p>
                                 </div>
 
-                                {/* Content */}
-                                <div className="flex-1 md:border-l md:border-slate-100 md:pl-6 space-y-3">
-                                    <h4 className="font-semibold text-slate-800 text-sm">Isi Laporan:</h4>
-                                    <p className="text-slate-600 text-sm leading-relaxed whitespace-pre-wrap">{item.isi_laporan}</p>
-                                </div>
-
-                                {/* Actions */}
-                                <div className="flex md:flex-col gap-2 md:w-32 md:border-l md:border-slate-100 md:pl-6 justify-center">
+                                {/* Action Buttons */}
+                                <div className="md:w-32 flex flex-row md:flex-col items-center md:items-end justify-start md:justify-start gap-2 shrink-0 md:border-l md:border-slate-100 md:pl-4 pt-2 md:pt-0">
                                     {item.status === 'Baru' && (
-                                        <TactileButton variant="primary" className="h-8 px-3 text-xs" onClick={() => updateStatus(item.id, 'Diproses')}>
-                                            <CheckCircle2 className="w-4 h-4 mr-1" /> Proses
-                                        </TactileButton>
+                                        <button 
+                                            onClick={() => updateStatus(item.id, 'Diproses')}
+                                            className="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors border border-blue-200"
+                                        >
+                                            Proses
+                                        </button>
                                     )}
                                     {item.status === 'Diproses' && (
-                                        <TactileButton variant="secondary" className="h-8 px-3 text-xs" onClick={() => updateStatus(item.id, 'Selesai')}>
+                                        <button 
+                                            onClick={() => updateStatus(item.id, 'Selesai')}
+                                            className="w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-600 font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors border border-emerald-200"
+                                        >
                                             Selesai
-                                        </TactileButton>
+                                        </button>
                                     )}
                                     <button
                                         onClick={() => deleteInquiry(item.id)}
-                                        className="flex items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100 mt-2"
+                                        className="w-full flex items-center justify-center gap-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors border border-rose-200"
                                     >
-                                        <Trash2 className="w-4 h-4" /> Hapus
+                                        <Trash2 className="w-3.5 h-3.5" /> Hapus
                                     </button>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </main>

@@ -1,5 +1,7 @@
 "use client";
 
+import { Document, Packer, Paragraph, Table, TableRow, TableCell, WidthType, AlignmentType } from "docx";
+import { saveAs } from "file-saver";
 import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { pb } from "@/lib/pb";
@@ -66,6 +68,62 @@ export default function MutasiPendudukPage() {
         }
     };
 
+    const handleExportWord = async () => {
+        if (filteredData.length === 0) {
+            alert("Tidak ada data untuk diekspor");
+            return;
+        }
+
+        const tableRows = [
+            new TableRow({
+                children: [
+                    new TableCell({ children: [new Paragraph({ text: "No", alignment: AlignmentType.CENTER })] }),
+                    new TableCell({ children: [new Paragraph({ text: "Tanggal", alignment: AlignmentType.CENTER })] }),
+                    new TableCell({ children: [new Paragraph({ text: "NIK", alignment: AlignmentType.CENTER })] }),
+                    new TableCell({ children: [new Paragraph({ text: "Nama Lengkap", alignment: AlignmentType.CENTER })] }),
+                    new TableCell({ children: [new Paragraph({ text: "Jenis Mutasi", alignment: AlignmentType.CENTER })] }),
+                    new TableCell({ children: [new Paragraph({ text: "Keterangan", alignment: AlignmentType.CENTER })] }),
+                ],
+            }),
+            ...filteredData.map((item, index) => 
+                new TableRow({
+                    children: [
+                        new TableCell({ children: [new Paragraph({ text: (index + 1).toString(), alignment: AlignmentType.CENTER })] }),
+                        new TableCell({ children: [new Paragraph({ text: formatDate(item.tanggal_mutasi, { day: 'numeric', month: 'short', year: 'numeric' }) })] }),
+                        new TableCell({ children: [new Paragraph({ text: item.nik || "-" })] }),
+                        new TableCell({ children: [new Paragraph({ text: item.nama_lengkap })] }),
+                        new TableCell({ children: [new Paragraph({ text: item.jenis_mutasi })] }),
+                        new TableCell({ children: [new Paragraph({ text: item.keterangan || "-" })] }),
+                    ]
+                })
+            )
+        ];
+
+        const doc = new Document({
+            sections: [{
+                properties: {},
+                children: [
+                    new Paragraph({
+                        text: "Laporan Mutasi Penduduk",
+                        heading: "Heading1",
+                        alignment: AlignmentType.CENTER,
+                        spacing: { after: 400 },
+                    }),
+                    new Table({
+                        width: {
+                            size: 100,
+                            type: WidthType.PERCENTAGE,
+                        },
+                        rows: tableRows,
+                    }),
+                ],
+            }],
+        });
+
+        const blob = await Packer.toBlob(doc);
+        saveAs(blob, `Laporan-Mutasi-Penduduk-${new Date().toISOString().split('T')[0]}.docx`);
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center mb-8">
@@ -73,7 +131,11 @@ export default function MutasiPendudukPage() {
                     <h1 className="text-2xl font-bold text-slate-900">Mutasi Penduduk</h1>
                     <p className="text-slate-500">Kelola riwayat kelahiran, kematian, kedatangan, dan kepindahan warga.</p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
+                    <TactileButton variant="secondary" onClick={handleExportWord} disabled={filteredData.length === 0}>
+                        <Download className="w-5 h-5 mr-2" />
+                        Cetak Word
+                    </TactileButton>
                     <Link href="/panel/dashboard/mutasi/baru">
                         <TactileButton variant="primary">
                             <Plus className="w-5 h-5 mr-2" />

@@ -7,11 +7,11 @@
    Format: HSL without units (for Tailwind opacity usage)
 ========================================= */
 :root {
-  /* BRAND: Desa Teal */
-  /* #0f766e (teal-700) -> 175 77% 26% */
-  --primary: 175 77% 26%;
-  /* #0d9488 (teal-600) -> 175 84% 32% */
-  --primary-dark: 175 84% 32%;
+  /* BRAND: Nature Green */
+  /* #15803d (green-700) */
+  --primary: 142 71% 29%;
+  /* #14532d (green-800) */
+  --primary-dark: 144 61% 20%;
   --primary-foreground: 0 0% 100%;
 
   /* BRAND: Soil Orange */

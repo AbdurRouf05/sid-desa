@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { Suspense } from "react";
-import { Inter, Merriweather, Manrope } from "next/font/google";
+import { Inter, Outfit, Manrope } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -13,10 +13,9 @@ import { Toaster } from "sonner";
 import { ClientGuard } from "@/components/security/client-guard";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const merriweather = Merriweather({ 
+const outfit = Outfit({ 
   subsets: ["latin"], 
-  weight: ["300", "400", "700", "900"],
-  variable: "--font-merriweather" 
+  variable: "--font-outfit" 
 });
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
 
@@ -24,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const config = await getSiteConfig();
 
   const title = config?.company_name || "SID Sumberanyar";
-  const desc = "Sistem Informasi Desa (SID) Sumberanyar: Portal resmi Desa Sumberanyar, Kec. Nguling, Kab. Pasuruan. Layanan administrasi, informasi publik, dan transparansi pemerintahan desa.";
+  const desc = "Sistem Informasi Desa (SID) Sumberanyar: Portal resmi Desa Sumberanyar, Kec. Rowokangkung, Kab. Lumajang. Layanan administrasi, informasi publik, dan transparansi pemerintahan desa.";
 
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://sumberanyar.local:3000"),
@@ -33,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
       default: `${title} - Portal Desa Digital`,
     },
     description: desc,
-    keywords: ["SID Sumberanyar", "Desa Sumberanyar", "Pemerintah Desa", "Kecamatan Nguling", "Kabupaten Pasuruan", "Sistem Informasi Desa", title],
+    keywords: ["SID Sumberanyar", "Desa Sumberanyar", "Pemerintah Desa", "Kecamatan Rowokangkung", "Kabupaten Lumajang", "Sistem Informasi Desa", title],
     openGraph: {
       type: "website",
       locale: "id_ID",
@@ -91,7 +90,7 @@ export default async function RootLayout({
     <html lang="id" className="scroll-smooth" data-scroll-behavior="smooth" suppressHydrationWarning>
       <body className={cn(
         inter.variable,
-        merriweather.variable,
+        outfit.variable,
         manrope.variable,
         "font-sans bg-background text-foreground antialiased"
       )} suppressHydrationWarning>

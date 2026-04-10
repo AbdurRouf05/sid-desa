@@ -1,20 +1,23 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
-import { Calendar } from "lucide-react";
+import Link from 'next/link';
+import { Calendar, CalendarDays, ArrowRight } from "lucide-react";
 import { TactileButton } from "@/components/ui/tactile-button";
 import { useUiLabels } from "@/components/providers/ui-labels-provider";
 import { getAssetUrl } from "@/lib/cdn";
 import { formatDate } from "@/lib/number-utils";
 
 interface NewsFeedProps {
-    news: any[];
-    loading: boolean;
+    news?: any[];
+    loading?: boolean;
+    onViewDetail?: (slug: string) => void;
 }
 
-export function NewsFeed({ news, loading }: NewsFeedProps) {
+export function NewsFeed({ news = [], loading = false, onViewDetail }: NewsFeedProps) {
     const { getLabel } = useUiLabels();
+    const [activeTab, setActiveTab] = useState('Semua');
 
     return (
         <section className="py-20 bg-white">
@@ -37,8 +40,8 @@ export function NewsFeed({ news, loading }: NewsFeedProps) {
                         ))
                     ) : news.length > 0 ? (
                         news.map((item: any) => (
-                            <div key={item.id} className="group cursor-pointer" onClick={() => window.location.href = `/berita/${item.slug}`}>
-                                <div className="h-48 bg-gray-200 rounded-xl mb-4 overflow-hidden relative">
+                            <div key={item.id} className="group relative bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300">
+                                <div className="h-48 bg-gray-200 relative overflow-hidden">
                                     {item.thumbnail ? (
                                         <Image
                                             src={getAssetUrl(item, item.thumbnail)}
@@ -57,19 +60,40 @@ export function NewsFeed({ news, loading }: NewsFeedProps) {
                                         {item.kategori || "KABAR DESA"}
                                     </span>
                                 </div>
-                                <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
-                                    <Calendar className="w-3 h-3" />
-                                    <span>
-                                        {formatDate(item.created || item.updated)}
-                                    </span>
+                                
+                                <div className="p-5">
+                                    <div className="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                                        <Calendar className="w-3 h-3" />
+                                        <span>
+                                            {formatDate(item.created || item.updated)}
+                                        </span>
+                                    </div>
+                                    <h3 className="font-bold text-lg text-slate-900 group-hover:text-desa-primary transition-colors line-clamp-2 mb-2 font-heading">
+                                        {onViewDetail ? (
+                                            <button onClick={() => onViewDetail(item.slug)} className="text-left">
+                                                {item.judul}
+                                            </button>
+                                        ) : (
+                                            <Link href={`/berita/${item.slug}`}>
+                                                {item.judul}
+                                            </Link>
+                                        )}
+                                    </h3>
+                                    <p
+                                        className="text-sm text-slate-500 line-clamp-2"
+                                        dangerouslySetInnerHTML={{ __html: item.konten ? item.konten.replace(/<[^>]*>/g, '') : "" }}
+                                    />
+                                    
+                                    {onViewDetail ? (
+                                        <button onClick={() => onViewDetail(item.slug)} className="absolute inset-0 z-10">
+                                            <span className="sr-only">Baca {item.judul}</span>
+                                        </button>
+                                    ) : (
+                                        <Link href={`/berita/${item.slug}`} className="absolute inset-0 z-10">
+                                            <span className="sr-only">Baca {item.judul}</span>
+                                        </Link>
+                                    )}
                                 </div>
-                                <h3 className="font-bold text-lg text-slate-900 group-hover:text-desa-primary transition-colors line-clamp-2 mb-2 font-heading">
-                                    {item.judul}
-                                </h3>
-                                <p
-                                    className="text-sm text-slate-500 line-clamp-2"
-                                    dangerouslySetInnerHTML={{ __html: item.konten ? item.konten.replace(/<[^>]*>/g, '') : "" }}
-                                />
                             </div>
                         ))
                     ) : (

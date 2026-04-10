@@ -59,7 +59,7 @@ export default function AdminLayout({
     }
 
     return (
-        <div className="flex min-h-screen bg-slate-50 font-sans">
+        <div className="flex min-h-screen bg-[#E9EEF1] font-sans">
             <AdminSidebar
                 collapsed={collapsed}
                 setCollapsed={setCollapsed}

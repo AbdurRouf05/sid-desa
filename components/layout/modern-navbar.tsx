@@ -1,218 +1,221 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Home, User, Search, ChevronRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { TactileButton } from "@/components/ui/tactile-button";
-import { pb } from "@/lib/pb";
-import { useUiLabels } from "@/components/providers/ui-labels-provider";
-import { SearchOverlay } from "./search-overlay";
+import { Menu, X, ChevronDown, MonitorSmartphone, Search, UserCircle2 } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export function ModernNavbar() {
-    const { getLabel, isVisible } = useUiLabels();
     const [isScrolled, setIsScrolled] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [logoUrl, setLogoUrl] = useState<string | null>(null);
-    const [logoWhiteUrl, setLogoWhiteUrl] = useState<string | null>(null);
-    const [companyName, setCompanyName] = useState("SID Sumberanyar");
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+    const pathname = usePathname();
 
-    // Scroll Listener & Logo Fetcher
+    // Handle scroll effect
     useEffect(() => {
         const handleScroll = () => {
-            if (window.scrollY > 10) {
-                setIsScrolled(true);
-            } else {
-                setIsScrolled(false);
-            }
+            setIsScrolled(window.scrollY > 20);
         };
-
-        const fetchConfig = async () => {
-            try {
-                const records = await pb.collection('profil_desa').getList(1, 1);
-                if (records.items.length > 0) {
-                    const data = records.items[0];
-                    if (data.logo_primary) {
-                        setLogoUrl(pb.files.getURL(data, data.logo_primary));
-                    }
-                    if (data.logo_secondary) {
-                        setLogoWhiteUrl(pb.files.getURL(data, data.logo_secondary));
-                    }
-                    if (data.company_name) {
-                        setCompanyName(data.company_name);
-                    }
-                }
-            } catch (e) {
-                console.error("Failed to load nav config", e);
-            }
-        };
-
         window.addEventListener("scroll", handleScroll);
-        fetchConfig();
-
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const navLinks = [
-        { name: getLabel('nav_home', 'Beranda'), href: "/", visible: isVisible('nav_home') },
-        { name: "Profil Desa", href: "/tentang-kami", visible: true },
-        { name: "Persuratan", href: "/layanan", visible: true },
-        { name: "Berita", href: "/berita", visible: true },
-        { name: "Pengaduan", href: "/pengaduan", visible: true },
-        { name: "Transparansi", href: "/transparansi", visible: true },
-        { name: getLabel('nav_contact', 'Kontak'), href: "/kontak", visible: isVisible('nav_contact') },
-    ].filter(link => link.visible);
+    const navMenus = [
+        { href: "/", label: "Beranda" },
+        { 
+            label: "Pelayanan", 
+            items: [
+                { href: "#pelayanan-cepat", label: "Portal Layanan Cepat", desc: "Akses form surat dan bansos." },
+                { href: "/pelayanan", label: "Semua Layanan", desc: "Lihat semua layanan administrasi." },
+            ]
+        },
+        { 
+            label: "Profil Desa", 
+            items: [
+                { href: "/tentang-kami", label: "Visi Misi & Sejarah", desc: "Mengenal Desa Sumberanyar." },
+                { href: "#aparatur", label: "Aparatur Desa", desc: "Struktur organisasi pemerintahan." },
+            ]
+        },
+        { href: "/berita", label: "Berita" },
+    ];
 
-    // Logic for current logo: Scrolled = Primary (Color), Unscrolled = Secondary (White)
-    const currentLogo = isScrolled ? logoUrl : (logoWhiteUrl || logoUrl);
+    const isActive = (path: string) => pathname === path;
 
     return (
-        <>
-            <nav
-                className={cn(
-                    "fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out px-4 sm:px-6 lg:px-8",
-                    isScrolled
-                        ? "bg-white text-slate-900 shadow-md py-3"
-                        : "bg-transparent text-white py-5"
-                )}
-            >
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
-                    {/* Logo Section */}
-                    <div className="flex items-center gap-3">
-                        <div
-                            className={cn(
-                                "p-1.5 rounded-lg transition-colors duration-300 overflow-hidden flex items-center justify-center",
-                                isScrolled ? "bg-white" : "bg-white/20 backdrop-blur-sm"
-                            )}
+        <nav
+            className={cn(
+                "fixed top-0 w-full z-50 transition-all duration-300",
+                isScrolled
+                    ? "bg-white/95 backdrop-blur-md shadow-sm border-b border-gray-100 py-3"
+                    : "bg-transparent py-5"
+            )}
+        >
+            <div className="container mx-auto px-4 md:px-8 flex items-center justify-between">
+                {/* Logo */}
+                <Link href="/" className="flex items-center gap-2 group">
+                    <div className={cn(
+                        "w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-xl transition-all shadow-sm",
+                        isScrolled ? "bg-desa-primary" : "bg-white/20 backdrop-blur-md"
+                    )}>
+                        S
+                    </div>
+                    <div className="flex flex-col">
+                        <span className={cn(
+                            "font-bold text-lg leading-none tracking-tight", 
+                            isScrolled ? "text-slate-900" : "text-white drop-shadow-md"
+                        )}>
+                            SID
+                        </span>
+                        <span className={cn(
+                            "text-xs font-semibold tracking-wider uppercase", 
+                            isScrolled ? "text-desa-primary" : "text-green-100 drop-shadow-md"
+                        )}>
+                            Sumberanyar
+                        </span>
+                    </div>
+                </Link>
+
+                {/* Desktop Nav - Mega Menu Style */}
+                <div className="hidden lg:flex items-center gap-1 bg-white/10 backdrop-blur-md px-2 py-1.5 rounded-full border border-white/20 shadow-sm" style={{ backgroundColor: isScrolled ? 'transparent' : '', borderColor: isScrolled ? 'transparent' : '', boxShadow: isScrolled ? 'none' : ''}}>
+                    {navMenus.map((menu) => (
+                        <div 
+                            key={menu.label} 
+                            className="relative group"
+                            onMouseEnter={() => setActiveDropdown(menu.label)}
+                            onMouseLeave={() => setActiveDropdown(null)}
                         >
-                            {currentLogo ? (
-                                <img
-                                    src={currentLogo}
-                                    alt="Logo"
-                                    className="w-8 h-8 md:w-10 md:h-10 object-contain"
-                                />
+                            {menu.href ? (
+                                <Link
+                                    href={menu.href}
+                                    className={cn(
+                                        "px-4 py-2 rounded-full text-sm font-medium transition-colors hover:bg-white/20",
+                                        isActive(menu.href)
+                                            ? (isScrolled ? "bg-green-50 text-desa-primary" : "bg-white/20 text-white")
+                                            : isScrolled
+                                                ? "text-slate-600 hover:text-desa-primary hover:bg-slate-100"
+                                                : "text-white/90 hover:text-white"
+                                    )}
+                                >
+                                    {menu.label}
+                                </Link>
                             ) : (
-                                <Home className="w-5 h-5 md:w-6 md:h-6 text-current" />
+                                <button
+                                    className={cn(
+                                        "flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-colors hover:bg-white/20",
+                                        activeDropdown === menu.label || menu.items?.some(i => isActive(i.href))
+                                            ? (isScrolled ? "bg-green-50 text-desa-primary" : "bg-white/20 text-white")
+                                            : isScrolled
+                                                ? "text-slate-600 hover:text-desa-primary hover:bg-slate-100"
+                                                : "text-white/90 hover:text-white"
+                                    )}
+                                >
+                                    {menu.label}
+                                    <ChevronDown className="w-4 h-4 opacity-50" />
+                                </button>
+                            )}
+
+                            {/* Dropdown Panel */}
+                            {menu.items && activeDropdown === menu.label && (
+                                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-100 p-2 py-3 animate-in fade-in zoom-in-95 duration-200">
+                                    <div className="flex flex-col gap-1">
+                                        {menu.items.map((item) => (
+                                            <Link
+                                                key={item.href}
+                                                href={item.href}
+                                                className="p-3 rounded-xl hover:bg-slate-50 transition-colors group/item"
+                                            >
+                                                <div className="text-sm font-semibold text-slate-800 group-hover/item:text-desa-primary">
+                                                    {item.label}
+                                                </div>
+                                                <div className="text-xs text-slate-500 mt-1 line-clamp-1">
+                                                    {item.desc}
+                                                </div>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                </div>
                             )}
                         </div>
-                        <div>
-                            <h1 className="font-bold text-lg md:text-xl tracking-tight leading-none">{companyName}</h1>
-                            <p className={cn(
-                                "text-[10px] font-semibold tracking-wider uppercase opacity-80",
-                                isScrolled ? "text-desa-primary" : "text-desa-primary-light"
-                            )}>
-                                Desa Sumberanyar
-                            </p>
-                        </div>
-                    </div>
-
-                    {/* Desktop Navigation */}
-                    <div className="hidden md:flex items-center gap-8">
-                        {navLinks.map((link) => (
-                            <Link
-                                key={link.name}
-                                href={link.href}
-                                className={cn(
-                                    "text-sm font-medium transition-colors hover:text-desa-accent relative group",
-                                    isScrolled ? "text-gray-600" : "text-white/90"
-                                )}
-                            >
-                                {link.name}
-                                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-desa-accent transition-all duration-300 group-hover:w-full"></span>
-                            </Link>
-                        ))}
-                    </div>
-
-                    {/* Desktop Actions */}
-                    <div className="hidden md:flex items-center gap-4">
-                        <button
-                            onClick={() => setIsSearchOpen(true)}
-                            className={cn(
-                                "p-2 transition-colors hover:text-desa-accent",
-                                isScrolled ? "text-gray-400" : "text-white/80"
-                            )}
-                        >
-                            <Search className="w-5 h-5" />
-                        </button>
-                    </div>
-
-                    {/* Mobile Menu Toggle */}
-                    <div className="flex items-center gap-2 md:hidden">
-                        <button
-                            onClick={() => setIsSearchOpen(true)}
-                            className="p-2 text-current focus:outline-none"
-                        >
-                            <Search className="w-6 h-6" />
-                        </button>
-                        <button
-                            className="p-2 text-current focus:outline-none"
-                            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                        >
-                            {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-                        </button>
-                    </div>
-                </div>
-            </nav>
-
-            {/* Mobile Menu Drawer (Overlay) */}
-            <div
-                className={cn(
-                    "fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity duration-300 md:hidden",
-                    isMobileMenuOpen ? "opacity-100 visible" : "opacity-0 invisible"
-                )}
-                onClick={() => setIsMobileMenuOpen(false)}
-            ></div>
-
-            {/* Mobile Menu Content (Sheet) */}
-            <div
-                className={cn(
-                    "fixed top-0 right-0 z-50 h-full w-[80%] max-w-sm bg-white shadow-2xl transition-transform duration-300 ease-out md:hidden flex flex-col",
-                    isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
-                )}
-            >
-                <div className="p-6 border-b border-gray-100 flex items-center justify-between bg-desa-primary text-white">
-                    <div className="flex items-center gap-3">
-                        <div className="bg-white/20 p-1.5 rounded-lg flex items-center justify-center">
-                            {logoUrl ? (
-                                <img src={logoUrl} alt="Logo Mobile" className="w-6 h-6 object-contain" />
-                            ) : (
-                                <Home className="w-5 h-5" />
-                            )}
-                        </div>
-                        <span className="font-bold text-lg">Menu Utama</span>
-                    </div>
-                    <button onClick={() => setIsMobileMenuOpen(false)} className="text-white/80 hover:text-white">
-                        <X className="w-6 h-6" />
-                    </button>
-                </div>
-
-                <div className="flex-1 overflow-y-auto py-4 px-6 space-y-2">
-                    {navLinks.map((link) => (
-                        <Link
-                            key={link.name}
-                            href={link.href}
-                            className="flex items-center justify-between p-3 rounded-xl hover:bg-green-50 text-gray-700 font-medium group transition-colors"
-                            onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                            {link.name}
-                            <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-desa-primary" />
-                        </Link>
                     ))}
                 </div>
 
-                <div className="p-6 border-t border-gray-100 bg-gray-50 space-y-4">
-                    <p className="text-center text-xs text-gray-400">
-                        © 2026 Pemerintah Desa Sumberanyar <br /> App Experience v2.0
-                    </p>
+                {/* Right Actions */}
+                <div className="hidden md:flex items-center gap-3">
+                    <button className={cn(
+                        "p-2.5 rounded-full transition-colors",
+                         isScrolled ? "text-slate-600 hover:bg-slate-100" : "text-white hover:bg-white/20"
+                    )}>
+                        <Search className="w-5 h-5" />
+                    </button>
+                    
+                    <Button 
+                        variant={isScrolled ? "default" : "outline"} 
+                        className={cn(
+                            "rounded-full gap-2 font-semibold shadow-sm",
+                            !isScrolled && "border-white/40 text-white hover:bg-white/20 hover:text-white"
+                        )}
+                    >
+                        <UserCircle2 className="w-4 h-4" />
+                        E-Mandiri
+                    </Button>
                 </div>
+
+                {/* Mobile Toggle */}
+                <button
+                    className={cn("lg:hidden p-2.5 rounded-full", isScrolled ? "text-slate-800 hover:bg-slate-100" : "text-white hover:bg-white/20")}
+                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                >
+                    {mobileMenuOpen ? <X /> : <Menu />}
+                </button>
             </div>
 
-            {/* Search Overlay */}
-            <SearchOverlay
-                isOpen={isSearchOpen}
-                onClose={() => setIsSearchOpen(false)}
-            />
-        </>
+            {/* Mobile Menu (Drawer approach for simplicity) */}
+            {mobileMenuOpen && (
+                <div className="absolute top-full left-0 w-full h-screen bg-black/20 backdrop-blur-sm lg:hidden" onClick={() => setMobileMenuOpen(false)}>
+                    <div className="w-full max-h-[80vh] overflow-y-auto bg-white border-t border-slate-100 p-4 shadow-xl flex flex-col rounded-b-3xl" onClick={e => e.stopPropagation()}>
+                        <div className="flex flex-col gap-2 relative">
+                            {navMenus.map((menu) => (
+                                <div key={menu.label} className="flex flex-col">
+                                    {menu.href ? (
+                                        <Link
+                                            href={menu.href}
+                                            className="px-4 py-3 text-slate-800 font-semibold rounded-xl hover:bg-green-50"
+                                            onClick={() => setMobileMenuOpen(false)}
+                                        >
+                                            {menu.label}
+                                        </Link>
+                                    ) : (
+                                        <div className="flex flex-col border-b border-slate-50 pb-2 mb-2">
+                                            <div className="px-4 py-2 text-sm font-bold text-slate-400 uppercase tracking-wider mt-2">
+                                                {menu.label}
+                                            </div>
+                                            {menu.items?.map(item => (
+                                                <Link
+                                                    key={item.href}
+                                                    href={item.href}
+                                                    className="px-4 py-2 text-slate-700 hover:text-desa-primary rounded-lg hover:bg-green-50"
+                                                    onClick={() => setMobileMenuOpen(false)}
+                                                >
+                                                    {item.label}
+                                                </Link>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                        
+                        <div className="mt-6 pt-4 border-t border-slate-100 flex flex-col gap-3">
+                            <Button className="w-full rounded-xl py-6 text-lg gap-2" variant="default">
+                                <UserCircle2 className="w-5 h-5" />
+                                Login E-Mandiri
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </nav>
     );
 }

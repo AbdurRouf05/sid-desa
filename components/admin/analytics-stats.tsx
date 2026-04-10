@@ -45,14 +45,27 @@ export function AnalyticsStats() {
                 const totalViews = pageViews.length;
                 const uniqueSessions = new Set(pageViews.map(i => i.session_id)).size;
 
+                // Split metrics for Growth Calculation (Last 7 days vs Previous)
+                const sevenDaysAgo = new Date();
+                sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                const currentPeriodViews = pageViews.filter(i => new Date(i.created) >= sevenDaysAgo).length;
+                const prevPeriodViews = totalViews - currentPeriodViews;
+                const viewsGrowth = prevPeriodViews === 0 ? 100 : Math.round(((currentPeriodViews - prevPeriodViews) / prevPeriodViews) * 100);
+
+                const currentPeriodSessions = new Set(pageViews.filter(i => new Date(i.created) >= sevenDaysAgo).map(i => i.session_id)).size;
+                const prevPeriodSessions = uniqueSessions - currentPeriodSessions;
+                const visitorsGrowth = prevPeriodSessions === 0 ? 100 : Math.round(((currentPeriodSessions - prevPeriodSessions) / prevPeriodSessions) * 100);
+
                 // 2. Engagement Metrics (Brand Perspective)
                 const shares = items.filter(i => i.event_type === 'share_click').length;
                 const waClicks = items.filter(i => i.event_type === 'wa_contact' || (i.event_type === 'click' && i.label?.includes('whatsapp'))).length;
 
                 // High Engagement = Duration > 30s or Share click
-                const highEngagementSessions = new Set(
-                    items.filter(i => i.duration > 30 || i.event_type === 'share_click').map(i => i.session_id)
-                ).size;
+                const engagementEvents = items.filter(i => i.duration > 30 || i.event_type === 'share_click');
+                const highEngagementSessions = new Set(engagementEvents.map(i => i.session_id)).size;
+                const currentPeriodEngagements = new Set(engagementEvents.filter(i => new Date(i.created) >= sevenDaysAgo).map(i => i.session_id)).size;
+                const prevPeriodEngagements = highEngagementSessions - currentPeriodEngagements;
+                const engagementGrowth = prevPeriodEngagements === 0 ? 100 : Math.round(((currentPeriodEngagements - prevPeriodEngagements) / prevPeriodEngagements) * 100);
 
                 // 3. Avg Duration (Global)
                 const durationEvents = items.filter(i => i.duration > 0);
@@ -104,6 +117,9 @@ export function AnalyticsStats() {
                     shares,
                     waClicks,
                     highEngagementSessions,
+                    viewsGrowth,
+                    visitorsGrowth,
+                    engagementGrowth,
                     rawEvents: items
                 });
 
@@ -190,30 +206,33 @@ export function AnalyticsStats() {
 
             {/* Metrics Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <MetricCard
-                    label="Total Views"
-                    value={data.totalViews}
-                    icon={MousePointerClick}
-                    color="bg-blue-50 text-blue-600"
+                <StatCard 
+                    title="Total Views" 
+                    value={data.totalViews.toLocaleString()} 
+                    icon={MousePointerClick} 
+                    trend={true}
+                    trendValue={data.viewsGrowth}
                 />
-                <MetricCard
-                    label="Unique Visitors"
-                    value={data.uniqueVisitors}
-                    icon={Users}
-                    color="bg-purple-50 text-purple-600"
+                <StatCard 
+                    title="Unique Visitors" 
+                    value={data.uniqueVisitors.toLocaleString()} 
+                    icon={Users} 
+                    trend={true}
+                    trendValue={data.visitorsGrowth}
                 />
-                <MetricCard
-                    label="Engagement Kuat"
-                    value={data.highEngagementSessions}
-                    icon={ArrowUpRight}
-                    color="bg-emerald-50 text-emerald-600"
-                    subtitle="Visitor > 30s / Share"
+                <StatCard 
+                    title="Engagement Kuat" 
+                    value={data.highEngagementSessions.toLocaleString()} 
+                    icon={ArrowUpRight} 
+                    description="Visitor > 30s / Share"
+                    trend={true}
+                    trendValue={data.engagementGrowth}
                 />
-                <MetricCard
-                    label="Interaksi WA"
-                    value={data.waClicks}
-                    icon={Phone}
-                    color="bg-green-50 text-green-600"
+                <StatCard 
+                    title="Interaksi WA" 
+                    value={data.waClicks.toLocaleString()} 
+                    icon={Phone} 
+                    description="Klik via floating button"
                 />
             </div>
 
@@ -361,18 +380,29 @@ export function AnalyticsStats() {
     );
 }
 
-function MetricCard({ label, value, icon: Icon, color, subtitle }: any) {
+export function StatCard({ title, value, icon: Icon, description, trend, trendValue }: any) {
     return (
-        <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4 hover:shadow-md transition-shadow">
-            <div className={`p-3.5 rounded-xl ${color}`}>
-                <Icon className="w-6 h-6" />
-            </div>
-            <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{label}</p>
-                <div className="flex items-baseline gap-1">
-                    <p className="text-2xl font-black text-slate-800 tracking-tight">{value}</p>
+        <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] flex flex-col relative overflow-hidden group">
+            <div className="absolute -right-4 -top-4 w-24 h-24 bg-gradient-to-br from-slate-50 to-slate-100 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
+            
+            <div className="flex items-start justify-between mb-4 relative z-10">
+                <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
+                    <Icon className="w-6 h-6" />
                 </div>
-                {subtitle && <p className="text-[9px] text-slate-400 font-medium">{subtitle}</p>}
+                {trend && trendValue !== undefined && (
+                    <div className={`px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1 ${trendValue >= 0 ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'}`}>
+                        <ArrowUpRight className={`w-3 h-3 ${trendValue < 0 ? 'rotate-90' : ''}`} /> 
+                        {trendValue >= 0 ? '+' : ''}{trendValue}%
+                    </div>
+                )}
+            </div>
+
+            <div className="relative z-10">
+                <h3 className="text-slate-500 text-sm font-bold uppercase tracking-wider mb-1">{title}</h3>
+                <div className="flex items-baseline gap-2">
+                    <span className="text-3xl font-black text-slate-800">{value}</span>
+                </div>
+                {description && <p className="text-xs text-slate-400 mt-2 font-medium">{description}</p>}
             </div>
         </div>
     );

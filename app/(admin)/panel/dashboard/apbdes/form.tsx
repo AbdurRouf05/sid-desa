@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pb } from "@/lib/pb";
-import { Loader2, Save, ArrowLeft } from "lucide-react";
+import { Loader2, Save, ArrowLeft, HelpCircle } from "lucide-react";
 import Link from "next/link";
 import { ApbdesData, ApbdesSchema } from "@/lib/validations/apbdes";
 import { ApbdesRealisasi } from "@/types";
@@ -107,7 +107,16 @@ export default function ApbdesFormPage({ isEdit = false }: { isEdit?: boolean })
                         </div>
 
                         <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-2">Kategori</label>
+                            <div className="flex items-center mb-2">
+                                <label className="block text-sm font-bold text-slate-700">Kategori Utama</label>
+                                <div className="relative group inline-block ml-2 cursor-help">
+                                    <HelpCircle className="w-4 h-4 text-slate-400" />
+                                    <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all w-56 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-xl z-50 pointer-events-none">
+                                        Pilih Kategori Utama (Pendapatan / Belanja / Pembiayaan). Total anggaran akan dijumlahkan berdasarkan kategori ini.
+                                        <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-slate-800"></div>
+                                    </div>
+                                </div>
+                            </div>
                             <select
                                 {...register("kategori")}
                                 className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
@@ -121,11 +130,20 @@ export default function ApbdesFormPage({ isEdit = false }: { isEdit?: boolean })
                     </div>
 
                     <div>
-                        <label className="block text-sm font-bold text-slate-700 mb-2">Nama Bidang / Uraian</label>
+                        <div className="flex items-center mb-2">
+                            <label className="block text-sm font-bold text-slate-700">Sub Kategori / Rincian Bidang</label>
+                            <div className="relative group inline-block ml-2 cursor-help">
+                                <HelpCircle className="w-4 h-4 text-slate-400" />
+                                <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all w-64 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-xl z-50 pointer-events-none">
+                                    Format Detail (mirip Ngembal Kulon). Contoh untuk Pendapatan: "Bagi Hasil Pajak", "Alokasi Dana Desa". Contoh untuk Belanja: "Bidang Penyelenggaran Pemerintahan", "Bidang Pembangunan".
+                                    <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-slate-800"></div>
+                                </div>
+                            </div>
+                        </div>
                         <input
                             {...register("nama_bidang")}
                             className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
-                            placeholder="Contoh: Pendapatan Asli Desa"
+                            placeholder="Contoh (Pendapatan): Alokasi Dana Desa | Contoh (Belanja): Bidang Pembangunan"
                         />
                         {errors.nama_bidang && <p className="text-sm text-red-500 mt-1">{errors.nama_bidang.message}</p>}
                     </div>

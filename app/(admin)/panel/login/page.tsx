@@ -53,6 +53,7 @@ export default function AdminLoginPage() {
         try {
             // Try regular users collection first
             await pb.collection('users').authWithPassword(data.email, data.password);
+            document.cookie = `pb_auth=${pb.authStore.token}; path=/; max-age=86400; SameSite=Strict`;
             router.push("/panel/dashboard");
         } catch (err: any) {
             // Only log if it's not a 400 (Bad Request / Invalid Credentials) error
@@ -63,6 +64,7 @@ export default function AdminLoginPage() {
             // Fallback: Try Super User Auth (PocketBase v0.25+)
             try {
                 await pb.collection('_superusers').authWithPassword(data.email, data.password);
+                document.cookie = `pb_auth=${pb.authStore.token}; path=/; max-age=86400; SameSite=Strict`;
                 router.push("/panel/dashboard");
             } catch (adminErr) {
                 setError("Email atau password salah.");

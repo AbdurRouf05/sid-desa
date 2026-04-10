@@ -11,7 +11,10 @@ export function middleware(request: NextRequest) {
     // This supports both cp.sumberanyar.local and cp.sumberanyar.id
     const isAdmin = hostname.includes("cp.");
 
-    console.log("Middleware Debug:", { hostname, pathname: url.pathname, isAdmin });
+    // Check for pb_auth cookie for server-side basic auth protection
+    const hasAuthCookie = request.cookies.has("pb_auth");
+
+    console.log("Middleware Debug:", { hostname, pathname: url.pathname, isAdmin, hasAuthCookie });
 
     // 1. Bot Protection (Simple User-Agent Block) - Global
     const ua = request.headers.get("user-agent") || "";
@@ -30,8 +33,8 @@ export function middleware(request: NextRequest) {
     object-src 'none';
     base-uri 'self';
     form-action 'self';
-    frame-src 'self' https://www.youtube.com https://www.tiktok.com https://www.instagram.com https://embed.tawk.to;
-    connect-src 'self' https://sid-magang.sagamuda.cloud https://analytics.google.com wss://*.tawk.to;
+    frame-src 'self' https://www.youtube.com https://www.tiktok.com https://www.instagram.com https://embed.tawk.to https://www.google.com https://maps.google.com;
+    connect-src 'self' https://sid-magang.sagamuda.cloud https://analytics.google.com wss://*.tawk.to https://maps.googleapis.com;
     frame-ancestors 'none';
     block-all-mixed-content;
     upgrade-insecure-requests;
@@ -45,6 +48,11 @@ export function middleware(request: NextRequest) {
         // If accessing root /, rewrite to /panel/dashboard (or redirect)
         if (url.pathname === "/") {
             return NextResponse.redirect(new URL("/panel/dashboard", request.url));
+        }
+
+        // Basic auth check for admin panel (except login page)
+        if (!hasAuthCookie && url.pathname !== "/panel/login" && !url.pathname.startsWith("/cdn") && !url.pathname.startsWith("/api")) {
+             return NextResponse.redirect(new URL("/panel/login", request.url));
         }
 
         // Rewrite path to include /panel for group route routing
@@ -70,9 +78,9 @@ export function middleware(request: NextRequest) {
             return NextResponse.rewrite(url);
         }
 
-        // 2. Rewrite / to /home
+        // 2. Rewrite / to /v3 (Dashboard UI)
         if (url.pathname === "/") {
-            url.pathname = "/home";
+            url.pathname = "/v3";
             const response = NextResponse.rewrite(url);
             response.headers.set("Content-Security-Policy", cspHeader);
             return response;

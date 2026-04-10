@@ -44,6 +44,33 @@ export interface ApbdesRealisasi {
     updated: string;
 }
 
+export interface PermohonanSuratOnline {
+    id: string;
+    nik: string;
+    nama: string;
+    jenis_surat: string;
+    alamat_rantau?: string;
+    no_wa: string;
+    bukti_syarat?: string;
+    status: 'Menunggu' | 'Diproses' | 'Selesai' | 'Ditolak';
+    created: string;
+    updated: string;
+}
+
+export interface LayananDesa {
+    id: string;
+    nama_layanan: string;
+    deskripsi: string;
+    konten?: string;
+    icon?: string;
+    tipe: 'panduan' | 'lapor' | 'bansos' | 'link_eksternal' | 'halaman_statis';
+    aksi_url?: string;
+    is_active?: boolean;
+    urutan?: number;
+    created: string;
+    updated: string;
+}
+
 export interface PengaduanWarga {
     id: string;
     nama_pelapor: string;
@@ -128,4 +155,20 @@ export interface InventarisDesa {
     kondisi: 'Baik' | 'Rusak Ringan' | 'Rusak Berat' | 'Dihapus/Lelang';
     created: string;
     updated: string;
+}
+
+export interface PenerimaBansos {
+    id: string;
+    nama: string;
+    nik: string;
+    jenis_bantuan: string;
+    tahun_penerimaan: number;
+    created: string;
+    updated: string;
+    expand?: {
+        jenis_bantuan?: {
+            id: string;
+            nama: string;
+        };
+    };
 }

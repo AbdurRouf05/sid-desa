@@ -5,7 +5,7 @@ import Link from "next/link";
 import { pb } from "@/lib/pb";
 import { SuratKeluar } from "@/types";
 // import { SectionHeading } from "@/components/ui/section-heading"; // Removed for layout consistency
-import { Plus, Search, Trash2, Edit2, FileText, Download, Printer } from "lucide-react";
+import { Plus, Search, Trash2, Edit2, FileText, Download, Printer, Calendar, MapPin, FolderOpen } from "lucide-react";
 import { TactileButton } from "@/components/ui/tactile-button";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -68,134 +68,158 @@ export default function SuratKeluarPage() {
         }
     };
 
+    const stats = useMemo(() => {
+        const categories = ["Pengantar", "SKTM", "Domisili", "Keterangan Usaha"];
+        const counts: Record<string, number> = { Semua: data.length };
+        categories.forEach(cat => {
+            counts[cat] = data.filter(d => d.jenis_surat === cat).length;
+        });
+        counts["Lainnya"] = data.filter(d => !categories.includes(d.jenis_surat)).length;
+        return counts;
+    }, [data]);
+
     return (
-        <main>
-            <div className="flex justify-between items-center mb-8">
+        <main className="space-y-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Buku Agenda Surat Keluar</h1>
-                    <p className="text-slate-500">Manajemen pendataan nomor registrasi surat layanan desa.</p>
+                    <h1 className="text-2xl font-black text-slate-800 tracking-tight uppercase">Buku Agenda Surat Keluar</h1>
+                    <p className="text-sm text-slate-500 mt-1">Manajemen pendataan nomor registrasi surat layanan desa.</p>
                 </div>
-                <div className="flex gap-2">
-                    <Link href="/panel/dashboard/surat/baru">
-                        <TactileButton variant="primary">
-                            <Plus className="w-5 h-5 mr-2" />
-                            Tambah Surat
-                        </TactileButton>
-                    </Link>
-                </div>
+                <Link href="/panel/dashboard/surat/baru">
+                    <button className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm shadow-emerald-200 transition-all active:scale-95 group">
+                        <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+                        Tambah Surat
+                    </button>
+                </Link>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 mb-8">
-                <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-6">
-                    <div className="relative w-full md:w-96">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                        <input
-                            type="text"
-                            placeholder="Cari Nomor, NIK, atau Nama..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
-                        />
+            {/* Stats Summary */}
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {[
+                    { label: "Total Surat", value: stats.Semua, icon: FileText, color: "text-blue-600", bg: "bg-blue-50" },
+                    { label: "SKTM", value: stats.SKTM, icon: FileText, color: "text-orange-600", bg: "bg-orange-50" },
+                    { label: "Domisili", value: stats.Domisili, icon: MapPin, color: "text-emerald-600", bg: "bg-emerald-50" },
+                    { label: "Pengantar", value: stats.Pengantar, icon: FileText, color: "text-indigo-600", bg: "bg-indigo-50" },
+                    { label: "Lainnya", value: stats.Lainnya, icon: FolderOpen, color: "text-slate-600", bg: "bg-slate-50" },
+                ].map((s, i) => (
+                    <div key={i} className="bg-white p-4 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-3">
+                        <div className={cn("p-2.5 rounded-xl", s.bg)}>
+                            <s.icon className={cn("w-5 h-5", s.color)} />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{s.label}</p>
+                            <p className="text-lg font-black text-slate-800 leading-none mt-0.5">{s.value}</p>
+                        </div>
                     </div>
-                    
-                    <div className="flex gap-2 self-start md:self-auto overflow-x-auto pb-2 md:pb-0 w-full md:w-auto custom-scrollbar">
-                        {["Semua", "Pengantar", "SKTM", "Domisili", "Keterangan Usaha", "Lainnya"].map((jenis) => (
-                            <button
-                                key={jenis}
-                                onClick={() => setFilterJenis(jenis)}
-                                className={cn(
-                                    "px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all border",
-                                    filterJenis === jenis 
-                                        ? "bg-slate-900 border-slate-900 text-white shadow-md shadow-slate-900/10"
-                                        : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
-                                )}
-                            >
-                                {jenis}
-                            </button>
-                        ))}
+                ))}
+            </div>
+
+            <div className="bg-white rounded-3xl overflow-hidden shadow-sm border border-slate-100">
+                {/* Search & Tabs Toolbar */}
+                <div className="p-6 border-b border-slate-100 bg-slate-50/30">
+                    <div className="flex flex-col lg:flex-row gap-6 justify-between lg:items-center">
+                        <div className="relative w-full lg:max-w-md">
+                            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-slate-400" />
+                            <input
+                                type="text"
+                                placeholder="Cari Nomor, NIK, atau Nama..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all text-sm font-medium"
+                            />
+                        </div>
+                        
+                        <div className="flex gap-1.5 p-1 bg-slate-100 rounded-2xl w-fit self-start lg:self-auto overflow-x-auto max-w-full no-scrollbar">
+                            {["Semua", "Pengantar", "SKTM", "Domisili", "Keterangan Usaha", "Lainnya"].map((jenis) => (
+                                <button
+                                    key={jenis}
+                                    onClick={() => setFilterJenis(jenis)}
+                                    className={cn(
+                                        "px-4 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all flex items-center gap-2",
+                                        filterJenis === jenis 
+                                            ? "bg-white text-emerald-700 shadow-sm border border-emerald-100"
+                                            : "text-slate-500 hover:text-slate-700"
+                                    )}
+                                >
+                                    {jenis}
+                                    <span className={cn(
+                                        "px-1.5 py-0.5 rounded-md text-[10px]",
+                                        filterJenis === jenis ? "bg-emerald-100 text-emerald-800" : "bg-slate-200 text-slate-500"
+                                    )}>
+                                        {stats[jenis] || 0}
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
-                <div className="overflow-x-auto custom-scrollbar">
+                <div className="overflow-x-auto min-h-[400px]">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="border-b-2 border-slate-100">
-                                <th className="p-4 font-bold text-slate-500 uppercase text-xs tracking-wider">No. Surat & Tgl</th>
-                                <th className="p-4 font-bold text-slate-500 uppercase text-xs tracking-wider">Pemohon</th>
-                                <th className="p-4 font-bold text-slate-500 uppercase text-xs tracking-wider">Jenis Surat</th>
-                                <th className="p-4 font-bold text-slate-500 uppercase text-xs tracking-wider">Arsip PDF</th>
-                                <th className="p-4 font-bold text-slate-500 uppercase text-xs tracking-wider text-right">Aksi</th>
+                            <tr className="bg-slate-50/50">
+                                <th className="px-6 py-4 font-bold text-slate-400 uppercase text-[10px] tracking-widest border-b border-slate-100">No. Agenda & Tgl</th>
+                                <th className="px-6 py-4 font-bold text-slate-400 uppercase text-[10px] tracking-widest border-b border-slate-100">Pemohon (Warga)</th>
+                                <th className="px-6 py-4 font-bold text-slate-400 uppercase text-[10px] tracking-widest border-b border-slate-100">Klasifikasi</th>
+                                <th className="px-6 py-4 font-bold text-slate-400 uppercase text-[10px] tracking-widest border-b border-slate-100 text-right">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-slate-50">
                             {loading ? (
-                                <TableSkeleton columns={5} rows={4} />
+                                <TableSkeleton columns={4} rows={6} />
                             ) : filteredData.length === 0 ? (
                                 <EmptyState
-                                    colSpan={5}
+                                    colSpan={4}
                                     icon={FileText}
-                                    title="Belum ada surat diregister"
-                                    description="Draf surat keluar akan tampil di sini saat admin membuat surat."
+                                    title="Pencatatan Tidak Ditemukan"
+                                    description={searchQuery ? "Coba kata kunci lain atau pilih kategori lain." : "Halaman ini akan menampilkan daftar surat yang keluar."}
                                 />
                             ) : (
                                 filteredData.map((item) => (
-                                    <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
-                                        <td className="p-4">
-                                            <div className="font-mono text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-100 rounded px-2 py-1 inline-block mb-1">
+                                    <tr key={item.id} className="hover:bg-emerald-50/20 transition-colors group">
+                                        <td className="px-6 py-4">
+                                            <div className="font-mono text-[11px] font-black text-slate-400 group-hover:text-emerald-700 transition-colors mb-1 uppercase">
                                                 {item.nomor_agenda}
                                             </div>
-                                            <div className="text-sm text-slate-500">
+                                            <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                                                <Calendar className="w-3.5 h-3.5" />
                                                 {formatDate(item.tanggal_dibuat, { day: 'numeric', month: 'short', year: 'numeric' })}
                                             </div>
                                         </td>
-                                        <td className="p-4">
-                                            <div className="font-bold text-slate-900">{item.nama_pemohon}</div>
-                                            <div className="text-sm text-slate-500 flex justify-between items-center group-hover:text-slate-600">
-                                                <span>NIK: {item.nik_pemohon}</span>
-                                            </div>
+                                        <td className="px-6 py-4">
+                                            <div className="font-bold text-slate-800 text-sm group-hover:text-emerald-900 transition-colors">{item.nama_pemohon}</div>
+                                            <div className="text-[11px] text-slate-400 font-mono mt-0.5 tracking-tight">NIK {item.nik_pemohon}</div>
                                         </td>
-                                        <td className="p-4">
+                                        <td className="px-6 py-4">
                                             <span className={cn(
-                                                "px-3 py-1 rounded-full text-xs font-bold border",
+                                                "px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-tight border",
                                                 getJenisBadgeColor(item.jenis_surat)
                                             )}>
                                                 {item.jenis_surat}
                                             </span>
                                         </td>
-                                        <td className="p-4">
-                                            {item.file_pdf ? (
-                                                <a 
-                                                    href={pb.files.getUrl(item, item.file_pdf)} 
-                                                    target="_blank" 
-                                                    rel="noreferrer"
-                                                    className="inline-flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg transition-colors border border-blue-100"
-                                                >
-                                                    <Download className="w-3.5 h-3.5" /> Unduh PDF
-                                                </a>
-                                            ) : (
-                                                <span className="text-xs text-slate-400 flex items-center gap-1.5">
-                                                    <FileText className="w-3.5 h-3.5 opacity-50" /> Belum ada
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td className="p-4">
-                                            <div className="flex gap-2 justify-end">
+                                        <td className="px-6 py-4">
+                                            <div className="flex gap-1 justify-end">
                                                 <Link href={`/panel/dashboard/surat/${item.id}/cetak`} target="_blank">
                                                     <button 
-                                                        title="Cetak Blangko Surat"
-                                                        className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                                                        title="Cetak Blangko"
+                                                        className="p-2 text-slate-400 hover:text-blue-600 hover:bg-white hover:shadow-sm rounded-lg transition-all"
                                                     >
                                                         <Printer className="w-4 h-4" />
                                                     </button>
                                                 </Link>
                                                 <Link href={`/panel/dashboard/surat/${item.id}`}>
-                                                    <button className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all">
+                                                    <button 
+                                                        title="Edit Data"
+                                                        className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-white hover:shadow-sm rounded-lg transition-all"
+                                                    >
                                                         <Edit2 className="w-4 h-4" />
                                                     </button>
                                                 </Link>
                                                 <button 
                                                     onClick={() => handleDelete(item.id)}
-                                                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                                                    title="Hapus"
+                                                    className="p-2 text-slate-400 hover:text-rose-600 hover:bg-white hover:shadow-sm rounded-lg transition-all"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -207,6 +231,13 @@ export default function SuratKeluarPage() {
                         </tbody>
                     </table>
                 </div>
+                
+                {/* Table Footer / Info */}
+                {!loading && filteredData.length > 0 && (
+                    <div className="p-4 bg-slate-50/50 border-t border-slate-100 flex justify-between items-center text-[11px] text-slate-400 font-bold uppercase tracking-widest">
+                        <span>Menampilkan {filteredData.length} dari {data.length} total surat</span>
+                    </div>
+                )}
             </div>
         </main>
     );

@@ -31,6 +31,7 @@ export default function NewsEditorPage({ isEdit = false }: { isEdit?: boolean })
     const params = isEdit ? useParams() : null;
     const [isLoading, setIsLoading] = useState(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [slugEdited, setSlugEdited] = useState(false);
 
     const { register, handleSubmit, control, setValue, watch, formState: { errors } } = useForm<NewsInputs>({
         resolver: zodResolver(newsSchema),
@@ -49,14 +50,14 @@ export default function NewsEditorPage({ isEdit = false }: { isEdit?: boolean })
 
     // Slug generator
     useEffect(() => {
-        if (!isEdit && judulValue) {
+        if (!isEdit && judulValue && !slugEdited) {
             const slug = judulValue
                 .toLowerCase()
                 .replace(/[^a-z0-9]+/g, "-")
                 .replace(/^-+|-+$/g, "");
             setValue("slug", slug);
         }
-    }, [judulValue, isEdit, setValue]);
+    }, [judulValue, isEdit, setValue, slugEdited]);
 
     // Fetch data if edit
     useEffect(() => {
@@ -210,6 +211,7 @@ export default function NewsEditorPage({ isEdit = false }: { isEdit?: boolean })
                                 <label className="block text-sm font-bold text-slate-700 mb-2">Slug (URL)</label>
                                 <input
                                     {...register("slug")}
+                                    onInput={() => setSlugEdited(true)}
                                     className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-600 font-mono text-sm focus:outline-none"
                                 />
                             </div>

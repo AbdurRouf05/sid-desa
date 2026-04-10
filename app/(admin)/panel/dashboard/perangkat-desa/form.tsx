@@ -20,6 +20,10 @@ export function PerangkatForm({ initialData, isEdit }: PerangkatFormProps) {
             jabatan: initialData?.jabatan || "",
             nip: initialData?.nip || "",
             is_aktif: initialData?.is_aktif ?? true,
+            sosmed_fb: initialData?.sosmed_fb || "",
+            sosmed_ig: initialData?.sosmed_ig || "",
+            sosmed_wa: initialData?.sosmed_wa || "",
+            sosmed_x: initialData?.sosmed_x || "",
             foto: null,
         }
     });
@@ -35,6 +39,10 @@ export function PerangkatForm({ initialData, isEdit }: PerangkatFormProps) {
             formData.append('jabatan', data.jabatan);
             formData.append('nip', data.nip);
             formData.append('is_aktif', String(data.is_aktif));
+            formData.append('sosmed_fb', data.sosmed_fb);
+            formData.append('sosmed_ig', data.sosmed_ig);
+            formData.append('sosmed_wa', data.sosmed_wa);
+            formData.append('sosmed_x', data.sosmed_x);
             
             if (data.foto && data.foto.length > 0) {
                 formData.append('foto', data.foto[0]);
@@ -121,6 +129,45 @@ export function PerangkatForm({ initialData, isEdit }: PerangkatFormProps) {
                             {...register("foto")}
                             className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-emerald-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
                         />
+                    </div>
+                </div>
+
+                {/* Sosial Media */}
+                <div className="space-y-4 pt-4 border-t border-slate-100">
+                    <h3 className="text-sm font-bold text-slate-800">Tautan Sosial Media (Opsional)</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Facebook URL</label>
+                            <input
+                                {...register("sosmed_fb")}
+                                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 text-sm"
+                                placeholder="https://facebook.com/..."
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Instagram URL</label>
+                            <input
+                                {...register("sosmed_ig")}
+                                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-pink-500 text-sm"
+                                placeholder="https://instagram.com/..."
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">WhatsApp URL/Number</label>
+                            <input
+                                {...register("sosmed_wa")}
+                                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 text-sm"
+                                placeholder="https://wa.me/628..."
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider">X (Twitter) URL</label>
+                            <input
+                                {...register("sosmed_x")}
+                                className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-slate-800 text-sm"
+                                placeholder="https://x.com/..."
+                            />
+                        </div>
                     </div>
                 </div>
 

@@ -11,7 +11,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ['var(--font-inter)'],
-        heading: ['var(--font-merriweather)', 'serif'],
+        heading: ['var(--font-outfit)', 'sans-serif'],
         display: ['var(--font-manrope)', 'sans-serif'], // Added from Arabesque Design
       },
       colors: {
@@ -19,9 +19,9 @@ const config: Config = {
         foreground: "var(--foreground)",
         desa: {
           primary: {
-            DEFAULT: '#0f766e', // Teal 700
-            dark: '#0d9488',
-            light: '#14b8a6',
+            DEFAULT: '#15803d', // Green 700
+            dark: '#14532d',    // Green 800
+            light: '#22c55e',   // Green 500
           },
           accent: {
             DEFAULT: '#ea580c', // Orange 600

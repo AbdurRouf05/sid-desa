@@ -1,0 +1,42 @@
+[
+  {
+    "nama_layanan": "SKTM (Pendidikan & Kesehatan)",
+    "deskripsi": "Surat pengantar pengajuan beasiswa atau keringanan biaya pengobatan bagi warga kurang mampu.",
+    "tipe": "panduan",
+    "urutan": 1,
+    "is_active": true,
+    "konten": "<div><strong>Berkas yang harus dibawa:</strong><ul><li>Surat Pengantar RT/RW (mencantumkan tujuan SKTM)</li><li>Fotokopi KTP Pemohon (2 Lembar)</li><li>Fotokopi Kartu Keluarga (2 Lembar)</li><li>Foto rumah tampak depan & dalam (paling detail)</li><li>Fotokopi rekening listrik/pembayaran PBB terakhir</li></ul><p class='mt-4 text-xs italic opacity-75'>Catatan: Pastikan seluruh berkas sudah difotokopi sebelum ke Balai Desa.</p></div>"
+  },
+  {
+    "nama_layanan": "Surat Keterangan Usaha (SKU)",
+    "deskripsi": "Bukti kepemilikan usaha untuk keperluan pengajuan pinjaman Modal/KUR di Bank.",
+    "tipe": "panduan",
+    "urutan": 2,
+    "is_active": true,
+    "konten": "<div><strong>Berkas yang harus dibawa:</strong><ul><li>Surat Pengantar RT/RW (mencantumkan nama & jenis usaha)</li><li>Fotokopi KTP Pemohon</li><li>Fotokopi Kartu Keluarga (KK)</li><li>Foto tempat usaha atau barang dagangan (sudah dicetak)</li><li>Bukti lunas PBB tahun berjalan</li></ul><p class='mt-4 text-xs italic opacity-75'>Catatan: Proses verifikasi biasanya memakan waktu 15-30 menit di jam kantor.</p></div>"
+  },
+  {
+    "nama_layanan": "Surat Keterangan Domisili",
+    "deskripsi": "Keterangan tempat tinggal sementara bagi pendatang atau penduduk yang menetap.",
+    "tipe": "panduan",
+    "urutan": 3,
+    "is_active": true,
+    "konten": "<div><strong>Berkas yang harus dibawa:</strong><ul><li>Surat Pengantar RT/RW setempat di Sumberanyar</li><li>Fotokopi KTP Asal</li><li>Fotokopi KK Asal</li><li>KTP Asli (untuk verifikasi data)</li></ul></div>"
+  },
+  {
+    "nama_layanan": "Surat Pengantar Kematian",
+    "deskripsi": "Pelaporan kematian warga untuk pemutakhiran data keluarga dan ahli waris.",
+    "tipe": "panduan",
+    "urutan": 4,
+    "is_active": true,
+    "konten": "<div><strong>Berkas yang harus dibawa:</strong><ul><li>KTP Asli Almarhum/Almarhumah</li><li>Kartu Keluarga (KK) Asli</li><li>Fotokopi KTP Pelapor (Ahli Waris)</li><li>Fotokopi KTP 2 orang saksi kematian</li><li>Surat Kematian dari RS atau pernyataan dari desa jika meninggal di rumah</li></ul></div>"
+  },
+  {
+    "nama_layanan": "Surat Keterangan Lahir",
+    "deskripsi": "Syarat utama pengurusan Akta Kelahiran baru ke Dispendukcapil Lumajang.",
+    "tipe": "panduan",
+    "urutan": 5,
+    "is_active": true,
+    "konten": "<div><strong>Berkas yang harus dibawa:</strong><ul><li>Surat Kelahiran Asli dari Bidan/Pusat Kesehatan</li><li>Fotokopi KTP kedua orang tua</li><li>Fotokopi Kartu Keluarga (KK)</li><li>Fotokopi Buku Nikah (Legalisir KUA)</li><li>Fotokopi KTP 2 orang saksi kelahiran</li></ul></div>"
+  }
+]
