@@ -27,6 +27,7 @@ export function FormBansos() {
         try {
             const res = await pb.collection('penerima_bansos').getList(page, perPage, {
                 sort: '-tahun_penerimaan,-created',
+                expand: 'jenis_bantuan',
             });
             setPublicList(res.items);
             setTotalPages(res.totalPages);
@@ -58,7 +59,10 @@ export function FormBansos() {
                 filter = `nama~"${query}"`;
             }
 
-            const res = await pb.collection('penerima_bansos').getList(1, 50, { filter });
+            const res = await pb.collection('penerima_bansos').getList(1, 50, { 
+                filter,
+                expand: 'jenis_bantuan',
+            });
             
             if (res.items.length > 0) {
                 setResults(res.items);
@@ -158,11 +162,11 @@ export function FormBansos() {
                             <tbody>
                                 {results.map((item, i) => (
                                     <tr key={item.id} className={`border-b border-slate-50 ${i % 2 === 0 ? 'bg-white' : 'bg-slate-50/50'} hover:bg-green-50/50 transition-colors`}>
-                                        <td className="px-4 py-3">
+                                    <td className="px-4 py-3">
                                             <p className="font-bold text-slate-800">{item.nama}</p>
-                                            <p className="text-xs text-slate-400 font-mono sm:hidden">{item.jenis_bantuan || '-'}</p>
+                                            <p className="text-xs text-slate-400 font-mono sm:hidden">{item.expand?.jenis_bantuan?.nama || item.jenis_bantuan || '-'}</p>
                                         </td>
-                                        <td className="px-4 py-3 text-slate-600 hidden sm:table-cell">{item.jenis_bantuan || '-'}</td>
+                                        <td className="px-4 py-3 text-slate-600 hidden sm:table-cell">{item.expand?.jenis_bantuan?.nama || item.jenis_bantuan || '-'}</td>
                                         <td className="px-4 py-3 text-center font-mono font-bold text-slate-700">{item.tahun_penerimaan}</td>
                                         <td className="px-4 py-3 text-center hidden md:table-cell">
                                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-bold ${
@@ -229,7 +233,7 @@ export function FormBansos() {
                                     <td className="px-4 py-3">
                                         <p className="font-semibold text-slate-800">{item.nama}</p>
                                     </td>
-                                    <td className="px-4 py-3 text-slate-500 hidden sm:table-cell">{item.jenis_bantuan || '-'}</td>
+                                    <td className="px-4 py-3 text-slate-500 hidden sm:table-cell">{item.expand?.jenis_bantuan?.nama || item.jenis_bantuan || '-'}</td>
                                     <td className="px-4 py-3 text-center font-mono font-bold text-slate-700">{item.tahun_penerimaan}</td>
                                 </tr>
                             ))}

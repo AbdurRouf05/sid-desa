@@ -24,12 +24,12 @@ export interface HeroBanner {
 
 export interface News {
     id: string;
-    title: string;
+    judul: string;
     slug: string;
-    content: string;
+    konten: string;
     thumbnail: string;
-    category: string;
-    published: boolean;
+    kategori: string;
+    is_published: boolean;
     created: string; // ISO Date
 }
 

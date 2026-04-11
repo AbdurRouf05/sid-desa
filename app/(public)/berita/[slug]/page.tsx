@@ -226,7 +226,7 @@ export default async function NewsDetailPage({ params }: Props) {
                             <div className="mt-8 pt-6 border-t border-slate-100">
                                 <h3 className="font-bold text-lg text-slate-900 mb-4">Kategori</h3>
                                 <div className="flex flex-wrap gap-2">
-                                    {["Berita", "Edukasi", "Promo"].map(tag => (
+                                    {["Berita Utama", "Edukasi & Literasi", "Pengumuman Desa", "Kegiatan Warga"].map(tag => (
                                         <Link href={`/berita?cat=${tag}`} key={tag} className="px-3 py-1 bg-slate-100 hover:bg-emerald-100 text-slate-600 hover:text-emerald-800 text-xs font-bold rounded-full transition-colors">
                                             {tag}
                                         </Link>

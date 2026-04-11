@@ -126,10 +126,10 @@ export function ModernFooter() {
                             Navigasi Desa
                         </h3>
                         <ul className="space-y-3 text-sm">
-                            <li><Link href="/tentang-kami" className="hover:text-desa-primary-light transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Tentang Kami</Link></li>
+                            <li><Link href="/" className="hover:text-desa-primary-light transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Beranda</Link></li>
+                            <li><Link href="/tentang-kami" className="hover:text-desa-primary-light transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Visi Misi & Sejarah</Link></li>
+                            <li><Link href="/#aparatur" className="hover:text-desa-primary-light transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Aparatur Desa</Link></li>
                             <li><Link href="/berita" className="hover:text-desa-primary-light transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Berita & Kegiatan</Link></li>
-                            <li><Link href="/layanan" className="hover:text-desa-primary-light transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Layanan Desa</Link></li>
-                            <li><Link href="/kontak" className="hover:text-desa-primary-light transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Kontak & Lokasi</Link></li>
                         </ul>
                     </div>
 
@@ -140,10 +140,10 @@ export function ModernFooter() {
                             Layanan Publik
                         </h3>
                         <ul className="space-y-3 text-sm">
-                            <li><Link href="/layanan" className="hover:text-desa-accent transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Layanan Surat</Link></li>
+                            <li><Link href="/#pelayanan-cepat" className="hover:text-desa-accent transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Portal Layanan Cepat</Link></li>
+                            <li><Link href="/pelayanan" className="hover:text-desa-accent transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Layanan Administrasi</Link></li>
                             <li><Link href="/transparansi" className="hover:text-desa-accent transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Transparansi APBDes</Link></li>
-                            <li><Link href="/pengaduan" className="hover:text-desa-accent transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Pengaduan Warga</Link></li>
-                            <li><Link href="/berita" className="hover:text-desa-accent transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Agenda Desa</Link></li>
+                            <li><Link href="/pengaduan" className="hover:text-desa-accent transition-colors flex items-center gap-2"><ArrowRight className="w-3 h-3" /> Pengaduan Lapor</Link></li>
                         </ul>
                     </div>
 

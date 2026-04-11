@@ -91,25 +91,7 @@ export function DashboardRightSidebar({ onArticleClick }: RightSidebarProps) {
                 </div>
             </div>
 
-            {/* Widget: Kategori Berita */}
-            <div className="bg-white border text-slate-800 border-slate-200 rounded-lg shadow-sm overflow-hidden">
-                <div className="bg-[#15803d] text-white p-3 flex items-center gap-2 border-b border-[#0f5c2c]">
-                    <Clock className="w-5 h-5" />
-                    <h3 className="font-bold uppercase tracking-wide text-sm">Kategori Berita</h3>
-                </div>
-                <div className="flex flex-col">
-                    {categories.map((cat, i) => (
-                        <button 
-                            key={i}
-                            onClick={() => {/* Could filter articles by category */}}
-                            className="flex items-center text-left py-2.5 px-4 text-sm font-medium text-slate-600 hover:text-[#15803d] hover:bg-emerald-50 transition-colors border-b border-slate-100 last:border-0"
-                        >
-                            <ChevronRight className="w-4 h-4 mr-1 text-slate-400" />
-                            {cat.label}
-                        </button>
-                    ))}
-                </div>
-            </div>
+
 
             {/* Widget: Arsip Artikel (REAL DATA) */}
             <div className="bg-white border text-slate-800 border-slate-200 rounded-lg shadow-sm overflow-hidden">

@@ -33,8 +33,8 @@ export function DashboardSidebar({ activeView, onNavigate, className }: Dashboar
         { id: "apbdes", label: "Transparansi", icon: <BarChart3 className="w-6 h-6" /> },
         { id: "layanan-terpadu", label: "Informasi Layanan", icon: <FileSignature className="w-6 h-6" /> },
         { id: "peta", label: "Peta Desa", icon: <MapPin className="w-6 h-6" /> },
-        { id: "drawer-lapor", label: "Ruang Lapor", icon: <MessageSquare className="w-6 h-6" /> },
-        { id: "drawer-bansos", label: "Cek Bansos", icon: <HandCoins className="w-6 h-6" /> },
+        { id: "pengaduan", label: "Ruang Lapor", icon: <MessageSquare className="w-6 h-6" /> },
+        { id: "cek-bansos", label: "Cek Bansos", icon: <HandCoins className="w-6 h-6" /> },
     ];
 
     const toggleAccordion = (section: 'profil' | 'desa-cantik') => {

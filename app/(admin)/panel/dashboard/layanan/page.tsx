@@ -42,12 +42,12 @@ export default function AdminLayananPage() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Katalog Pusat Layanan</h1>
-                    <p className="text-slate-500">Kelola daftar layanan mandiri, panduan persyaratan, dan link eksternal yang tampil di beranda utama (V3).</p>
+                    <h1 className="text-2xl font-black text-slate-800 tracking-tight uppercase">Katalog Pusat Layanan</h1>
+                    <p className="text-sm text-slate-500 mt-1">Kelola daftar layanan mandiri, panduan persyaratan, dan link eksternal yang tampil di beranda utama.</p>
                 </div>
                 <Link
                     href="/panel/dashboard/layanan/baru"
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-emerald-900/10"
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-emerald-900/10"
                 >
                     <Plus className="w-5 h-5" />
                     Tambah Layanan

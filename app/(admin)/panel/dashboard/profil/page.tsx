@@ -70,15 +70,15 @@ export default function ProfilDesaPage() {
     };
 
     return (
-        <main className="max-w-5xl mx-auto pb-20 animate-in fade-in duration-300">
-            <form onSubmit={handleSubmit(onSubmit)}>
-                {/* Header */}
-                <div className="flex items-center justify-between mb-8 sticky top-0 bg-slate-50/90 backdrop-blur-md py-4 z-40 border-b border-slate-200 -mx-8 px-8">
+        <main className="max-w-7xl mx-auto pb-20 animate-in fade-in duration-500">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {/* Standard Header - Transparent */}
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 py-2 mb-6">
                     <div>
-                        <h1 className="text-2xl font-bold text-slate-900">
+                        <h1 className="text-2xl font-black text-slate-800 tracking-tight uppercase">
                             Profil & Sejarah Desa
                         </h1>
-                        <p className="text-sm text-slate-500">
+                        <p className="text-sm text-slate-500 mt-1">
                             Kelola identitas, cerita historis, dan arah pandang desa secara komprehensif.
                         </p>
                     </div>
@@ -86,64 +86,83 @@ export default function ProfilDesaPage() {
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-emerald-900/10 transition-all disabled:opacity-70"
+                        className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm shadow-emerald-200 transition-all active:scale-95 disabled:opacity-70 group"
                     >
-                        {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                        {isLoading ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                            <Save className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                        )}
                         Simpan Perubahan
                     </button>
                 </div>
 
-                <div className="grid grid-cols-1 gap-8">
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
-                        <div className="flex items-center gap-3 mb-2 border-b pb-4">
-                            <Building2 className="w-6 h-6 text-emerald-600" />
-                            <h3 className="text-lg font-bold text-slate-800">Identitas Utama Desa</h3>
+                {/* Identity Card - Large full width but compact fields */}
+                <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                    <div className="flex items-center gap-3 mb-5 border-b border-slate-50 pb-4">
+                        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                            <Building2 className="w-5 h-5" />
                         </div>
-                        <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-2">Nama Desa</label>
-                            <input
-                                {...register("nama_desa")}
-                                className="w-full text-lg font-bold placeholder:font-normal px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
-                                placeholder="Contoh: Sumberanyar"
+                        <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Identitas Desa</h3>
+                    </div>
+                    
+                    <div className="max-w-2xl">
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2">Nama Lengkap Desa</label>
+                        <input
+                            {...register("nama_desa")}
+                            className="w-full text-base font-bold placeholder:font-normal px-5 py-3.5 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-slate-700"
+                            placeholder="Contoh: Desa Sumberanyar"
+                        />
+                        {errors.nama_desa && <p className="text-[10px] font-bold text-red-500 mt-2 uppercase tracking-tight">{errors.nama_desa.message}</p>}
+                    </div>
+                </div>
+
+                {/* Dual Column Content Area */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Sejarah Desa Card */}
+                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col transition-all hover:shadow-md">
+                        <div className="flex items-center gap-3 mb-5 border-b border-slate-50 pb-4">
+                            <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
+                                <BookOpen className="w-5 h-5" />
+                            </div>
+                            <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Sejarah Desa</h3>
+                        </div>
+                        <div className="flex-1 min-h-[400px]">
+                            <Controller
+                                name="sejarah_desa"
+                                control={control}
+                                render={({ field }) => (
+                                    <RichTextEditor
+                                        value={field.value || ""}
+                                        onChange={field.onChange}
+                                        placeholder="Ceritakan asal mula terbentuknya desa, pendiri, dan tokoh-tokoh penting..."
+                                    />
+                                )}
                             />
-                            {errors.nama_desa && <p className="text-sm text-red-500 mt-1">{errors.nama_desa.message}</p>}
                         </div>
                     </div>
 
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <div className="flex items-center gap-3 mb-4 border-b pb-4">
-                            <BookOpen className="w-6 h-6 text-emerald-600" />
-                            <h3 className="text-lg font-bold text-slate-800">Sejarah Desa</h3>
+                    {/* Visi Misi Card */}
+                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col transition-all hover:shadow-md">
+                        <div className="flex items-center gap-3 mb-5 border-b border-slate-50 pb-4">
+                            <div className="p-2 bg-amber-50 text-amber-600 rounded-xl">
+                                <Building2 className="w-5 h-5" />
+                            </div>
+                            <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Visi & Misi</h3>
                         </div>
-                        <Controller
-                            name="sejarah_desa"
-                            control={control}
-                            render={({ field }) => (
-                                <RichTextEditor
-                                    value={field.value || ""}
-                                    onChange={field.onChange}
-                                    placeholder="Ceritakan asal mula terbentuknya desa, pendiri, dan tokoh-tokoh penting..."
-                                />
-                            )}
-                        />
-                    </div>
-
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                        <div className="flex items-center gap-3 mb-4 border-b pb-4">
-                            <Building2 className="w-6 h-6 text-emerald-600" />
-                            <h3 className="text-lg font-bold text-slate-800">Visi & Misi</h3>
+                        <div className="flex-1 min-h-[400px]">
+                            <Controller
+                                name="visi_misi"
+                                control={control}
+                                render={({ field }) => (
+                                    <RichTextEditor
+                                        value={field.value || ""}
+                                        onChange={field.onChange}
+                                        placeholder="Apa visi dan misi kepala desa saat ini? Jabarkan dengan rinci..."
+                                    />
+                                )}
+                            />
                         </div>
-                        <Controller
-                            name="visi_misi"
-                            control={control}
-                            render={({ field }) => (
-                                <RichTextEditor
-                                    value={field.value || ""}
-                                    onChange={field.onChange}
-                                    placeholder="Apa visi dan misi kepala desa saat ini? Jabarkan dengan rinci..."
-                                />
-                            )}
-                        />
                     </div>
                 </div>
             </form>

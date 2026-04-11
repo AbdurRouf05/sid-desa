@@ -12,7 +12,7 @@ interface ModernPusatLayananProps {
     defaultServiceId?: string;
 }
 
-export function ModernPusatLayanan() {
+export function ModernPusatLayanan({ defaultServiceId }: ModernPusatLayananProps) {
     const [services, setServices] = useState<LayananDesa[]>([]);
     const [loading, setLoading] = useState(true);
 

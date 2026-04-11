@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
@@ -10,7 +12,7 @@ import { PenerimaBansos } from "@/types";
 import Link from "next/link";
 import { CreatableSelect } from "@/components/ui/creatable-select";
 
-export default function BansosFormPage({ isEdit = false, params }: { isEdit?: boolean, params?: { id: string } }) {
+export default function BansosFormPage({ isEdit = false, recordId }: { isEdit?: boolean, recordId?: string }) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [pageLoading, setPageLoading] = useState(isEdit);
@@ -54,9 +56,10 @@ export default function BansosFormPage({ isEdit = false, params }: { isEdit?: bo
     useEffect(() => {
         const fetchAll = async () => {
             await fetchCategories();
-            if (isEdit && params?.id) {
+            
+            if (isEdit && recordId) {
                 try {
-                    const record = await pb.collection("penerima_bansos").getOne<PenerimaBansos>(params.id);
+                    const record = await pb.collection("penerima_bansos").getOne<PenerimaBansos>(recordId);
                     setValue("nik", record.nik);
                     setValue("nama", record.nama);
                     setValue("jenis_bantuan", record.jenis_bantuan);
@@ -65,14 +68,15 @@ export default function BansosFormPage({ isEdit = false, params }: { isEdit?: bo
                     console.error("Error fetching record:", error);
                     alert("Data tidak ditemukan.");
                     router.push("/panel/dashboard/bansos");
-                } finally {
-                    setPageLoading(false);
                 }
             }
+            
+            // Always set loading to false after attempting to fetch
+            setPageLoading(false);
         };
 
         fetchAll();
-    }, [isEdit, params?.id, setValue, router]);
+    }, [isEdit, recordId, setValue, router]);
 
     const handleAddCategory = async (nama: string) => {
         setCatLoading(true);

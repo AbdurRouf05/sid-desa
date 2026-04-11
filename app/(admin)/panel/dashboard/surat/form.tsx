@@ -13,7 +13,7 @@ import { SuratKeluarSchema, SuratKeluarData } from "@/lib/validations/surat";
 import { cn } from "@/lib/utils";
 import { SuratKeluar } from "@/types";
 
-export default function SuratFormPage({ isEdit = false, params }: { isEdit?: boolean, params?: { id: string } }) {
+export default function SuratFormPage({ isEdit = false, recordId }: { isEdit?: boolean, recordId?: string }) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [pageLoading, setPageLoading] = useState(isEdit);
@@ -31,9 +31,9 @@ export default function SuratFormPage({ isEdit = false, params }: { isEdit?: boo
 
     useEffect(() => {
         const fetchRecord = async () => {
-            if (isEdit && params?.id) {
+            if (isEdit && recordId) {
                 try {
-                    const record = await pb.collection("surat_keluar").getOne<SuratKeluar>(params.id);
+                    const record = await pb.collection("surat_keluar").getOne<SuratKeluar>(recordId);
                     setCurrentRecord(record);
                     setValue("nomor_agenda", record.nomor_agenda);
                     setValue("nik_pemohon", record.nik_pemohon);
@@ -44,14 +44,14 @@ export default function SuratFormPage({ isEdit = false, params }: { isEdit?: boo
                     console.error("Error fetching record:", error);
                     alert("Data tidak ditemukan.");
                     router.push("/panel/dashboard/surat");
-                } finally {
-                    setPageLoading(false);
                 }
             }
+            // Always set loading to false after attempted fetch
+            setPageLoading(false);
         };
 
         fetchRecord();
-    }, [isEdit, params?.id, setValue, router]);
+    }, [isEdit, recordId, setValue, router]);
 
     const onSubmit = async (data: SuratKeluarData) => {
         setIsLoading(true);
