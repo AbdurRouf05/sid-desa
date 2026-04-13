@@ -1,6 +1,7 @@
 import PocketBase, { BaseAuthStore } from 'pocketbase';
 import { SiteConfigSchema, type SiteConfig } from './validations/site';
-import { BkuTransactionSchema, type BkuTransactionForm } from './validations/bku';
+import { BkuTransaksiSchema, type BkuTransaksiData } from './validations/bku';
+
 import { PerangkatDesaSchema, type PerangkatDesa, SuratKeluarSchema, type SuratKeluar } from './validations/admin';
 import { TanahDesaSchema, type TanahDesa } from './validations/aset';
 
@@ -43,22 +44,31 @@ export { pb };
 export const db = {
   siteConfig: {
     get: async () => {
-      const record = await pb.collection('profil_desa').getFirstListItem("");
-      return SiteConfigSchema.parse(record);
+      try {
+        const result = await pb.collection('profil_desa').getList(1, 1);
+        if (result.items.length === 0) {
+          return SiteConfigSchema.parse({});
+        }
+        return SiteConfigSchema.parse(result.items[0]);
+      } catch (error) {
+        console.warn("Failed to fetch site config, using defaults:", error);
+        return SiteConfigSchema.parse({});
+      }
     }
   },
+
   bku: {
     list: async (page = 1, perPage = 50, filter = "") => {
       const result = await pb.collection('bku_transaksi').getList(page, perPage, { filter, sort: '-tanggal' });
       return {
         ...result,
-        items: result.items.map((item: any) => BkuTransactionSchema.parse(item))
+        items: result.items.map((item: any) => BkuTransaksiSchema.parse(item))
       };
     },
-    create: async (data: BkuTransactionForm) => {
-      const validated = BkuTransactionSchema.parse(data);
+    create: async (data: BkuTransaksiData) => {
+      const validated = BkuTransaksiSchema.parse(data);
       const record = await pb.collection('bku_transaksi').create(validated);
-      return BkuTransactionSchema.parse(record);
+      return BkuTransaksiSchema.parse(record);
     }
   },
   surat: {

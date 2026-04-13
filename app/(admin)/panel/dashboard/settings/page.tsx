@@ -2,13 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
-import { toast } from "sonner";
 import { pb } from "@/lib/pb";
 import { optimizeImage } from "@/lib/image-optimizer";
-import { SectionHeading } from "@/components/ui/section-heading";
-import { TactileButton } from "@/components/ui/tactile-button";
 import { IconPicker } from "@/components/ui/icon-picker";
-import { Save, Building2, Phone, Mail, MapPin, Loader2, Image as ImageIcon, Share2, Instagram, Facebook, Video, Youtube, Globe, FileText } from "lucide-react";
+import { 
+    Save, Building2, Phone, Mail, MapPin, Loader2, 
+    Image as ImageIcon, Share2, Instagram, Facebook, 
+    Video, Youtube, Globe, FileText, LayoutGrid, Sparkles, 
+    ArrowLeft, HelpCircle, ShieldCheck, AppWindow
+} from "lucide-react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 interface SiteConfig {
     id: string;
@@ -22,7 +26,6 @@ interface SiteConfig {
     map_embed_url: string;
     nib: string;
     legal_bh: string;
-    // Temp fields for Social Media form handling
     instagram_url?: string;
     facebook_url?: string;
     tiktok_url?: string;
@@ -32,7 +35,6 @@ interface SiteConfig {
     logo_secondary: any;
     favicon: any;
 
-    // Locations Section (Jaringan Kantor)
     locations_title?: string;
     locations_description?: string;
     locations_feature1_text?: string;
@@ -41,38 +43,15 @@ interface SiteConfig {
     locations_feature2_icon?: string;
 }
 
-// Helper to extract Lat/Lng or convert to Embed URL
 function transformMapUrl(input: string): string {
     if (!input) return "";
-
-    // If already an embed iframe src, return as is
-    if (input.includes("google.com/maps/embed") || input.includes("output=embed")) {
-        return input;
-    }
-
-    // Try to extract Lat/Lng from various Google Maps formats
-    // 1. @lat,lng
+    if (input.includes("google.com/maps/embed") || input.includes("output=embed")) return input;
     const atMatch = input.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-    if (atMatch) {
-        const [_, lat, lng] = atMatch;
-        return `https://maps.google.com/maps?q=${lat},${lng}&hl=id&z=16&output=embed`;
-    }
-
-    // 2. q=lat,lng or ll=lat,lng
+    if (atMatch) return `https://maps.google.com/maps?q=${atMatch[1]},${atMatch[2]}&hl=id&z=16&output=embed`;
     const qMatch = input.match(/[?&](q|ll)=(-?\d+\.\d+),(-?\d+\.\d+)/);
-    if (qMatch) {
-        const [_, __, lat, lng] = qMatch;
-        return `https://maps.google.com/maps?q=${lat},${lng}&hl=id&z=16&output=embed`;
-    }
-
-    // 3. search/lat,lng
+    if (qMatch) return `https://maps.google.com/maps?q=${qMatch[2]},${qMatch[3]}&hl=id&z=16&output=embed`;
     const searchMatch = input.match(/search\/(-?\d+\.\d+),(-?\d+\.\d+)/);
-    if (searchMatch) {
-        const [_, lat, lng] = searchMatch;
-        return `https://maps.google.com/maps?q=${lat},${lng}&hl=id&z=16&output=embed`;
-    }
-
-    // Fallback: Return original (User might have pasted something else, let them try)
+    if (searchMatch) return `https://maps.google.com/maps?q=${searchMatch[1]},${searchMatch[2]}&hl=id&z=16&output=embed`;
     return input;
 }
 
@@ -83,37 +62,17 @@ export default function SettingsPage() {
     const [mapPreview, setMapPreview] = useState("");
     const [logoPreviews, setLogoPreviews] = useState<any>({});
 
-    const { register, handleSubmit, setValue, watch, getValues, control } = useForm<SiteConfig>();
-
-    // Watch map input for live preview
+    const { register, handleSubmit, setValue, watch, control } = useForm<SiteConfig>();
     const mapInput = watch("map_embed_url");
 
     useEffect(() => {
-        if (mapInput) {
-            setMapPreview(transformMapUrl(mapInput));
-        }
+        if (mapInput) setMapPreview(transformMapUrl(mapInput));
     }, [mapInput]);
 
-    // Load config
     useEffect(() => {
-        let isMounted = true;
-
         async function loadConfig() {
             try {
-
-                // Add a timeout to prevent infinite loading
-                const timeoutPromise = new Promise((_, reject) =>
-                    setTimeout(() => reject(new Error("Timeout loading config")), 10000)
-                );
-
-                const recordsPromise = pb.collection('profil_desa').getList(1, 1);
-
-                // Race the fetch against timeout
-                const records = await Promise.race([recordsPromise, timeoutPromise]) as any;
-
-                if (!isMounted) return;
-
-
+                const records = await pb.collection('profil_desa').getList(1, 1);
                 if (records.items.length > 0) {
                     const data = records.items[0];
                     setConfigId(data.id);
@@ -127,20 +86,16 @@ export default function SettingsPage() {
                     setValue("nib", data.nib || "");
                     setValue("legal_bh", data.legal_bh || "");
 
-                    // Social Links Parsing
                     const links = data.social_links || {};
                     setValue("instagram_url", links.instagram || "");
                     setValue("facebook_url", links.facebook || "");
                     setValue("tiktok_url", links.tiktok || "");
                     setValue("youtube_url", links.youtube || "");
 
-                    // Read Map URL
-                    // Check if map is in soc links or root field (legacy support)
                     const mapUrl = links.map_embed_url || data.map_embed_url || "";
                     setValue("map_embed_url", mapUrl);
                     setMapPreview(mapUrl);
 
-                    // Locations
                     setValue("locations_title", data.locations_title || "");
                     setValue("locations_description", data.locations_description || "");
                     setValue("locations_feature1_text", data.locations_feature1_text || "");
@@ -148,7 +103,6 @@ export default function SettingsPage() {
                     setValue("locations_feature2_text", data.locations_feature2_text || "");
                     setValue("locations_feature2_icon", data.locations_feature2_icon || "");
 
-                    // Update previews
                     setLogoPreviews({
                         logo_primary: data.logo_primary ? pb.files.getUrl(data, data.logo_primary) : null,
                         logo_secondary: data.logo_secondary ? pb.files.getUrl(data, data.logo_secondary) : null,
@@ -157,33 +111,18 @@ export default function SettingsPage() {
                 }
             } catch (e: any) {
                 console.error("Error loading config:", e);
-                if (isMounted) {
-                    alert("Gagal memuat pengaturan: " + (e.message || "Unknown error"));
-                }
             } finally {
-                if (isMounted) {
-                    setIsLoading(false);
-                }
+                setIsLoading(false);
             }
         }
-
         loadConfig();
-
-        return () => {
-            isMounted = false;
-        };
     }, [setValue]);
 
     const onSubmit = async (data: SiteConfig) => {
         setIsSaving(true);
-
         try {
             const transformedMapUrl = transformMapUrl(data.map_embed_url);
-
-            // Use FormData to ensure file uploads work correctly
             const formData = new FormData();
-
-            // ... append text fields ...
             formData.append("company_name", data.company_name || "");
             formData.append("address", data.address || "");
             formData.append("phone_wa", data.phone_wa || "");
@@ -194,8 +133,6 @@ export default function SettingsPage() {
             formData.append("nib", data.nib || "");
             formData.append("legal_bh", data.legal_bh || "");
             formData.append("map_embed_url", transformedMapUrl);
-
-            // Locations Section
             formData.append("locations_title", data.locations_title || "");
             formData.append("locations_description", data.locations_description || "");
             formData.append("locations_feature1_text", data.locations_feature1_text || "");
@@ -203,7 +140,6 @@ export default function SettingsPage() {
             formData.append("locations_feature2_text", data.locations_feature2_text || "");
             formData.append("locations_feature2_icon", data.locations_feature2_icon || "");
 
-            // Append JSON Field (social_links)
             const socialLinks = {
                 map_embed_url: transformedMapUrl,
                 instagram: data.instagram_url,
@@ -213,376 +149,338 @@ export default function SettingsPage() {
             };
             formData.append("social_links", JSON.stringify(socialLinks));
 
-            // Append Files with Smart Optimization
-            if (data.logo_primary && data.logo_primary.length > 0) {
-                if (data.logo_primary[0] instanceof File) {
-
-                    try {
-                        const optimized = await optimizeImage(data.logo_primary[0], 'logo');
-                        formData.append("logo_primary", optimized);
-                    } catch (optErr) {
-                        console.error("Optimization failed, using original", optErr);
-                        formData.append("logo_primary", data.logo_primary[0]);
-                    }
-                }
+            if (data.logo_primary?.[0] instanceof File) {
+                const optimized = await optimizeImage(data.logo_primary[0], 'logo');
+                formData.append("logo_primary", optimized);
             }
-            if (data.logo_secondary && data.logo_secondary.length > 0) {
-                if (data.logo_secondary[0] instanceof File) {
-
-                    try {
-                        const optimized = await optimizeImage(data.logo_secondary[0], 'logo');
-                        formData.append("logo_secondary", optimized);
-                    } catch (optErr) {
-                        console.error("Optimization failed, using original", optErr);
-                        formData.append("logo_secondary", data.logo_secondary[0]);
-                    }
-                }
+            if (data.logo_secondary?.[0] instanceof File) {
+                const optimized = await optimizeImage(data.logo_secondary[0], 'logo');
+                formData.append("logo_secondary", optimized);
             }
-            if (data.favicon && data.favicon.length > 0) {
-                if (data.favicon[0] instanceof File) {
-
-                    try {
-                        const optimized = await optimizeImage(data.favicon[0], 'favicon');
-                        formData.append("favicon", optimized);
-                    } catch (optErr) {
-                        console.error("Optimization failed, using original", optErr);
-                        formData.append("favicon", data.favicon[0]);
-                    }
-                }
+            if (data.favicon?.[0] instanceof File) {
+                const optimized = await optimizeImage(data.favicon[0], 'favicon');
+                formData.append("favicon", optimized);
             }
 
-
-
-            let record;
-
-            // Check for existing record to enforce Singleton
-            // Always fetch the latest to be sure, or rely on configId if we trust it doesn't change
             const existing = await pb.collection('profil_desa').getList(1, 1);
+            let record;
             if (existing.items.length > 0) {
-
-                const targetId = existing.items[0].id; // Ensure we use the correct ID from DB
-                setConfigId(targetId);
-                record = await pb.collection('profil_desa').update(targetId, formData);
+                record = await pb.collection('profil_desa').update(existing.items[0].id, formData);
             } else {
-
                 record = await pb.collection('profil_desa').create(formData);
-                setConfigId(record.id);
             }
 
-            alert("Pengaturan berhasil disimpan! Gambar telah dioptimasi.");
-
-            // Update previews with new URLs from response
             setLogoPreviews({
                 logo_primary: record.logo_primary ? pb.files.getUrl(record, record.logo_primary) : null,
                 logo_secondary: record.logo_secondary ? pb.files.getUrl(record, record.logo_secondary) : null,
                 favicon: record.favicon ? pb.files.getUrl(record, record.favicon) : null,
             });
-
-            // Update form with the transformed value
             setValue("map_embed_url", transformedMapUrl);
             setMapPreview(transformedMapUrl);
-
+            alert("Pengaturan website berhasil diperbarui.");
         } catch (e: any) {
             console.error("Error saving config:", e);
-            alert("Gagal menyimpan pengaturan: " + (e.message || "Unknown error"));
+            alert("Gagal menyimpan pengaturan.");
         } finally {
             setIsSaving(false);
         }
     };
 
     if (isLoading) {
-        return <div className="p-8 text-center text-slate-500">Memuat pengaturan...</div>;
+        return (
+            <div className="p-20 flex flex-col items-center justify-center gap-4 text-slate-400">
+                <Loader2 className="w-10 h-10 animate-spin text-emerald-500" />
+                <p className="text-[10px] font-black uppercase tracking-widest leading-relaxed">Sinkronisasi preferensi...</p>
+            </div>
+        );
     }
 
     return (
-        <main>
-            <div className="mb-8 p-6 rounded-2xl bg-gradient-to-br from-desa-primary to-desa-primary-dark text-white relative overflow-hidden shadow-lg">
-                <div className="absolute inset-0 bg-arabesque-grid bg-grid-24 opacity-10 pointer-events-none"></div>
-                <div className="relative z-10">
-                    <h1 className="text-3xl font-bold font-display">Pengaturan Situs</h1>
-                    <p className="text-emerald-100 mt-2">Kelola informasi publik, kontak, dan statistik website.</p>
-                </div>
-            </div>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8 max-w-4xl">
-
-                {/* Branding Section */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                        <ImageIcon className="w-5 h-5 text-purple-500" />
-                        Branding & Logo
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        {/* Primary Logo */}
-                        <div className="space-y-3">
-                            <label className="block text-sm font-medium text-slate-700">
-                                Logo Utama (Warna)
-                                <span className="block text-[10px] text-emerald-600 font-normal mt-0.5">
-                                    Format: PNG/JPG/WebP. Otomatis di-resize & convert ke WebP untuk performa.
-                                </span>
-                            </label>
-                            <div className="border border-slate-200 rounded-lg p-4 flex flex-col items-center justify-center bg-slate-50 h-32 relative overflow-hidden group hover:border-emerald-300 transition-colors">
-                                {logoPreviews.logo_primary ? (
-                                    <img src={logoPreviews.logo_primary} alt="Primary Logo" className="h-full object-contain" />
-                                ) : (
-                                    <span className="text-xs text-slate-400">Belum ada logo</span>
-                                )}
+        <main className="max-w-7xl mx-auto pb-20 animate-in fade-in duration-500 px-4 md:px-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+                {/* Header Banner Section */}
+                <div className="relative overflow-hidden bg-gradient-to-br from-emerald-900 to-emerald-950 rounded-3xl p-8 md:p-12 text-white shadow-xl shadow-emerald-950/20 mb-10 border border-white/5">
+                    <div className="absolute inset-0 bg-arabesque-grid bg-grid-24 opacity-5 pointer-events-none mix-blend-overlay"></div>
+                    <div className="absolute -right-20 -top-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl"></div>
+                    
+                    <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                        <div className="space-y-2">
+                            <div className="flex items-center gap-3">
+                                <Link 
+                                    href="/panel/dashboard" 
+                                    className="p-2 bg-white/10 hover:bg-white/20 rounded-xl transition-all border border-white/10"
+                                >
+                                    <ArrowLeft className="w-5 h-5" />
+                                </Link>
+                                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400">Website Configuration</span>
                             </div>
-                            <input
-                                {...register("logo_primary")}
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => {
-                                    register("logo_primary").onChange(e);
-                                    if (e.target.files && e.target.files[0]) {
-                                        setLogoPreviews((prev: any) => ({ ...prev, logo_primary: URL.createObjectURL(e.target.files![0]) }));
-                                    }
-                                }}
-                                className="text-xs w-full text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
-                            />
+                            <h1 className="text-3xl md:text-4xl font-black tracking-tight uppercase">Pengaturan Situs</h1>
+                            <p className="text-slate-400 font-medium max-w-xl">Sesuaikan identitas digital, branding, dan informasi operasional desa.</p>
                         </div>
-
-                        {/* Secondary Logo */}
-                        <div className="space-y-3">
-                            <label className="block text-sm font-medium text-slate-700">
-                                Logo Sekunder (Putih/Negatif)
-                                <span className="block text-[10px] text-slate-500 font-normal mt-0.5">
-                                    Sama seperti utama. WebP Optimized.
-                                </span>
-                            </label>
-                            <div className="border border-slate-200 rounded-lg p-4 flex flex-col items-center justify-center bg-slate-800 h-32 relative overflow-hidden group hover:border-emerald-300 transition-colors">
-                                {logoPreviews.logo_secondary ? (
-                                    <img src={logoPreviews.logo_secondary} alt="Secondary Logo" className="h-full object-contain" />
-                                ) : (
-                                    <span className="text-xs text-slate-400">Belum ada logo</span>
-                                )}
-                            </div>
-                            <input
-                                {...register("logo_secondary")}
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => {
-                                    register("logo_secondary").onChange(e);
-                                    if (e.target.files && e.target.files[0]) {
-                                        setLogoPreviews((prev: any) => ({ ...prev, logo_secondary: URL.createObjectURL(e.target.files![0]) }));
-                                    }
-                                }}
-                                className="text-xs w-full text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
-                            />
-                        </div>
-
-                        {/* Favicon */}
-                        <div className="space-y-3">
-                            <label className="block text-sm font-medium text-slate-700">
-                                Favicon
-                                <span className="block text-[10px] text-purple-600 font-normal mt-0.5">
-                                    Format Icon Browser. Otomatis convert ke PNG 256px.
-                                </span>
-                            </label>
-                            <div className="border border-slate-200 rounded-lg p-4 flex flex-col items-center justify-center bg-white h-32 relative overflow-hidden group hover:border-emerald-300 transition-colors">
-                                {logoPreviews.favicon ? (
-                                    <img src={logoPreviews.favicon} alt="Favicon" className="h-16 w-16 object-contain" />
-                                ) : (
-                                    <span className="text-xs text-slate-400">Belum ada icon</span>
-                                )}
-                            </div>
-                            <input
-                                {...register("favicon")}
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => {
-                                    register("favicon").onChange(e);
-                                    if (e.target.files && e.target.files[0]) {
-                                        setLogoPreviews((prev: any) => ({ ...prev, favicon: URL.createObjectURL(e.target.files![0]) }));
-                                    }
-                                }}
-                                className="text-xs w-full text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
-                            />
-                        </div>
+                        
+                        <button
+                            type="submit"
+                            disabled={isSaving}
+                            className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest text-[11px] flex items-center justify-center gap-3 shadow-lg shadow-emerald-900/40 transition-all active:scale-95 disabled:opacity-70 group"
+                        >
+                            {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5 group-hover:rotate-12 transition-transform" />}
+                            Simpan Perubahan
+                        </button>
                     </div>
                 </div>
 
-                {/* Stats Section */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                        <Building2 className="w-5 h-5 text-gold-500" />
-                        Statistik & Identitas
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Nama Instansi</label>
-                            <input {...register("company_name")} className="w-full p-2 border rounded-lg" placeholder="Pemerintah Desa Sumberanyar" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Total Aset (Text)</label>
-                            <input {...register("total_assets")} className="w-full p-2 border rounded-lg" placeholder="28 Milyar" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Total Anggota (Text)</label>
-                            <input {...register("total_members")} className="w-full p-2 border rounded-lg" placeholder="6,000+" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Jumlah Kantor</label>
-                            <input {...register("total_branches")} className="w-full p-2 border rounded-lg" placeholder="16" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">NIB (Nomor Induk Berusaha)</label>
-                            <input {...register("nib")} className="w-full p-2 border rounded-lg" placeholder="12345678..." />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Legalitas / Badan Hukum</label>
-                            <textarea {...register("legal_bh")} className="w-full p-2 border rounded-lg h-20 resize-y" placeholder="SK Menteri Hukum dan HAM..." />
-                        </div>
-                    </div>
-                </div>
-
-                {/* Social Media Profiles */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                        <Share2 className="w-5 h-5 text-pink-500" />
-                        Profil Media Sosial
-                        <span className="text-xs font-normal text-slate-500 ml-2 bg-slate-100 px-2 py-1 rounded-full">Wajib untuk Magic Fetch</span>
-                    </h2>
-                    <div className="grid grid-cols-1 gap-6">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-2">
-                                <Instagram className="w-4 h-4 text-pink-600" /> Instagram Profile
-                            </label>
-                            <input {...register("instagram_url")} className="w-full p-2 border rounded-lg font-mono text-sm" placeholder="https://www.instagram.com/desa_sumberanyar/" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-2">
-                                <Facebook className="w-4 h-4 text-blue-600" /> Facebook Page
-                            </label>
-                            <input {...register("facebook_url")} className="w-full p-2 border rounded-lg font-mono text-sm" placeholder="https://www.facebook.com/DesaSumberanyar/" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-2">
-                                <Video className="w-4 h-4 text-black" /> TikTok Profile
-                            </label>
-                            <input {...register("tiktok_url")} className="w-full p-2 border rounded-lg font-mono text-sm" placeholder="https://www.tiktok.com/@desa_sumberanyar" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1 flex items-center gap-2">
-                                <Youtube className="w-4 h-4 text-red-600" /> YouTube Channel
-                            </label>
-                            <input {...register("youtube_url")} className="w-full p-2 border rounded-lg font-mono text-sm" placeholder="https://www.youtube.com/channel/..." />
-                        </div>
-                    </div>
-                </div>
-
-                {/* Contact Section */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                        <Phone className="w-5 h-5 text-emerald-500" />
-                        Kontak & Lokasi
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">WhatsApp Official</label>
-                            <input {...register("phone_wa")} className="w-full p-2 border rounded-lg" placeholder="6281234567890" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Email Official</label>
-                            <input {...register("email_official")} className="w-full p-2 border rounded-lg" placeholder="desa@sumberanyar.id" />
-                        </div>
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Alamat Kantor Pusat</label>
-                            <textarea {...register("address")} className="w-full p-2 border rounded-lg h-24" placeholder="Jl. Alun-alun Timur..." />
-                        </div>
-                        <div className="md:col-span-2">
-                            <label className="block text-sm font-medium text-slate-700 mb-1">
-                                Link Google Maps / Embed URL
-                                <span className="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">Baru: Bisa paste Link Google Maps biasa!</span>
-                            </label>
-                            <input
-                                {...register("map_embed_url")}
-                                className="w-full p-2 border rounded-lg font-mono text-xs text-slate-500"
-                                placeholder="Paste link Google Maps (https://maps.app.goo.gl/...) atau Embed code"
-                            />
-                            <p className="text-xs text-slate-400 mt-1">
-                                Sistem otomatis mendeteksi Lokasi dan membuat Pin jika Anda copas link dari Google Maps.
-                            </p>
-
-                            {/* Live Preview */}
-                            {mapPreview && (transformMapUrl(mapInput || "") !== (mapInput || "") || (typeof mapInput === 'string' && mapInput.includes("embed"))) && (
-                                <div className="mt-4 border rounded-lg overflow-hidden">
-                                    <div className="bg-slate-50 px-3 py-1 text-xs text-slate-500 border-b">Preview Maps</div>
-                                    <iframe
-                                        src={transformMapUrl(mapInput || "")}
-                                        width="100%"
-                                        height="200"
-                                        style={{ border: 0 }}
-                                        allowFullScreen
-                                        loading="lazy"
-                                    ></iframe>
+                <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
+                    {/* Main Sidebar (Left) */}
+                    <div className="xl:col-span-4 space-y-8">
+                        {/* Branding Card */}
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md space-y-8">
+                            <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
+                                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                    <Sparkles className="w-5 h-5" />
                                 </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
+                                <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Identitas & Branding</h3>
+                            </div>
 
-                {/* Locations Section (Jaringan Kantor) */}
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                    <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                        <MapPin className="w-5 h-5 text-emerald-600" />
-                        Bagian "Jaringan Kantor" (Homepage)
-                    </h2>
-                    <div className="grid grid-cols-1 gap-6">
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Judul</label>
-                            <input {...register("locations_title")} className="w-full p-2 border rounded-lg" placeholder="Kami Hadir Lebih Dekat" />
-                        </div>
-                        <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Deskripsi</label>
-                            <textarea {...register("locations_description")} className="w-full p-2 border rounded-lg h-24" placeholder="Dengan 16 titik layanan..." />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Fitur 1 (Teks)</label>
-                                    <textarea {...register("locations_feature1_text")} className="w-full p-2 border rounded-lg h-20 resize-y" placeholder="Kantor Pusat & Cabang Strategis" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Fitur 1 (Icon)</label>
-                                    <Controller
-                                        control={control}
-                                        name="locations_feature1_icon"
-                                        render={({ field }) => (
-                                            <IconPicker value={field.value} onChange={field.onChange} />
+                            <div className="space-y-8">
+                                {/* Primary Logo */}
+                                <div className="space-y-4">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block">Logo Utama (Warna)</label>
+                                    <div className="aspect-square rounded-2xl border-2 border-dashed border-slate-100 bg-slate-50 flex items-center justify-center p-6 relative group overflow-hidden hover:bg-slate-100/50 transition-colors">
+                                        <input 
+                                            type="file" 
+                                            {...register("logo_primary")}
+                                            onChange={(e) => {
+                                                register("logo_primary").onChange(e);
+                                                if (e.target.files?.[0]) setLogoPreviews((p:any)=>({...p, logo_primary: URL.createObjectURL(e.target.files![0])}));
+                                            }}
+                                            className="absolute inset-0 opacity-0 cursor-pointer z-10" 
+                                        />
+                                        {logoPreviews.logo_primary ? (
+                                            <img src={logoPreviews.logo_primary} alt="Primary" className="max-h-full object-contain" />
+                                        ) : (
+                                            <div className="text-center opacity-30">
+                                                <ImageIcon className="w-10 h-10 mx-auto mb-2" />
+                                                <p className="text-[9px] font-black uppercase tracking-widest">Pilih Logo</p>
+                                            </div>
                                         )}
-                                    />
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div className="space-y-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Fitur 2 (Teks)</label>
-                                    <textarea {...register("locations_feature2_text")} className="w-full p-2 border rounded-lg h-20 resize-y" placeholder="Layanan Senin - Sabtu..." />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">Fitur 2 (Icon)</label>
-                                    <Controller
-                                        control={control}
-                                        name="locations_feature2_icon"
-                                        render={({ field }) => (
-                                            <IconPicker value={field.value} onChange={field.onChange} />
+                                {/* Favicon */}
+                                <div className="space-y-4">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] block">Favicon Browser</label>
+                                    <div className="w-24 h-24 rounded-2xl border-2 border-dashed border-slate-100 bg-slate-50 flex items-center justify-center p-4 relative group hover:bg-slate-100/50 transition-colors">
+                                        <input 
+                                            type="file" 
+                                            {...register("favicon")}
+                                            onChange={(e) => {
+                                                register("favicon").onChange(e);
+                                                if (e.target.files?.[0]) setLogoPreviews((p:any)=>({...p, favicon: URL.createObjectURL(e.target.files![0])}));
+                                            }}
+                                            className="absolute inset-0 opacity-0 cursor-pointer z-10" 
+                                        />
+                                        {logoPreviews.favicon ? (
+                                            <img src={logoPreviews.favicon} alt="Favicon" className="w-full h-full object-contain" />
+                                        ) : (
+                                            <Globe className="w-8 h-8 opacity-20" />
                                         )}
-                                    />
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        {/* Social Links Card */}
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md space-y-6">
+                            <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
+                                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                    <Share2 className="w-5 h-5" />
+                                </div>
+                                <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Media Sosial</h3>
+                            </div>
+
+                            <div className="space-y-5">
+                                {[
+                                    { id: "instagram_url", icon: Instagram, color: "text-emerald-500", label: "Instagram" },
+                                    { id: "facebook_url", icon: Facebook, color: "text-emerald-600", label: "Facebook" },
+                                    { id: "tiktok_url", icon: Video, color: "text-emerald-700", label: "TikTok" },
+                                    { id: "youtube_url", icon: Youtube, color: "text-emerald-800", label: "YouTube" },
+                                ].map((s) => (
+                                    <div key={s.id} className="space-y-1.5">
+                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                            <s.icon className={cn("w-3.5 h-3.5", s.color)} /> {s.label}
+                                        </label>
+                                        <input 
+                                            {...register(s.id as any)} 
+                                            className="w-full px-4 py-2 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white focus:border-emerald-500 text-xs font-mono transition-all outline-none" 
+                                            placeholder={`https://${s.label.toLowerCase()}.com/...`}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Content Area (Center/Right) */}
+                    <div className="xl:col-span-8 space-y-8">
+                        {/* Information Grid */}
+                        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md space-y-10">
+                            {/* General Info */}
+                            <section className="space-y-6">
+                                <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
+                                    <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                        <Building2 className="w-5 h-5" />
+                                    </div>
+                                    <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Profil Operasional Desa</h3>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Nama Instansi</label>
+                                        <input {...register("company_name")} className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white transition-all text-sm font-bold uppercase tracking-wide outline-none" placeholder="Pemerintah Desa ..." />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Email Official</label>
+                                        <input {...register("email_official")} className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white transition-all text-sm font-bold outline-none" placeholder="desa@example.id" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">WhatsApp Center</label>
+                                        <input {...register("phone_wa")} className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white transition-all text-sm font-mono font-bold outline-none" placeholder="6281234567890" />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Nomor Induk Berusaha (NIB)</label>
+                                        <input {...register("nib")} className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white transition-all text-sm font-mono font-bold outline-none" placeholder="12345678..." />
+                                    </div>
+                                    <div className="md:col-span-2 space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Alamat Kantor Pusat</label>
+                                        <textarea {...register("address")} rows={3} className="w-full px-5 py-4 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white transition-all text-sm font-medium outline-none resize-none" placeholder="Jl. Alun-alun Timur No. 1..." />
+                                    </div>
+                                </div>
+                            </section>
+
+                            {/* Map Settings */}
+                            <section className="space-y-6 pt-6 border-t border-slate-50">
+                                <div className="flex items-center justify-between border-b border-slate-50 pb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                            <MapPin className="w-5 h-5" />
+                                        </div>
+                                        <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Lokasi Interaktif (Maps)</h3>
+                                    </div>
+                                    <div className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border border-emerald-100">
+                                        Auto-Detect Link Google Maps
+                                    </div>
+                                </div>
+                                
+                                <div className="space-y-6">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Paste URL / Embed Iframe</label>
+                                        <input
+                                            {...register("map_embed_url")}
+                                            className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-500 outline-none focus:bg-white transition-all"
+                                            placeholder="https://maps.app.goo.gl/..."
+                                        />
+                                    </div>
+
+                                    {mapPreview && (
+                                        <div className="rounded-2xl overflow-hidden border border-slate-100 shadow-inner bg-slate-50">
+                                            <div className="px-5 py-2.5 bg-white/80 backdrop-blur-md border-b text-[9px] font-black uppercase tracking-widest text-slate-400">
+                                                Visual Preview (Auto-generated)
+                                            </div>
+                                            <iframe
+                                                src={mapPreview}
+                                                width="100%"
+                                                height="300"
+                                                style={{ border: 0 }}
+                                                allowFullScreen
+                                                loading="lazy"
+                                                className="grayscale hover:grayscale-0 transition-all duration-700"
+                                            ></iframe>
+                                        </div>
+                                    )}
+                                </div>
+                            </section>
+
+                            {/* Section: Homepage Jaringan Kantor */}
+                            <section className="space-y-8 pt-8 border-t border-slate-50">
+                                <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
+                                    <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                        <AppWindow className="w-5 h-5" />
+                                    </div>
+                                    <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Kustomisasi Halaman Beranda</h3>
+                                </div>
+
+                                <div className="space-y-8">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Judul Bagian</label>
+                                            <input {...register("locations_title")} className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white text-sm font-black uppercase tracking-tight transition-all outline-none" placeholder="Jaringan Kantor Kami" />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Deskripsi Singkat</label>
+                                            <input {...register("locations_description")} className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:bg-white text-sm font-medium transition-all outline-none" placeholder="Kami melayani dengan sepenuh hati..." />
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-slate-50/50 p-8 rounded-3xl border border-slate-100">
+                                        {[1, 2].map((num) => (
+                                            <div key={num} className="space-y-6">
+                                                <div className="flex items-center gap-2">
+                                                    <span className="w-1 h-3 bg-emerald-500 rounded-full"></span>
+                                                    <label className="text-[10px] font-black text-slate-900 uppercase tracking-widest">Fitur Unggulan {num}</label>
+                                                </div>
+                                                <div className="space-y-4">
+                                                    <div className="space-y-2">
+                                                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Pilih Icon Visual</label>
+                                                        <Controller
+                                                            control={control}
+                                                            name={`locations_feature${num}_icon` as any}
+                                                            render={({ field }) => (
+                                                                <IconPicker value={field.value} onChange={field.onChange} />
+                                                            )}
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">Keterangan Teks</label>
+                                                        <textarea 
+                                                            {...register(`locations_feature${num}_text` as any)} 
+                                                            rows={2} 
+                                                            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-indigo-500 transition-all text-[11px] font-bold uppercase tracking-tight leading-relaxed outline-none resize-none shadow-sm"
+                                                            placeholder="Misal: Pelayanan Cepat 5 Menit..."
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        
+                        {/* Status Card Footer */}
+                        <div className="bg-emerald-600 text-white p-8 rounded-3xl shadow-xl shadow-emerald-600/20 relative overflow-hidden group border border-white/10">
+                                <div className="absolute -right-20 -top-20 w-64 h-64 bg-white/5 rounded-full blur-2xl group-hover:scale-125 transition-transform duration-700"></div>
+                                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                                    <div className="space-y-2">
+                                        <div className="flex items-center gap-3">
+                                            <ShieldCheck className="w-6 h-6 text-blue-200" />
+                                            <h3 className="text-xl font-black uppercase tracking-tight">Konfigurasi Aman</h3>
+                                        </div>
+                                        <p className="text-emerald-50/80 text-xs font-medium max-w-md">Perubahan yang Anda lakukan akan langsung berdampak pada seluruh halaman publik website. Pastikan data yang dimasukkan sudah benar.</p>
+                                    </div>
+                                    <div className="p-4 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20">
+                                        <HelpCircle className="w-8 h-8 text-white opacity-40" />
+                                    </div>
+                                </div>
+                        </div>
                     </div>
                 </div>
-
-                <div className="flex justify-end">
-                    <TactileButton type="submit" disabled={isSaving} className="px-8" icon={isSaving ? undefined : <Save className="w-4 h-4" />}>
-                        {isSaving ? <Loader2 className="animate-spin w-5 h-5 mx-auto" /> : "Simpan Perubahan"}
-                    </TactileButton>
-                </div>
-
             </form>
         </main>
     );
+}
+
+function ActivityIcon({ className }: { className?: string }) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    )
 }

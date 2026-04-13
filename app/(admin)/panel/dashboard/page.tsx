@@ -15,6 +15,7 @@ import {
 import { SectionHeading } from "@/components/ui/section-heading";
 import Link from "next/link";
 import { AnalyticsStats } from "@/components/admin/analytics-stats";
+import { cn } from "@/lib/utils";
 
 export default function DashboardPage() {
     const [stats, setStats] = useState({
@@ -100,25 +101,25 @@ export default function DashboardPage() {
                     icon={FileText}
                     label="Surat Masuk"
                     value={stats.suratMenunggu.toString()}
-                    color={stats.suratMenunggu > 0 ? "bg-red-100 text-red-700 animate-pulse border-red-200" : "bg-slate-100 text-slate-700"}
+                    color={stats.suratMenunggu > 0 ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-slate-50 text-slate-400"}
                 />
                 <StatCard
                     icon={Users}
-                    label="Jumlah Anggota"
+                    label="Jumlah Penduduk"
                     value={stats.membersCount}
-                    color="bg-blue-100 text-blue-700"
+                    color="bg-emerald-50 text-emerald-600 border-emerald-100"
                 />
                 <StatCard
                     icon={FileText}
-                    label="Berita Terpublikasi"
+                    label="Berita Desa"
                     value={stats.newsCount.toString()}
-                    color="bg-purple-100 text-purple-700"
+                    color="bg-emerald-50 text-emerald-600 border-emerald-100"
                 />
                 <StatCard
                     icon={MessageSquare}
                     label="Pengaduan Aktif"
                     value={stats.pengaduanCount.toString()}
-                    color={stats.pengaduanCount > 0 ? "bg-amber-100 text-amber-700" : "bg-slate-100 text-slate-500"}
+                    color={stats.pengaduanCount > 0 ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-slate-50 text-slate-400"}
                 />
             </div>
 
@@ -163,29 +164,29 @@ export default function DashboardPage() {
                             href="/panel/dashboard/surat-online"
                             icon={FileText}
                             label="Lihat Surat"
-                            color="bg-red-100 text-red-600"
-                            hover="group-hover:bg-red-200"
+                            color="bg-emerald-50 text-emerald-600 border-emerald-100"
+                            hover="group-hover:bg-emerald-100"
                         />
                         <ShortcutBtn
                             href="/panel/dashboard/bansos"
                             icon={Users}
                             label="Kelola Bansos"
-                            color="bg-blue-100 text-blue-600"
-                            hover="group-hover:bg-blue-200"
+                            color="bg-emerald-50 text-emerald-600 border-emerald-100"
+                            hover="group-hover:bg-emerald-100"
                         />
                         <ShortcutBtn
                             href="/panel/dashboard/inquiries"
                             icon={MessageSquare}
                             label="Cek Laporan"
-                            color="bg-amber-100 text-amber-600"
-                            hover="group-hover:bg-amber-200"
+                            color="bg-emerald-50 text-emerald-600 border-emerald-100"
+                            hover="group-hover:bg-emerald-100"
                         />
                         <ShortcutBtn
                             href="/panel/dashboard/berita/baru"
                             icon={ImageIcon}
                             label="Tulis Berita"
-                            color="bg-emerald-100 text-emerald-600"
-                            hover="group-hover:bg-emerald-200"
+                            color="bg-emerald-600 text-white border-emerald-600"
+                            hover="group-hover:bg-emerald-700"
                         />
                     </div>
                 </div>
@@ -196,13 +197,13 @@ export default function DashboardPage() {
 
 function StatCard({ icon: Icon, label, value, color }: any) {
     return (
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-md transition-shadow">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${color}`}>
-                <Icon className="w-6 h-6" />
+        <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-slate-100 flex items-center gap-4 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center border", color)}>
+                <Icon className="w-5 h-5" />
             </div>
             <div>
-                <p className="text-sm font-medium text-slate-500">{label}</p>
-                <p className="text-2xl font-bold text-slate-900">{value}</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{label}</p>
+                <p className="text-2xl font-black text-slate-900 tracking-tight">{value}</p>
             </div>
         </div>
     );
@@ -210,11 +211,11 @@ function StatCard({ icon: Icon, label, value, color }: any) {
 
 function ShortcutBtn({ href, icon: Icon, label, color, hover }: any) {
     return (
-        <Link href={href} className="p-4 bg-slate-50 hover:bg-slate-100 rounded-xl flex flex-col items-center justify-center gap-3 transition-all group border border-slate-100 hover:border-slate-200 hover:shadow-sm">
-            <div className={`p-3 rounded-full transition-transform group-hover:scale-110 ${color} ${hover}`}>
+        <Link href={href} className="p-5 bg-slate-50/50 hover:bg-white rounded-[2rem] flex flex-col items-center justify-center gap-4 transition-all group border border-slate-100 hover:border-emerald-200 hover:shadow-xl hover:-translate-y-1">
+            <div className={cn("p-4 rounded-2xl transition-all group-hover:scale-110 border shadow-sm", color, hover)}>
                 <Icon className="w-6 h-6" />
             </div>
-            <span className="text-xs font-bold text-slate-700 text-center">{label}</span>
+            <span className="text-[10px] font-black text-slate-700 text-center uppercase tracking-widest">{label}</span>
         </Link>
     );
 }

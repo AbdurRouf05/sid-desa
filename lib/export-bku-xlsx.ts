@@ -16,14 +16,18 @@ interface ExportBkuParams {
 }
 
 export function exportBkuToXlsx({ transactions, pajakData, bulan, tahun }: ExportBkuParams) {
-    const monthIdx = parseInt(bulan);
-    const monthName = MONTH_NAMES[monthIdx];
-    const period = `${monthName} ${tahun}`;
+    const isAllMonth = bulan === "Semua";
+    const isAllYear = tahun === "Semua";
+    const monthName = isAllMonth ? "Semua Bulan" : MONTH_NAMES[parseInt(bulan)];
+    const yearName = isAllYear ? "Semua Tahun" : tahun;
+    const period = `${monthName} ${yearName}`;
 
     // Filter transactions by the selected period
     const filtered = transactions.filter(item => {
         const d = new Date(item.tanggal);
-        return String(d.getMonth() + 1).padStart(2, '0') === bulan && String(d.getFullYear()) === tahun;
+        const matchesMonth = isAllMonth || String(d.getMonth() + 1).padStart(2, '0') === bulan;
+        const matchesYear = isAllYear || String(d.getFullYear()) === tahun;
+        return matchesMonth && matchesYear;
     });
 
     if (filtered.length === 0) {
@@ -36,22 +40,30 @@ export function exportBkuToXlsx({ transactions, pajakData, bulan, tahun }: Expor
         const bkuDate = p.expand?.bku_id?.tanggal;
         if (!bkuDate) return false;
         const d = new Date(bkuDate);
-        return String(d.getMonth() + 1).padStart(2, '0') === bulan && String(d.getFullYear()) === tahun;
+        const matchesMonth = isAllMonth || String(d.getMonth() + 1).padStart(2, '0') === bulan;
+        const matchesYear = isAllYear || String(d.getFullYear()) === tahun;
+        return matchesMonth && matchesYear;
     });
 
     // Calculate previous months' running balance as "Kas Awal"
-    const allBefore = transactions.filter(item => {
-        const d = new Date(item.tanggal);
-        const itemDate = new Date(parseInt(tahun), monthIdx - 1, 1);
-        return d < itemDate;
-    });
-
+    // If "All Time" selected, Kas Awal is 0
     let kasAwal = 0;
-    allBefore.forEach(item => {
-        if (item.tipe_transaksi === "Masuk") kasAwal += item.nominal;
-        else if (item.tipe_transaksi === "Keluar") kasAwal -= item.nominal;
-        // Pindah Buku is net-zero
-    });
+    if (!isAllMonth || !isAllYear) {
+        const startDate = (isAllMonth && !isAllYear) 
+            ? new Date(parseInt(tahun), 0, 1) 
+            : (!isAllMonth && !isAllYear) 
+                ? new Date(parseInt(tahun), parseInt(bulan) - 1, 1)
+                : null;
+
+        if (startDate) {
+            const allBefore = transactions.filter(item => new Date(item.tanggal) < startDate);
+            allBefore.forEach(item => {
+                if (item.tipe_transaksi === "Masuk") kasAwal += item.nominal;
+                else if (item.tipe_transaksi === "Keluar") kasAwal -= item.nominal;
+            });
+        }
+    }
+
 
     // Sort filtered by date
     const sorted = [...filtered].sort((a, b) => new Date(a.tanggal).getTime() - new Date(b.tanggal).getTime());

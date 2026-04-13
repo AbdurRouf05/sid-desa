@@ -4,8 +4,7 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { pb } from "@/lib/pb";
 import { PenerimaBansos } from "@/types";
-import { Plus, Search, Trash2, Edit2, Users, FileText, Calendar } from "lucide-react";
-import { TactileButton } from "@/components/ui/tactile-button";
+import { Plus, Search, Trash2, Edit2, Users, FileText, Calendar, ShieldCheck, Activity } from "lucide-react";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils";
@@ -20,7 +19,6 @@ export default function BansosPage() {
     const fetchData = async () => {
         setLoading(true);
         try {
-            // Fetch recipients and categories in parallel
             const [bansosRecords, kategoriRecords] = await Promise.all([
                 pb.collection("penerima_bansos").getFullList<PenerimaBansos>({
                     sort: "-created",
@@ -55,13 +53,11 @@ export default function BansosPage() {
         }
     };
 
-    // Calculate dynamic categories (murni dari database)
     const allCategories = useMemo(() => {
         const fromDB = kategori.map(k => k.nama);
         return ["Semua", ...fromDB];
     }, [kategori]);
 
-    // Statistics breakdown
     const stats = useMemo(() => {
         const total = data.length;
         const breakdown = data.reduce((acc: any, curr) => {
@@ -89,154 +85,158 @@ export default function BansosPage() {
             "bg-emerald-50 text-emerald-600 border-emerald-100",
             "bg-amber-50 text-amber-600 border-amber-100",
             "bg-rose-50 text-rose-600 border-rose-100",
-            "bg-indigo-50 text-indigo-600 border-indigo-100"
+            "bg-emerald-50 text-emerald-600 border-emerald-100"
         ];
-        // Hash string to pick a color
         let hash = 0;
         for (let i = 0; i < jenis.length; i++) hash = jenis.charCodeAt(i) + ((hash << 5) - hash);
         return colors[Math.abs(hash) % colors.length];
     };
 
     return (
-        <main className="max-w-7xl mx-auto space-y-6 pb-20 px-4">
+        <div className="p-4 md:p-8 space-y-6 animate-in fade-in duration-500">
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 py-2">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 py-2 mb-2">
                 <div>
                     <h1 className="text-2xl font-black text-slate-800 tracking-tight uppercase">Penerima Bansos</h1>
-                    <p className="text-sm text-slate-500 mt-1">Pusat pengelolaan data bantuan sosial desa</p>
+                    <p className="text-sm text-slate-500 mt-1">Pusat pengelolaan data bantuan sosial warga desa.</p>
                 </div>
-                <div className="flex items-center gap-3">
-                    <Link href="/panel/dashboard/bansos/baru">
-                    <button className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm shadow-emerald-200 transition-all active:scale-95 group text-sm">
+                <Link href="/panel/dashboard/bansos/baru" className="w-full md:w-auto">
+                    <button className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm shadow-emerald-200 transition-all active:scale-95 group text-sm w-full md:w-auto">
                         <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
                         Tambah Penerima
                     </button>
                 </Link>
-                </div>
             </div>
 
-            {/* Statistics Summary */}
+            {/* Quick Stats Grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm transition-all hover:shadow-md group">
-                    <div className="flex items-center justify-between mb-3">
-                        <div className="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
-                            <Users className="w-5 h-5" />
+                <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:border-slate-200 group">
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                            <Users className="w-4 h-4" />
                         </div>
-                        <span className="text-[10px] font-black text-blue-400 group-hover:text-blue-600 transition-colors uppercase tracking-[0.2em]">Penerima</span>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Total Penerima</p>
                     </div>
-                    <div className="text-2xl font-black text-slate-900 leading-none mb-1">{stats.total}</div>
-                    <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Warga Terdaftar</div>
+                    <p className="text-xl font-black text-emerald-700 tracking-tight">{stats.total}</p>
                 </div>
 
                 {kategori.slice(0, 3).map((cat, idx) => (
-                    <div key={cat.id} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm transition-all hover:shadow-md group">
-                        <div className="flex items-center justify-between mb-3">
+                    <div key={cat.id} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:border-slate-200 group">
+                        <div className="flex items-center gap-3 mb-2">
                             <div className={cn(
-                                "p-2.5 rounded-xl",
-                                idx === 0 ? "bg-blue-50 text-blue-500" : 
-                                idx === 1 ? "bg-emerald-50 text-emerald-500" : "bg-amber-50 text-amber-500"
+                                "p-2 rounded-lg",
+                                idx === 0 ? "bg-emerald-50 text-emerald-600" : 
+                                idx === 1 ? "bg-amber-50 text-amber-600" : "bg-emerald-50 text-emerald-600"
                             )}>
-                                <FileText className="w-5 h-5" />
+                                <Activity className="w-4 h-4" />
                             </div>
-                            <span className="text-[10px] font-black text-slate-300 group-hover:text-slate-500 transition-colors uppercase tracking-[0.2em]">{cat.nama}</span>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] line-clamp-1">{cat.nama}</p>
                         </div>
-                        <div className="text-2xl font-black text-slate-900 leading-none mb-1">{stats.breakdown[cat.nama] || 0}</div>
-                        <div className="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Penerima Aktif</div>
+                        <p className="text-xl font-black text-emerald-700 tracking-tight">{stats.breakdown[cat.nama] || 0}</p>
                     </div>
                 ))}
             </div>
 
-            {/* Content Card */}
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 transition-all">
-                {/* Search & Tabs */}
-                <div className="flex flex-col gap-6 mb-6">
+            {/* Content Table Card */}
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden transition-all hover:shadow-md">
+                {/* Search & Tabs Toolbar */}
+                <div className="p-5 border-b border-slate-100 space-y-6">
                     <div className="relative group max-w-xl">
                         <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-emerald-500 transition-colors" />
                         <input
                             type="text"
-                            placeholder="Cari berdasarkan NIK atau Nama Lengkap..."
+                            placeholder="Cari NIK atau Nama Lengkap..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-12 pr-6 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-emerald-500/5 focus:bg-white focus:border-emerald-500 transition-all font-bold text-slate-600 text-sm"
+                            className="w-full pl-12 pr-6 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm font-medium"
                         />
                     </div>
                     
-                    <div className="flex gap-1 p-1 bg-slate-100 rounded-xl w-fit self-start lg:self-auto overflow-x-auto max-w-full no-scrollbar">
-                            {allCategories.map((cat) => (
-                                <button
-                                    key={cat}
-                                    onClick={() => setFilterJenis(cat)}
-                                    className={cn(
-                                        "px-3 py-1.5 rounded-lg text-[11px] font-bold whitespace-nowrap transition-all uppercase tracking-tight",
-                                        filterJenis === cat
-                                            ? "bg-white text-emerald-700 shadow-sm border border-emerald-100"
-                                            : "text-slate-400 hover:text-slate-600"
-                                    )}
-                                >
-                                    {cat}
-                                </button>
-                            ))}
-                        </div>
+                    <div className="flex flex-wrap gap-2">
+                        {allCategories.map((cat) => (
+                            <button
+                                key={cat}
+                                onClick={() => setFilterJenis(cat)}
+                                className={cn(
+                                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border shrink-0 outline-none",
+                                    filterJenis === cat
+                                        ? "bg-emerald-800 border-emerald-800 text-white shadow-md shadow-emerald-900/10"
+                                        : "bg-white border-slate-200 text-slate-500 hover:bg-slate-50"
+                                )}
+                            >
+                                {cat}
+                                {filterJenis === cat && <span className="ml-2 px-1.5 py-0.5 rounded-md text-[9px] font-black bg-white/20 text-white">{filteredData.length}</span>}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                {/* Table Section */}
-                <div className="overflow-x-auto -mx-6 px-6">
-                    <table className="w-full text-left border-separate border-spacing-y-2">
+                <div className="overflow-x-auto custom-scrollbar">
+                    <table className="w-full text-left border-collapse min-w-[800px]">
                         <thead>
-                            <tr>
-                                <th className="px-4 py-3 font-black text-slate-400 uppercase text-[9px] tracking-[0.2em]">Informasi Penerima</th>
-                                <th className="px-4 py-3 font-black text-slate-400 uppercase text-[9px] tracking-[0.2em]">Jenis Bantuan</th>
-                                <th className="px-4 py-3 font-black text-slate-400 uppercase text-[9px] tracking-[0.2em]">Tahun</th>
-                                <th className="px-4 py-3 font-black text-slate-400 uppercase text-[9px] tracking-[0.2em] text-right">Opsi</th>
+                            <tr className="bg-slate-50/50 border-b border-slate-100">
+                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Informasi Penerima</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Jenis Bantuan</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Periode</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right pr-8">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="divide-y divide-slate-100">
                             {loading ? (
-                                <TableSkeleton columns={4} rows={4} />
+                                <tr>
+                                    <td colSpan={4} className="px-6 py-12 text-center">
+                                        <div className="flex flex-col items-center gap-2">
+                                            <div className="w-8 h-8 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-2">Sinkronisasi data...</p>
+                                        </div>
+                                    </td>
+                                </tr>
                             ) : filteredData.length === 0 ? (
-                                <EmptyState
-                                    colSpan={4}
-                                    icon={Users}
-                                    title="Penerima Tidak Ditemukan"
-                                    description="Sesuaikan kata kunci pencarian atau filter kategori Anda."
-                                />
+                                <tr>
+                                    <td colSpan={4} className="px-6 py-16 text-center">
+                                        <div className="flex flex-col items-center gap-3 text-slate-200">
+                                            <Users className="w-12 h-12" />
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest leading-relaxed">Penerima tidak ditemukan.</p>
+                                        </div>
+                                    </td>
+                                </tr>
                             ) : (
                                 filteredData.map((item) => (
-                                    <tr key={item.id} className="group hover:translate-x-1 transition-all">
-                                        <td className="px-4 py-4 bg-slate-50/50 rounded-l-xl border-y border-l border-slate-100 group-hover:bg-white group-hover:border-slate-200 group-hover:shadow-sm">
-                                            <div className="font-bold text-slate-800 uppercase tracking-tight text-xs mb-0.5">{item.nama}</div>
-                                            <div className="text-[9px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
+                                    <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
+                                        <td className="px-6 py-4">
+                                            <div className="font-bold text-slate-900 uppercase tracking-tight text-sm mb-0.5 group-hover:text-emerald-700 transition-colors">{item.nama}</div>
+                                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
                                                 <span className="w-1 h-1 rounded-full bg-slate-300" />
                                                 NIK: {item.nik}
                                             </div>
                                         </td>
-                                        <td className="px-4 py-4 bg-slate-50/50 border-y border-slate-100 group-hover:bg-white group-hover:border-slate-200 group-hover:shadow-sm">
+                                        <td className="px-6 py-4">
                                             <span className={cn(
-                                                "px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest border",
+                                                "px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border",
                                                 getJenisBadgeColor(item.expand?.jenis_bantuan?.nama || "")
                                             )}>
-                                                {item.expand?.jenis_bantuan?.nama || "Kategori Dihapus"}
+                                                {item.expand?.jenis_bantuan?.nama || "Umum"}
                                             </span>
                                         </td>
-                                        <td className="px-4 py-4 bg-slate-50/50 border-y border-slate-100 group-hover:bg-white group-hover:border-slate-200 group-hover:shadow-sm text-slate-600">
-                                            <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-white border border-slate-100 rounded-lg text-[10px] font-black shadow-sm">
+                                        <td className="px-6 py-4">
+                                            <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-slate-50 border border-slate-100 rounded-lg text-[10px] font-black text-slate-600 shadow-sm">
                                                 <Calendar className="w-3 h-3 text-slate-400" />
-                                                {item.tahun_penerimaan}
+                                                Tahun {item.tahun_penerimaan}
                                             </div>
                                         </td>
-                                        <td className="px-4 py-4 bg-slate-50/50 rounded-r-xl border-y border-r border-slate-100 group-hover:bg-white group-hover:border-slate-200 group-hover:shadow-sm">
-                                            <div className="flex gap-1 justify-end opacity-50 group-hover:opacity-100 transition-all">
+                                        <td className="px-6 py-4 text-right pr-8">
+                                            <div className="flex gap-2 justify-end items-center opacity-40 group-hover:opacity-100 transition-all">
                                                 <Link href={`/panel/dashboard/bansos/${item.id}`}>
-                                                    <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all active:scale-95" title="Edit Data">
-                                                        <Edit2 className="w-3.5 h-3.5" />
+                                                    <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all border border-transparent hover:border-blue-100" title="Edit Data">
+                                                        <Edit2 className="w-4 h-4" />
                                                     </button>
                                                 </Link>
                                                 <button 
                                                     onClick={() => handleDelete(item.id)}
-                                                    className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all active:scale-95"
+                                                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all border border-transparent hover:border-red-100"
                                                     title="Hapus Data"
                                                 >
-                                                    <Trash2 className="w-3.5 h-3.5" />
+                                                    <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </div>
                                         </td>
@@ -247,6 +247,6 @@ export default function BansosPage() {
                     </table>
                 </div>
             </div>
-        </main>
+        </div>
     );
 }

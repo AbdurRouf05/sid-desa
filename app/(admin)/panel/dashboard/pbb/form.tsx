@@ -5,9 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pb } from "@/lib/pb";
-import { SectionHeading } from "@/components/ui/section-heading";
-import { Save, ArrowLeft, Loader2, Calculator } from "lucide-react";
-import { TactileButton } from "@/components/ui/tactile-button";
+import { Save, ArrowLeft, Loader2, Calculator, CreditCard, User, MapPin, Activity, Calendar } from "lucide-react";
 import Link from "next/link";
 import { PbbSchema, PbbData } from "@/lib/validations/pbb";
 import { cn } from "@/lib/utils";
@@ -89,172 +87,202 @@ export default function PbbFormPage({ isEdit = false, params }: { isEdit?: boole
     };
 
     if (pageLoading) {
-        return <div className="p-8 text-center text-slate-500 flex justify-center items-center"><Loader2 className="animate-spin mr-2" /> Memuat form...</div>;
+        return (
+            <div className="p-20 flex flex-col items-center justify-center gap-4 text-slate-400">
+                <Loader2 className="w-10 h-10 animate-spin text-emerald-500" />
+                <p className="text-[10px] font-black uppercase tracking-widest leading-relaxed">Memuat formulir...</p>
+            </div>
+        );
     }
 
     return (
-        <main className="max-w-4xl">
-            <div className="flex items-center gap-4 mb-8">
-                <Link href="/panel/dashboard/pbb">
-                    <button className="p-2 hover:bg-slate-100 rounded-full transition-colors" type="button">
-                        <ArrowLeft className="w-5 h-5 text-slate-600" />
-                    </button>
-                </Link>
-                <SectionHeading 
-                    title={isEdit ? "Edit Catatan PBB" : "Tambah Tagihan PBB Warga"} 
-                    subtitle="Kelola tagihan Pajak Bumi dan Bangunan berdasarkan setoran tiap dusun." 
-                />
-            </div>
-
-            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        
-                        {/* NOP */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700">Nomor Objek Pajak (NOP) <span className="text-red-500">*</span></label>
-                            <input
-                                {...register("nop")}
-                                placeholder="Contoh: 35.14.XXX..."
-                                className={cn(
-                                    "w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 transition-all font-mono",
-                                    errors.nop ? "border-red-300 focus:ring-red-500/20 focus:border-red-500" : "border-slate-200 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                )}
-                            />
-                            {errors.nop && <p className="text-red-500 text-xs">{errors.nop.message}</p>}
+        <main className="max-w-5xl mx-auto pb-20 animate-in fade-in duration-500 px-4 md:px-0">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {/* Clean Integrated Header */}
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 py-2 mb-6">
+                    <div className="flex items-center gap-4">
+                        <Link
+                            href="/panel/dashboard/pbb"
+                            className="p-2.5 hover:bg-white rounded-xl transition-all border border-transparent hover:border-slate-200 shadow-sm hover:shadow-md bg-slate-50 md:bg-transparent"
+                        >
+                            <ArrowLeft className="w-5 h-5 text-slate-600" />
+                        </Link>
+                        <div>
+                            <h1 className="text-2xl font-black text-slate-800 tracking-tight uppercase">
+                                {isEdit ? "Edit Catatan PBB" : "Catat Setoran PBB"}
+                            </h1>
+                            <p className="text-sm text-slate-500 mt-1">
+                                Kelola tagihan Pajak Bumi dan Bangunan berdasarkan setoran tiap dusun.
+                            </p>
                         </div>
-
-                        {/* Nama Wajib Pajak */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700">Nama Wajib Pajak <span className="text-red-500">*</span></label>
-                            <input
-                                {...register("nama_wajib_pajak")}
-                                placeholder="Nama sesuai SPPT PBB"
-                                className={cn(
-                                    "w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 transition-all",
-                                    errors.nama_wajib_pajak ? "border-red-300 focus:ring-red-500/20 focus:border-red-500" : "border-slate-200 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                )}
-                            />
-                            {errors.nama_wajib_pajak && <p className="text-red-500 text-xs">{errors.nama_wajib_pajak.message}</p>}
-                        </div>
-
-                        {/* Dusun / Koordinator */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700">Dusun / Koordinator <span className="text-red-500">*</span></label>
-                            <input
-                                {...register("dusun_koordinator")}
-                                placeholder="Cth: Dusun Krajan / Bpk. Rudi"
-                                className={cn(
-                                    "w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 transition-all",
-                                    errors.dusun_koordinator ? "border-red-300 focus:ring-red-500/20 focus:border-red-500" : "border-slate-200 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                )}
-                            />
-                            {errors.dusun_koordinator && <p className="text-red-500 text-xs">{errors.dusun_koordinator.message}</p>}
-                        </div>
-
-                        {/* Nominal Tagihan */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700">Nominal Pokok Pajak (Rp) <span className="text-red-500">*</span></label>
-                            <input
-                                type="number"
-                                {...register("nominal_tagihan")}
-                                className={cn(
-                                    "w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 transition-all",
-                                    errors.nominal_tagihan ? "border-red-300 focus:ring-red-500/20 focus:border-red-500" : "border-slate-200 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                )}
-                            />
-                            {errors.nominal_tagihan && <p className="text-red-500 text-xs">{errors.nominal_tagihan.message}</p>}
-                        </div>
-
                     </div>
 
-                    <div className="border-t border-slate-100 pt-6"></div>
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm shadow-emerald-200 transition-all active:scale-95 disabled:opacity-70 group"
+                    >
+                        {isLoading ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                            <Save className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                        )}
+                        Simpan Catatan
+                    </button>
+                </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-200">
-                        {/* Status Pembayaran */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700">Status Pembayaran <span className="text-red-500">*</span></label>
-                            <div className="relative">
-                                <select 
-                                    {...register("status_pembayaran")}
-                                    className={cn(
-                                        "w-full px-4 py-2.5 border rounded-xl appearance-none focus:outline-none focus:ring-2 transition-all font-bold",
-                                        statusPembayaran === "Lunas" ? "bg-emerald-100 text-emerald-800 border-emerald-300" : "bg-white text-slate-700 border-slate-300"
-                                    )}
-                                >
-                                    <option value="Belum Lunas">Belum Lunas</option>
-                                    <option value="Lunas">Selesai / Lunas</option>
-                                </select>
-                                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
-                                    <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    {/* Main Content - Substantive Info */}
+                    <div className="lg:col-span-8 space-y-6">
+                        {/* Section: Identitas Objek & Subjek Pajak */}
+                        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                            <div className="flex items-center gap-3 mb-8 border-b border-slate-50 pb-4">
+                                <div className="p-2 bg-slate-50 text-slate-600 rounded-xl">
+                                    <User className="w-5 h-5" />
+                                </div>
+                                <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Identitas Objek & Subjek</h3>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                                {/* NOP */}
+                                <div className="space-y-2">
+                                    <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                        <CreditCard className="w-3 h-3" /> Nomor Objek Pajak (NOP)
+                                    </label>
+                                    <input
+                                        {...register("nop")}
+                                        placeholder="Contoh: 35.14.XXX..."
+                                        className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm font-mono font-bold"
+                                    />
+                                    {errors.nop && <p className="text-[10px] font-bold text-red-500 uppercase mt-1 tracking-tight">{errors.nop.message}</p>}
+                                </div>
+
+                                {/* Nama Wajib Pajak */}
+                                <div className="space-y-2">
+                                    <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                        <User className="w-3 h-3" /> Nama Wajib Pajak
+                                    </label>
+                                    <input
+                                        {...register("nama_wajib_pajak")}
+                                        placeholder="Sesuai SPPT PBB"
+                                        className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm font-bold placeholder:font-normal uppercase tracking-wide"
+                                    />
+                                    {errors.nama_wajib_pajak && <p className="text-[10px] font-bold text-red-500 uppercase mt-1 tracking-tight">{errors.nama_wajib_pajak.message}</p>}
+                                </div>
+
+                                {/* Dusun / Koordinator */}
+                                <div className="md:col-span-2 space-y-2">
+                                    <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                        <MapPin className="w-3 h-3" /> Dusun / Koordinator
+                                    </label>
+                                    <input
+                                        {...register("dusun_koordinator")}
+                                        placeholder="Cth: Dusun Krajan / Bpk. Rudi"
+                                        className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm font-bold placeholder:font-normal"
+                                    />
+                                    {errors.dusun_koordinator && <p className="text-[10px] font-bold text-red-500 uppercase mt-1 tracking-tight">{errors.dusun_koordinator.message}</p>}
                                 </div>
                             </div>
                         </div>
 
-                        {/* Tanggal Bayar */}
-                        {statusPembayaran === "Lunas" && (
-                            <div className="space-y-2">
-                                <label className="text-sm font-bold text-slate-700">Tanggal Bayar <span className="text-slate-400 font-normal">(Default hari ini)</span></label>
-                                <input
-                                    type="date"
-                                    {...register("tanggal_bayar")}
-                                    className={cn(
-                                        "w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 transition-all bg-white",
-                                        "border-slate-300 focus:ring-blue-500/20 focus:border-blue-500"
-                                    )}
-                                />
+                        {/* Section: Rincian Tagihan */}
+                        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                            <div className="flex items-center gap-3 mb-8 border-b border-slate-50 pb-4">
+                                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                    <Activity className="w-5 h-5" />
+                                </div>
+                                <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Rincian Pokok Tagihan</h3>
                             </div>
-                        )}
 
-                        {/* Denda Keterlambatan - Hybrid */}
-                        <div className="space-y-2 md:col-span-2 mt-2">
-                            <label className="text-sm font-bold text-slate-700 flex items-center justify-between">
-                                <span>Denda Keterlambatan (Rp) <span className="text-slate-400 font-normal text-xs ml-1">(Bisa diedit manual)</span></span>
-                                <button
-                                    type="button"
-                                    onClick={handleHitungDenda}
-                                    className="text-xs text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-lg transition-colors flex items-center"
-                                >
-                                    <Calculator className="w-3.5 h-3.5 mr-1" />
-                                    Isi Otomatis (2%)
-                                </button>
-                            </label>
-                            <input
-                                type="number"
-                                {...register("denda")}
-                                placeholder="0"
-                                className={cn(
-                                    "w-full px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 transition-all text-lg font-bold text-red-600 bg-white",
-                                    errors.denda ? "border-red-300 focus:ring-red-500/20 focus:border-red-500" : "border-slate-300 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                )}
-                            />
-                            {errors.denda && <p className="text-red-500 text-xs">{errors.denda.message}</p>}
+                            <div className="space-y-2">
+                                <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Nominal Pokok Pajak (Rp)</label>
+                                <input
+                                    type="number"
+                                    {...register("nominal_tagihan")}
+                                    className="w-full px-5 py-4 bg-emerald-50/20 border border-emerald-100 rounded-xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all text-xl font-mono font-bold text-emerald-700"
+                                    placeholder="0"
+                                />
+                                {errors.nominal_tagihan && <p className="text-[10px] font-bold text-red-500 uppercase mt-1 tracking-tight">{errors.nominal_tagihan.message}</p>}
+                            </div>
                         </div>
                     </div>
 
+                    {/* Sidebar - Status & Action */}
+                    <div className="lg:col-span-4 space-y-6">
+                        {/* Status Card */}
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md space-y-6">
+                            <div className="flex items-center gap-3 mb-4 border-b border-slate-50 pb-4">
+                                <div className={cn(
+                                    "p-2 rounded-xl transition-all",
+                                    statusPembayaran === "Lunas" ? "bg-emerald-50 text-emerald-600" : "bg-orange-50 text-orange-600"
+                                )}>
+                                    <Activity className="w-4 h-4" />
+                                </div>
+                                <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Status Setoran</h3>
+                            </div>
 
-                    <div className="pt-6 border-t border-slate-100 flex justify-end gap-3 mt-8">
-                        <Link href="/panel/dashboard/pbb">
-                            <TactileButton variant="secondary" type="button" disabled={isLoading}>
-                                Batal
-                            </TactileButton>
-                        </Link>
-                        <TactileButton variant="primary" type="submit" disabled={isLoading}>
-                            {isLoading ? (
-                                <>
-                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                    Menyimpan...
-                                </>
-                            ) : (
-                                <>
-                                    <Save className="w-4 h-4 mr-2" />
-                                    Simpan Catatan PBB
-                                </>
-                            )}
-                        </TactileButton>
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Pilih Status</label>
+                                    <select 
+                                        {...register("status_pembayaran")}
+                                        className={cn(
+                                            "w-full px-5 py-3 border rounded-xl appearance-none focus:outline-none transition-all font-bold text-sm",
+                                            statusPembayaran === "Lunas" ? "bg-emerald-100 text-emerald-800 border-emerald-300" : "bg-white text-slate-700 border-slate-300"
+                                        )}
+                                    >
+                                        <option value="Belum Lunas">BELUM LUNAS</option>
+                                        <option value="Lunas">LUNAS / SELESAI</option>
+                                    </select>
+                                </div>
+
+                                {statusPembayaran === "Lunas" && (
+                                    <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
+                                        <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                            <Calendar className="w-3 h-3" /> Tanggal Bayar
+                                        </label>
+                                        <input
+                                            type="date"
+                                            {...register("tanggal_bayar")}
+                                            className="w-full px-5 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 focus:bg-white outline-none transition-all text-sm font-bold"
+                                        />
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Denda Card */}
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md space-y-4">
+                            <div className="flex items-center justify-between border-b border-slate-50 pb-4">
+                                <div className="flex items-center gap-2">
+                                    <div className="p-2 bg-red-50 text-red-600 rounded-xl">
+                                        <Calculator className="w-4 h-4" />
+                                    </div>
+                                    <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Denda</h3>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={handleHitungDenda}
+                                    className="text-[9px] font-black uppercase tracking-widest text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-all border border-blue-100 shadow-sm flex items-center gap-1 active:scale-95"
+                                >
+                                    Auto 2%
+                                </button>
+                            </div>
+                            
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Nominal Denda</label>
+                                <input
+                                    type="number"
+                                    {...register("denda")}
+                                    placeholder="0"
+                                    className="w-full px-5 py-3 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white transition-all text-lg font-mono font-bold text-red-600"
+                                />
+                                {errors.denda && <p className="text-[10px] font-bold text-red-500 uppercase mt-1 tracking-tight">{errors.denda.message}</p>}
+                            </div>
+                        </div>
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </main>
     );
 }

@@ -79,19 +79,19 @@ const MENU_GROUPS = [
             { href: "/panel/dashboard/apbdes", icon: PieChart, label: "Transparansi APBDes" },
         ]
     },
-    {
-        label: "Media Sosial",
-        items: [
-            { href: "/panel/dashboard/socials", icon: Share2, label: "Social Feeds" },
-        ]
-    },
-    {
-        label: "Sistem",
-        items: [
-            { href: "/panel/dashboard/settings", icon: Settings, label: "Pengaturan Situs" },
-            // { href: "/panel/dashboard/users", icon: Users, label: "Manajemen User" },
-        ]
-    }
+    // {
+    //     label: "Media Sosial",
+    //     items: [
+    //         { href: "/panel/dashboard/socials", icon: Share2, label: "Social Feeds" },
+    //     ]
+    // },
+    // {
+    //     label: "Sistem",
+    //     items: [
+    //         { href: "/panel/dashboard/settings", icon: Settings, label: "Pengaturan Situs" },
+    //         // { href: "/panel/dashboard/users", icon: Users, label: "Manajemen User" },
+    //     ]
+    // }
 ];
 
 interface AdminSidebarProps {
@@ -147,11 +147,14 @@ export function AdminSidebar({ collapsed, setCollapsed, mobileOpen = false, setM
                     </div>
 
                     {/* Navigation */}
-                    <nav className="flex-1 py-6 px-3 space-y-6 overflow-y-auto custom-scrollbar">
+                    <nav className="flex-1 py-6 px-3 space-y-4 overflow-y-auto custom-scrollbar">
                         {MENU_GROUPS.map((group, groupIdx) => (
                             <div key={groupIdx}>
-                                {!collapsed && (
-                                    <h3 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 px-3">
+                                 {!collapsed && (
+                                    <h3 className={cn(
+                                        "text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1 px-3 leading-tight",
+                                        groupIdx > 0 && "mt-4"
+                                    )}>
                                         {group.label}
                                     </h3>
                                 )}

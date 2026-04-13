@@ -6,9 +6,7 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { pb } from "@/lib/pb";
 import { MutasiPenduduk } from "@/types";
-// import { SectionHeading } from "@/components/ui/section-heading"; // Removed to match requested layout
 import { Plus, Search, Trash2, Edit2, FileText, Download, Users } from "lucide-react";
-import { TactileButton } from "@/components/ui/tactile-button";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatDate } from "@/lib/number-utils";
@@ -60,11 +58,11 @@ export default function MutasiPendudukPage() {
 
     const getJenisBadgeColor = (jenis: string) => {
         switch (jenis) {
-            case "Lahir": return "bg-emerald-100 text-emerald-800 border-emerald-200";
-            case "Mati": return "bg-red-100 text-red-800 border-red-200";
-            case "Datang": return "bg-blue-100 text-blue-800 border-blue-200";
-            case "Pergi": return "bg-orange-100 text-orange-800 border-orange-200";
-            default: return "bg-slate-100 text-slate-800 border-slate-200";
+            case "Lahir": return "bg-emerald-50 text-emerald-700 border-emerald-100";
+            case "Mati": return "bg-red-50 text-red-700 border-red-100";
+            case "Datang": return "bg-blue-50 text-blue-700 border-blue-100";
+            case "Pergi": return "bg-orange-50 text-orange-700 border-orange-100";
+            default: return "bg-slate-50 text-slate-700 border-slate-100";
         }
     };
 
@@ -125,36 +123,43 @@ export default function MutasiPendudukPage() {
     };
 
     return (
-        <div className="space-y-6">
-            <div className="flex justify-between items-center mb-8">
+        <div className="p-4 md:p-8 space-y-6">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 py-2 mb-2">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Mutasi Penduduk</h1>
-                    <p className="text-slate-500">Kelola riwayat kelahiran, kematian, kedatangan, dan kepindahan warga.</p>
+                    <h1 className="text-2xl font-black text-slate-800 tracking-tight uppercase">Mutasi Penduduk</h1>
+                    <p className="text-sm text-slate-500 mt-1">Kelola riwayat kelahiran, kematian, kedatangan, dan kepindahan warga.</p>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                    <TactileButton variant="secondary" onClick={handleExportWord} disabled={filteredData.length === 0}>
-                        <Download className="w-5 h-5 mr-2" />
+                <div className="flex flex-wrap gap-3">
+                    <button
+                        onClick={handleExportWord}
+                        disabled={filteredData.length === 0}
+                        className="flex items-center gap-2 bg-white border border-slate-200 text-slate-700 px-5 py-2.5 rounded-xl font-bold shadow-sm hover:bg-slate-50 transition-all active:scale-95 disabled:opacity-50 text-sm"
+                    >
+                        <Download className="w-4 h-4" />
                         Cetak Word
-                    </TactileButton>
-                    <Link href="/panel/dashboard/mutasi/baru">
-                        <TactileButton variant="primary">
-                            <Plus className="w-5 h-5 mr-2" />
-                            Tambah Mutasi
-                        </TactileButton>
+                    </button>
+                    <Link
+                        href="/panel/dashboard/mutasi/baru"
+                        className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm shadow-emerald-200 transition-all active:scale-95 group text-sm"
+                    >
+                        <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+                        Tambah Mutasi
                     </Link>
                 </div>
             </div>
 
-            <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 mb-8">
+            {/* Search & Filter */}
+            <div className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 transition-all hover:shadow-md">
                 <div className="flex flex-col md:flex-row gap-4 justify-between items-center mb-6">
-                    <div className="relative w-full md:w-96">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <div className="relative group w-full md:w-96">
+                        <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-emerald-500 transition-colors" />
                         <input
                             type="text"
                             placeholder="Cari NIK atau Nama Lengkap..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                            className="w-full pl-12 pr-6 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm font-medium"
                         />
                     </div>
                     
@@ -164,10 +169,10 @@ export default function MutasiPendudukPage() {
                                 key={jenis}
                                 onClick={() => setFilterJenis(jenis)}
                                 className={cn(
-                                    "px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all border",
+                                    "px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest whitespace-nowrap transition-all border",
                                     filterJenis === jenis 
-                                        ? "bg-slate-900 border-slate-900 text-white shadow-md shadow-slate-900/10"
-                                        : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"
+                                        ? "bg-emerald-800 border-emerald-800 text-white shadow-md shadow-emerald-900/10"
+                                        : "bg-white border-slate-200 text-slate-500 hover:bg-slate-50"
                                 )}
                             >
                                 {jenis}
@@ -179,12 +184,12 @@ export default function MutasiPendudukPage() {
                 <div className="overflow-x-auto custom-scrollbar">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="border-b-2 border-slate-100">
-                                <th className="p-4 font-bold text-slate-500 uppercase text-xs tracking-wider">Tanggal</th>
-                                <th className="p-4 font-bold text-slate-500 uppercase text-xs tracking-wider">Nama Lengkap & NIK</th>
-                                <th className="p-4 font-bold text-slate-500 uppercase text-xs tracking-wider">Jenis Mutasi</th>
-                                <th className="p-4 font-bold text-slate-500 uppercase text-xs tracking-wider">Dokumen</th>
-                                <th className="p-4 font-bold text-slate-500 uppercase text-xs tracking-wider text-right">Aksi</th>
+                            <tr className="border-b border-slate-100">
+                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Tanggal</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Nama Lengkap & NIK</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Jenis Mutasi</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Dokumen</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
@@ -200,54 +205,54 @@ export default function MutasiPendudukPage() {
                             ) : (
                                 filteredData.map((item) => (
                                     <tr key={item.id} className="hover:bg-slate-50/50 transition-colors group">
-                                        <td className="p-4 text-slate-600">
+                                        <td className="px-6 py-4 text-sm text-slate-600">
                                             {formatDate(item.tanggal_mutasi, { day: 'numeric', month: 'short', year: 'numeric' })}
                                         </td>
-                                        <td className="p-4">
-                                            <div className="font-bold text-slate-900">{item.nama_lengkap}</div>
-                                            <div className="text-sm text-slate-500 flex justify-between items-center group-hover:text-slate-600">
-                                                <span>NIK: {item.nik || "-"}</span>
+                                        <td className="px-6 py-4">
+                                            <div className="font-bold text-sm text-slate-900">{item.nama_lengkap}</div>
+                                            <div className="text-xs text-slate-400 font-mono mt-0.5">
+                                                NIK: {item.nik || "-"}
                                             </div>
                                         </td>
-                                        <td className="p-4">
+                                        <td className="px-6 py-4">
                                             <span className={cn(
-                                                "px-3 py-1 rounded-full text-xs font-bold border",
+                                                "px-2.5 py-1 rounded-md text-[10px] font-black uppercase tracking-wider border",
                                                 getJenisBadgeColor(item.jenis_mutasi)
                                             )}>
                                                 {item.jenis_mutasi}
                                             </span>
                                             {item.keterangan && (
-                                                <p className="text-xs text-slate-500 mt-2 max-w-[200px] truncate" title={item.keterangan}>
+                                                <p className="text-[10px] text-slate-400 mt-1.5 max-w-[200px] truncate" title={item.keterangan}>
                                                     {item.keterangan}
                                                 </p>
                                             )}
                                         </td>
-                                        <td className="p-4">
+                                        <td className="px-6 py-4">
                                             {item.dokumen_bukti ? (
                                                 <a 
                                                     href={pb.files.getUrl(item, item.dokumen_bukti)} 
                                                     target="_blank" 
                                                     rel="noreferrer"
-                                                    className="inline-flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg transition-colors border border-blue-100"
+                                                    className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors border border-blue-100"
                                                 >
                                                     <FileText className="w-3.5 h-3.5" /> Lihat File
                                                 </a>
                                             ) : (
-                                                <span className="text-xs text-slate-400 flex items-center gap-1.5">
-                                                    <FileText className="w-3.5 h-3.5 opacity-50" /> Tidak ada
+                                                <span className="text-[10px] text-slate-300 flex items-center gap-1.5 font-medium">
+                                                    <FileText className="w-3.5 h-3.5" /> Tidak ada
                                                 </span>
                                             )}
                                         </td>
-                                        <td className="p-4">
+                                        <td className="px-6 py-4">
                                             <div className="flex gap-2 justify-end">
                                                 <Link href={`/panel/dashboard/mutasi/${item.id}`}>
-                                                    <button className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all">
+                                                    <button className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all border border-transparent hover:border-blue-100">
                                                         <Edit2 className="w-4 h-4" />
                                                     </button>
                                                 </Link>
                                                 <button 
                                                     onClick={() => handleDelete(item.id)}
-                                                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                                                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all border border-transparent hover:border-red-100"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>

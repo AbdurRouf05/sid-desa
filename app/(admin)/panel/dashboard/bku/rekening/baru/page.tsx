@@ -1,16 +1,8 @@
 import { RekeningKasForm } from "../form";
-import { SectionHeading } from "@/components/ui/section-heading";
 
 export default function BaruRekeningPage() {
     return (
-        <main>
-            <div className="mb-8">
-                <SectionHeading
-                    align="left"
-                    title="Registrasi Dompet Kas"
-                    subtitle="Tambahkan dompet/laci baru untuk mutasi buku kas umum"
-                />
-            </div>
+        <main className="animate-in fade-in duration-700">
             <RekeningKasForm />
         </main>
     );

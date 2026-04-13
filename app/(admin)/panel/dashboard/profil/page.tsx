@@ -122,7 +122,7 @@ export default function ProfilDesaPage() {
                     {/* Sejarah Desa Card */}
                     <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col transition-all hover:shadow-md">
                         <div className="flex items-center gap-3 mb-5 border-b border-slate-50 pb-4">
-                            <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
+                            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
                                 <BookOpen className="w-5 h-5" />
                             </div>
                             <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Sejarah Desa</h3>

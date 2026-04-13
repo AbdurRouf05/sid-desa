@@ -1,467 +1,377 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pb } from "@/lib/pb";
-import { BkuTransactionForm as BkuTransactionFormType, BkuTransactionSchema } from "@/lib/validations/bku";
-import { RekeningKas } from "@/types";
-import { FormInput } from "@/components/ui/form-input";
-import { TactileButton } from "@/components/ui/tactile-button";
-import { Save, ArrowLeft, Loader2, ArrowDownCircle, ArrowUpCircle, RefreshCw, Upload, X, FileText, AlertCircle } from "lucide-react";
-import { getSaldoRekening } from "@/lib/bku-utils";
+import { 
+    Save, ArrowLeft, Loader2, ArrowDownCircle, ArrowUpCircle, 
+    RefreshCw, Wallet, Calendar, FileText, Plus, X, 
+    Calculator, Receipt, Info, ShieldCheck, Activity
+} from "lucide-react";
+import { BkuTransaksi, RekeningKas } from "@/types";
+import { BkuTransaksiSchema, BkuTransaksiData } from "@/lib/validations/bku";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 
-interface RekeningKasWithSaldo extends RekeningKas {
-    saldo?: number;
+interface BkuFormProps {
+    initialData?: BkuTransaksi | null;
 }
 
-const formatLocalYYYYMMDD = (date: Date) => {
-    const d = new Date(date);
-    let month = '' + (d.getMonth() + 1);
-    let day = '' + d.getDate();
-    const year = d.getFullYear();
-
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-
-    return [year, month, day].join('-');
-};
-
-interface BkuTransaksiFormProps {
-    id?: string;
-}
-
-export function BkuTransaksiForm({ id }: BkuTransaksiFormProps) {
+export function BkuTransaksiForm({ initialData }: BkuFormProps) {
     const router = useRouter();
-    const [isSaving, setIsSaving] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
-    const [rekeningList, setRekeningList] = useState<RekeningKasWithSaldo[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [rekenings, setRekenings] = useState<RekeningKas[]>([]);
     
-    // File upload state for existing and new files
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [existingFileUrl, setExistingFileUrl] = useState<string | null>(null);
-
-    const {
-        register,
-        handleSubmit,
-        setValue,
-        watch,
-        formState: { errors },
-    } = useForm<BkuTransactionFormType>({
-        resolver: zodResolver(BkuTransactionSchema),
+    const { register, handleSubmit, setValue, watch, control, formState: { errors } } = useForm<BkuTransaksiData>({
+        resolver: zodResolver(BkuTransaksiSchema),
         defaultValues: {
-            tipe_transaksi: "Masuk",
-            tanggal: formatLocalYYYYMMDD(new Date()),
-            uraian: "",
-            nominal: 0,
-            rekening_sumber_id: "",
-            rekening_tujuan_id: "",
-        },
+            tanggal: initialData?.tanggal || new Date().toISOString().split('T')[0],
+            uraian: initialData?.uraian || "",
+            tipe_transaksi: initialData?.tipe_transaksi || "Masuk",
+            nominal: initialData?.nominal || 0,
+            rekening_sumber_id: initialData?.rekening_sumber_id || "",
+            rekening_tujuan_id: initialData?.rekening_tujuan_id || "",
+            pajak_logs: {
+                pph21: 0,
+                pph22: 0,
+                pph23: 0,
+                ppn: 0
+            }
+        }
     });
 
-    const watchTipe = watch("tipe_transaksi");
-    const watchSumber = watch("rekening_sumber_id");
-    const watchTujuan = watch("rekening_tujuan_id");
-    const watchHasPajak = watch("has_pajak");
+    const tipe = watch("tipe_transaksi");
+    const nominal = watch("nominal");
+    const pajakLogs = watch("pajak_logs");
+
+    // Total Pajak calculation
+    const totalPajakCalculated = useMemo(() => {
+        if (!pajakLogs) return 0;
+        return (pajakLogs.pph21 || 0) + (pajakLogs.pph22 || 0) + (pajakLogs.pph23 || 0) + (pajakLogs.ppn || 0);
+    }, [pajakLogs]);
 
     useEffect(() => {
-        const fetchInitialData = async () => {
+        const fetchRekenings = async () => {
             try {
-                // Fetch valid rekenings
-                const rekenings = await pb.collection("rekening_kas").getFullList<RekeningKas>({
-                    sort: "jenis,nama_rekening"
+                const records = await pb.collection("rekening_kas").getFullList<RekeningKas>({
+                    sort: "nama_rekening",
                 });
-                
-                const rekeningsWithSaldo = await Promise.all(rekenings.map(async (rek) => {
-                    const saldo = await getSaldoRekening(rek.id);
-                    return { ...rek, saldo };
-                }));
-
-                setRekeningList(rekeningsWithSaldo);
-
-                if (id) {
-                    const record = await pb.collection("bku_transaksi").getOne<BkuTransactionFormType>(id);
-                    setValue("tipe_transaksi", record.tipe_transaksi);
-                    setValue("tanggal", record.tanggal.split(' ')[0]);
-                    setValue("nominal", record.nominal);
-                    setValue("uraian", record.uraian);
-                    setValue("rekening_sumber_id", record.rekening_sumber_id || "");
-                    setValue("rekening_tujuan_id", record.rekening_tujuan_id || "");
-                    
-                    if (record.bukti_file) {
-                        setExistingFileUrl(pb.files.getUrl(record as any, record.bukti_file as string));
-                    }
-                }
+                setRekenings(records);
             } catch (error) {
-                console.error("Error fetching", error);
-                alert("Gagal memuat data transaksi/rekening.");
-            } finally {
-                setIsLoading(false);
+                console.error("Error fetching rekenings", error);
             }
         };
+        fetchRekenings();
+    }, []);
 
-        fetchInitialData();
-    }, [id, setValue]);
-
-    const nominal = watch("nominal") || 0;
-    const sourceRekening = rekeningList.find(r => r.id === watchSumber);
-    const overSpend = (watchTipe === "Keluar" || watchTipe === "Pindah Buku") && sourceRekening && (nominal > (sourceRekening.saldo || 0));
-
-    // Auto calculate tax 11% if PPN is selected
-    useEffect(() => {
-        if (watchHasPajak && watch("jenis_pajak") === "PPN 11%") {
-            const taxNominal = Math.round(nominal * 0.11);
-            setValue("nominal_pajak", taxNominal, { shouldValidate: true });
-        }
-    }, [nominal, watchHasPajak, watch("jenis_pajak"), setValue]);
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            setSelectedFile(file);
-        }
-    };
-
-    const handleRemoveFile = () => {
-        setSelectedFile(null);
-        if (fileInputRef.current) {
-            fileInputRef.current.value = "";
-        }
-    };
-
-    const onSubmit = async (data: BkuTransactionFormType) => {
-        setIsSaving(true);
-        const submitData = new FormData();
-
-        submitData.append("tipe_transaksi", data.tipe_transaksi);
-        submitData.append("tanggal", data.tanggal);
-        submitData.append("uraian", data.uraian);
-        submitData.append("nominal", String(data.nominal));
-
-        if (data.tipe_transaksi === "Masuk" || data.tipe_transaksi === "Pindah Buku") {
-            submitData.append("rekening_tujuan_id", data.rekening_tujuan_id || "");
-        } else {
-            submitData.append("rekening_tujuan_id", "");
-        }
-
-        if (data.tipe_transaksi === "Keluar" || data.tipe_transaksi === "Pindah Buku") {
-            submitData.append("rekening_sumber_id", data.rekening_sumber_id || "");
-        } else {
-            submitData.append("rekening_sumber_id", "");
-        }
-
-        if (selectedFile) {
-            submitData.append("bukti_file", selectedFile);
-        }
-
+    const onSubmit = async (data: BkuTransaksiData) => {
+        setIsLoading(true);
         try {
-            let savedRecord;
-            if (id) {
-                savedRecord = await pb.collection("bku_transaksi").update(id, submitData);
+            let record;
+            if (initialData?.id) {
+                record = await pb.collection("bku_transaksi").update(initialData.id, data);
             } else {
-                savedRecord = await pb.collection("bku_transaksi").create(submitData);
+                record = await pb.collection("bku_transaksi").create(data);
             }
 
-            // --- Tax Log Integration ---
-            if (data.tipe_transaksi === "Keluar" && data.has_pajak && data.jenis_pajak && data.nominal_pajak && data.nominal_pajak > 0) {
-                // Check if tax log exists for this bku_id (in case of edit)
-                try {
-                    const existingTax = await pb.collection("pajak_log").getFirstListItem(`bku_id="${savedRecord.id}"`);
-                    if (existingTax) {
-                        await pb.collection("pajak_log").update(existingTax.id, {
-                            jenis_pajak: data.jenis_pajak,
-                            nominal_pajak: data.nominal_pajak,
-                        });
-                    }
-                } catch (e) {
-                    // Not found, create new
-                    await pb.collection("pajak_log").create({
-                        bku_id: savedRecord.id,
-                        jenis_pajak: data.jenis_pajak,
-                        nominal_pajak: data.nominal_pajak,
-                        status: "Belum Disetor"
-                    });
-                }
-            }
+            // Sync Pajak logs if exists
+            const existingPajak = await pb.collection("pajak_log").getFullList({ filter: `bku_id = "${record.id}"` });
+            await Promise.all(existingPajak.map(p => pb.collection("pajak_log").delete(p.id)));
 
-            // Remove tax if toggled off during edit
-            if (id && data.tipe_transaksi === "Keluar" && !data.has_pajak) {
-                try {
-                    const existingTax = await pb.collection("pajak_log").getFirstListItem(`bku_id="${savedRecord.id}"`);
-                    if (existingTax) await pb.collection("pajak_log").delete(existingTax.id);
-                } catch (e) { /* ignore */ }
-            }
+            const tasks = [];
+            if (data.pajak_logs.pph21 > 0) tasks.push(pb.collection("pajak_log").create({ bku_id: record.id, jenis_pajak: "PPh 21", nominal_pajak: data.pajak_logs.pph21, status: "Belum Disetor" }));
+            if (data.pajak_logs.pph22 > 0) tasks.push(pb.collection("pajak_log").create({ bku_id: record.id, jenis_pajak: "PPh 22", nominal_pajak: data.pajak_logs.pph22, status: "Belum Disetor" }));
+            if (data.pajak_logs.pph23 > 0) tasks.push(pb.collection("pajak_log").create({ bku_id: record.id, jenis_pajak: "PPh 23", nominal_pajak: data.pajak_logs.pph23, status: "Belum Disetor" }));
+            if (data.pajak_logs.ppn > 0) tasks.push(pb.collection("pajak_log").create({ bku_id: record.id, jenis_pajak: "PPN", nominal_pajak: data.pajak_logs.ppn, status: "Belum Disetor" }));
+            
+            await Promise.all(tasks);
 
             router.push("/panel/dashboard/bku/transaksi");
             router.refresh();
         } catch (error: any) {
-            console.error("Save error", error);
-            alert("Gagal menyimpan transaksi. Pastikan rekening sudah dipilih.");
+            console.error("Save error:", error);
+            alert(error?.message || "Terjadi kesalahan saat menyimpan data.");
         } finally {
-            setIsSaving(false);
+            setIsLoading(false);
         }
     };
 
-    if (isLoading) {
-        return <div className="p-8 text-center text-slate-500">Memuat form transaksi...</div>;
-    }
-
-    if (rekeningList.length === 0) {
-        return (
-            <div className="bg-amber-50 rounded-2xl p-6 border border-amber-200">
-                <p className="font-bold text-amber-800">Perhatian: Modul Kas Tidak Siap</p>
-                <p className="text-amber-700 mt-1">Anda belum memiliki Rekening Kas apapun. Harap buat <b>Master Rekening Desa</b> terlebih dahulu sebelum mencatat transaksi.</p>
-                <TactileButton variant="primary" className="mt-4" onClick={() => router.push("/panel/dashboard/bku/rekening/baru")}>
-                    Buat Rekening Desa Sekarang
-                </TactileButton>
-            </div>
-        );
-    }
-
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="max-w-4xl space-y-8">
-            <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100">
-                <div className="flex items-center gap-3 mb-8">
-                    <div className={`p-3 rounded-2xl ${
-                        watchTipe === 'Masuk' ? 'bg-emerald-100 text-emerald-600' : 
-                        watchTipe === 'Keluar' ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-600'
-                    }`}>
-                        {watchTipe === 'Masuk' && <ArrowDownCircle className="w-6 h-6" />}
-                        {watchTipe === 'Keluar' && <ArrowUpCircle className="w-6 h-6" />}
-                        {watchTipe === 'Pindah Buku' && <RefreshCw className="w-6 h-6" />}
+        <main className="max-w-6xl mx-auto pb-20 animate-in fade-in duration-700 px-4 md:px-0">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                
+                {/* Integrated Header (Bansos Reference) */}
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 py-2 mb-6">
+                    <div className="flex items-center gap-4">
+                        <Link
+                            href="/panel/dashboard/bku/transaksi"
+                            className="p-2.5 hover:bg-white rounded-2xl transition-all border border-transparent hover:border-slate-200 shadow-sm hover:shadow-md bg-slate-50 md:bg-transparent"
+                        >
+                            <ArrowLeft className="w-5 h-5 text-slate-600" />
+                        </Link>
+                        <div>
+                            <h1 className="text-2xl font-black text-slate-800 tracking-tight uppercase">
+                                {initialData ? "Koreksi Jurnal Umum" : "Pencatatan BKU Baru"}
+                            </h1>
+                            <p className="text-sm text-slate-500 mt-1">
+                                Input mutasi kas masuk, keluar, atau pindah buku antar rekening desa.
+                            </p>
+                        </div>
                     </div>
-                    <div>
-                        <h2 className="text-xl font-bold text-slate-800">
-                            {id ? "Edit Log Buku Kas Umum" : "Catat Transaksi BKU Baru"}
-                        </h2>
-                        <p className="text-sm text-slate-500">
-                            Rekam keluar masuknya dana ke dalam dompet pemerintahan desa secara terstruktur.
-                        </p>
-                    </div>
+
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3.5 rounded-2xl font-black text-[11px] uppercase tracking-widest flex items-center justify-center gap-2 shadow-xl shadow-emerald-900/10 transition-all active:scale-95 disabled:opacity-70 group"
+                    >
+                        {isLoading ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                            <Save className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                        )}
+                        Simpan Jurnal Kas
+                    </button>
                 </div>
 
-                {errors.tipe_transaksi && (
-                    <div className="mb-6 p-4 bg-red-50 text-red-600 border border-red-200 rounded-xl text-sm font-medium">
-                        {errors.tipe_transaksi.message}
-                    </div>
-                )}
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Tipe Transaksi */}
-                    <div className="col-span-1 md:col-span-2 space-y-3">
-                        <label className="text-sm font-bold text-slate-700 block">Jalur Arus Uang</label>
-                        <div className="flex flex-col md:flex-row gap-4">
-                            <label className={`flex-1 flex flex-col items-center justify-center p-4 border-2 rounded-2xl cursor-pointer transition-all ${watchTipe === 'Masuk' ? 'border-emerald-500 bg-emerald-50/50' : 'border-slate-200 hover:border-slate-300'}`}>
-                                <input type="radio" value="Masuk" className="hidden" {...register("tipe_transaksi")} />
-                                <span className={`font-bold ${watchTipe === 'Masuk' ? 'text-emerald-700' : 'text-slate-600'}`}>Pemasukan / Uang Masuk</span>
-                            </label>
-                            <label className={`flex-1 flex flex-col items-center justify-center p-4 border-2 rounded-2xl cursor-pointer transition-all ${watchTipe === 'Keluar' ? 'border-red-500 bg-red-50/50' : 'border-slate-200 hover:border-slate-300'}`}>
-                                <input type="radio" value="Keluar" className="hidden" {...register("tipe_transaksi")} />
-                                <span className={`font-bold ${watchTipe === 'Keluar' ? 'text-red-700' : 'text-slate-600'}`}>Pengeluaran / Uang Keluar</span>
-                            </label>
-                            <label className={`flex-1 flex flex-col items-center justify-center p-4 border-2 rounded-2xl cursor-pointer transition-all ${watchTipe === 'Pindah Buku' ? 'border-blue-500 bg-blue-50/50' : 'border-slate-200 hover:border-slate-300'}`}>
-                                <input type="radio" value="Pindah Buku" className="hidden" {...register("tipe_transaksi")} />
-                                <span className={`font-bold ${watchTipe === 'Pindah Buku' ? 'text-blue-700' : 'text-slate-600'}`}>Pindah Buku Saldo</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    {/* Routing Rekening */}
-                    {(watchTipe === "Keluar" || watchTipe === "Pindah Buku") && (
-                        <div className="col-span-1">
-                            <label className="text-sm font-bold text-slate-700 block mb-1">
-                                Rekening Asal (Sumber Dana)
-                            </label>
-                            <select 
-                                {...register("rekening_sumber_id")} 
-                                className="block w-full py-3 px-3 rounded-lg border-gray-200 bg-slate-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
-                            >
-                                <option value="">-- Pilih dompet potong --</option>
-                                {rekeningList.map((rek) => (
-                                    <option key={rek.id} value={rek.id} disabled={watchTipe === "Pindah Buku" && rek.id === watchTujuan}>
-                                        {rek.nama_rekening} {rek.jenis === 'Bank' ? '(Bank)' : '(Tunai)'}
-                                    </option>
-                                ))}
-                            </select>
-                            {(watchSumber && sourceRekening) && (
-                                <div className={`mt-2 flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium ${overSpend ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-emerald-50 text-emerald-700 border border-emerald-100'}`}>
-                                    <span>Sisa Saldo Kas:</span>
-                                    <span>Rp {(sourceRekening.saldo || 0).toLocaleString('id-ID')}</span>
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    {(watchTipe === "Masuk" || watchTipe === "Pindah Buku") && (
-                        <div className="col-span-1">
-                            <label className="text-sm font-bold text-slate-700 block mb-1">
-                                {watchTipe === "Masuk" ? "Disimpan Ke (Rekening Tujuan)" : "Dikirim Ke (Tujuan)"}
-                            </label>
-                            <select 
-                                {...register("rekening_tujuan_id")} 
-                                className="block w-full py-3 px-3 rounded-lg border-gray-200 bg-slate-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
-                            >
-                                <option value="">-- Pilih dompet penyimpanan --</option>
-                                {rekeningList.map((rek) => (
-                                    <option key={rek.id} value={rek.id} disabled={watchTipe === "Pindah Buku" && rek.id === watchSumber}>
-                                        {rek.nama_rekening} {rek.jenis === 'Bank' ? '(Bank)' : '(Tunai)'}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    )}
-
-                    {/* Basic info */}
-                    <div className="col-span-1 md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
-                        <FormInput
-                            label="Nominal (Rupiah)"
-                            type="text"
-                            numeric
-                            currencyPrefix="Rp"
-                            value={watch("nominal")?.toString() || ""}
-                            onNumericChange={(val) => {
-                                const num = parseInt(val, 10);
-                                setValue("nominal", isNaN(num) ? 0 : num, { shouldValidate: true });
-                            }}
-                            error={errors.nominal?.message}
-                        />
-                        <FormInput
-                            label="Tanggal Transaksi"
-                            type="date"
-                            {...register("tanggal")}
-                            error={errors.tanggal?.message}
-                        />
-                    </div>
-
-                    {/* Opsional Pajak Section */}
-                    {watchTipe === "Keluar" && (
-                        <div className="col-span-1 md:col-span-2 bg-slate-50 border border-slate-200 rounded-2xl p-5 mb-2 transition-all">
-                            <label className="flex items-center gap-3 cursor-pointer select-none">
-                                <input 
-                                    type="checkbox" 
-                                    {...register("has_pajak")}
-                                    className="w-5 h-5 rounded text-emerald-600 focus:ring-emerald-500 border-gray-300"
-                                />
-                                <span className="font-bold text-slate-700">Terdapat Potongan Pajak pada transaksi ini? (Titipan ke Kas)</span>
-                            </label>
-                            
-                            {watchHasPajak && (
-                                <div className="mt-5 pt-5 border-t border-slate-200 grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                                    <div>
-                                        <label className="text-sm font-bold text-slate-700 block mb-1">Jenis Pemotongan Pajak</label>
-                                        <select 
-                                            {...register("jenis_pajak")}
-                                            className="block w-full py-3 px-3 rounded-lg border-gray-200 bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
-                                        >
-                                            <option value="">-- Pilih Jenis Pajak --</option>
-                                            <option value="PPN 11%">PPN 11%</option>
-                                            <option value="PPh 21">PPh Pasal 21</option>
-                                            <option value="PPh 22">PPh Pasal 22</option>
-                                            <option value="PPh 23">PPh Pasal 23</option>
-                                        </select>
-                                    </div>
-                                    <FormInput
-                                        label="Nominal Pajak Disisihkan"
-                                        type="text"
-                                        numeric
-                                        currencyPrefix="Rp"
-                                        value={watch("nominal_pajak")?.toString() || ""}
-                                        onNumericChange={(val) => {
-                                            const num = parseInt(val, 10);
-                                            setValue("nominal_pajak", isNaN(num) ? 0 : num, { shouldValidate: true });
-                                        }}
-                                    />
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    <div className="col-span-1 md:col-span-2">
-                        <label className="text-sm font-bold text-slate-700 block mb-1">
-                            Uraian / Keterangan Keperluan
-                        </label>
-                        <textarea
-                            {...register("uraian")}
-                            placeholder="Contoh: Belanja alat tulis kantor RT 01 / Insentif bulanan"
-                            className="block w-full p-4 rounded-xl border-gray-200 bg-slate-50 focus:bg-white focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
-                            rows={3}
-                        />
-                        {errors.uraian && <span className="text-red-500 text-sm font-medium mt-1 inline-block">{errors.uraian.message}</span>}
-                    </div>
-
-                    {/* Nota File */}
-                    <div className="col-span-1 md:col-span-2">
-                        <label className="text-sm font-bold text-slate-700 block mb-1">
-                            Upload Bukti Nota / Dokumen (Opsional)
-                        </label>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    {/* Main Input Column (8 Cols) */}
+                    <div className="lg:col-span-8 space-y-6">
                         
-                        {(existingFileUrl || selectedFile) ? (
-                            <div className="flex items-center gap-3 p-4 bg-emerald-50 text-emerald-800 rounded-xl border border-emerald-100">
-                                <FileText className="w-6 h-6 text-emerald-500" />
-                                <span className="flex-1 font-medium truncate">
-                                    {selectedFile ? selectedFile.name : 'Bukti file telah dilampirkan'}
-                                </span>
-                                <button
-                                    type="button"
-                                    onClick={handleRemoveFile}
-                                    className="p-1 hover:bg-emerald-200 rounded-full transition-colors"
-                                >
-                                    <X className="w-5 h-5" />
-                                </button>
+                        {/* 1. Header Transaksi */}
+                        <div className="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                            <div className="flex items-center gap-3 mb-8 border-b border-slate-50 pb-5">
+                                <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+                                    <Activity className="w-5 h-5" />
+                                </div>
+                                <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Inisialisasi Transaksi</h3>
                             </div>
-                        ) : (
-                            <label className="flex flex-col flex-1 items-center justify-center p-6 border-2 border-dashed border-slate-200 rounded-2xl cursor-pointer hover:border-emerald-500 hover:bg-emerald-50/50 transition-all text-center">
-                                <Upload className="w-8 h-8 text-slate-400 mb-2" />
-                                <span className="text-sm font-medium text-slate-600">
-                                    Klik untuk memilih file nota dari komputer
-                                </span>
-                                <span className="text-xs text-slate-400 mt-1">
-                                    Format: JPG, PNG, atau PDF (Maks. 5MB)
-                                </span>
-                                <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    className="hidden"
-                                    accept="image/jpeg,image/png,application/pdf"
-                                    onChange={handleFileChange}
-                                />
-                            </label>
-                        )}
+
+                            <div className="space-y-8">
+                                {/* Tipe Selector (Premium Radio Buttons) */}
+                                <div className="space-y-4">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-1">Arus Sirkulasi Uang</label>
+                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        {[
+                                            { id: 'Masuk', icon: ArrowDownCircle, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-100' },
+                                            { id: 'Keluar', icon: ArrowUpCircle, color: 'text-rose-600', bg: 'bg-rose-50', border: 'border-rose-100' },
+                                            { id: 'Pindah Buku', icon: RefreshCw, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-100' },
+                                        ].map((item) => (
+                                            <button
+                                                key={item.id}
+                                                type="button"
+                                                onClick={() => {
+                                                    setValue("tipe_transaksi", item.id as any);
+                                                    if (item.id === 'Masuk') setValue("rekening_sumber_id", "");
+                                                    if (item.id === 'Keluar') setValue("rekening_tujuan_id", "");
+                                                }}
+                                                className={cn(
+                                                    "relative flex items-center gap-3 p-4 rounded-2xl border-2 transition-all active:scale-95 group overflow-hidden",
+                                                    tipe === item.id 
+                                                        ? `${item.bg} ${item.border} border-current shadow-lg shadow-slate-100` 
+                                                        : "bg-white border-slate-100 hover:border-slate-300 text-slate-400"
+                                                )}
+                                            >
+                                                <item.icon className={cn("w-5 h-5 transition-transform", tipe === item.id && "scale-110 rotate-12")} />
+                                                <span className={cn("text-[11px] font-black uppercase tracking-widest", tipe === item.id && "text-slate-900")}>
+                                                    {item.id}
+                                                </span>
+                                                {tipe === item.id && (
+                                                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] bg-emerald-800 text-white px-2 py-0.5 rounded-md font-black">ACTIVE</div>
+                                                )}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-1">Tanggal Transaksi</label>
+                                        <div className="relative">
+                                            <input
+                                                type="date"
+                                                {...register("tanggal")}
+                                                className="w-full h-12 px-5 bg-slate-50/50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm font-bold"
+                                            />
+                                            <Calendar className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-1">Nominal Transaksi (Gross)</label>
+                                        <div className="relative">
+                                            <div className="absolute left-5 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-400">RP</div>
+                                            <input
+                                                type="number"
+                                                {...register("nominal", { valueAsNumber: true })}
+                                                className="w-full h-12 pl-12 pr-5 bg-slate-50/50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm font-mono font-black"
+                                                placeholder="0"
+                                            />
+                                        </div>
+                                        {errors.nominal && <p className="text-[10px] font-bold text-red-500 uppercase px-1">{errors.nominal.message}</p>}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 2. Detail Jurnal */}
+                        <div className="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                            <div className="flex items-center gap-3 mb-8 border-b border-slate-50 pb-5">
+                                <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+                                    <LayoutGrid className="w-5 h-5" />
+                                </div>
+                                <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Detail & Klasifikasi Rekening</h3>
+                            </div>
+
+                            <div className="space-y-8">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-1">Uraian / Keterangan Transaksi</label>
+                                    <textarea
+                                        {...register("uraian")}
+                                        rows={3}
+                                        className="w-full px-5 py-4 bg-slate-50/50 border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm font-bold uppercase tracking-tight"
+                                        placeholder="CONTOH: PEMBAYARAN HONOR PERANGKAT DESA BULAN MEI"
+                                    />
+                                    {errors.uraian && <p className="text-[10px] font-bold text-red-500 uppercase px-1">{errors.uraian.message}</p>}
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    {(tipe === 'Keluar' || tipe === 'Pindah Buku') && (
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-1">Rekening Sumber (DEBET)</label>
+                                            <select
+                                                {...register("rekening_sumber_id")}
+                                                className="w-full h-12 px-5 bg-slate-50 border border-slate-200 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:border-emerald-500 outline-none transition-all"
+                                            >
+                                                <option value="">-- PILIH REKENING --</option>
+                                                {rekenings.map(r => <option key={r.id} value={r.id}>{r.nama_rekening} ({r.jenis})</option>)}
+                                            </select>
+                                            {errors.rekening_sumber_id && <p className="text-[10px] font-bold text-red-500 uppercase px-1">{errors.rekening_sumber_id.message}</p>}
+                                        </div>
+                                    )}
+
+                                    {(tipe === 'Masuk' || tipe === 'Pindah Buku') && (
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-1">Rekening Tujuan (KREDIT)</label>
+                                            <select
+                                                {...register("rekening_tujuan_id")}
+                                                className="w-full h-12 px-5 bg-slate-50 border border-slate-200 rounded-2xl text-[11px] font-black uppercase tracking-widest focus:border-emerald-500 outline-none transition-all"
+                                            >
+                                                <option value="">-- PILIH REKENING --</option>
+                                                {rekenings.map(r => <option key={r.id} value={r.id}>{r.nama_rekening} ({r.jenis})</option>)}
+                                            </select>
+                                            {errors.rekening_tujuan_id && <p className="text-[10px] font-bold text-red-500 uppercase px-1">{errors.rekening_tujuan_id.message}</p>}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 3. Pajak Integration Section */}
+                        <div className="bg-white p-6 md:p-8 rounded-[2rem] shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                            <div className="flex items-center gap-3 mb-8 border-b border-slate-50 pb-5">
+                                <div className="p-2.5 bg-amber-50 text-amber-600 rounded-xl">
+                                    <Receipt className="w-5 h-5" />
+                                </div>
+                                <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Potongan / Titipan Pajak (Log Pajak)</h3>
+                            </div>
+
+                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight mb-8 leading-relaxed">
+                                Jika transaksi ini mengandung potongan pajak, masukkan nilai nominal pada masing-masing kolom di bawah. Sistem akan otomatis mencatatnya dalam Buku Pembantu Pajak.
+                            </p>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {["pph21", "pph22", "pph23", "ppn"].map((p) => (
+                                    <div key={p} className="space-y-2">
+                                        <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest px-1">{p.toUpperCase()}</label>
+                                        <input
+                                            type="number"
+                                            {...register(`pajak_logs.${p}` as any, { valueAsNumber: true })}
+                                            className="w-full h-11 px-4 bg-slate-50 border border-slate-100 rounded-xl focus:border-amber-500 outline-none transition-all text-xs font-mono font-bold"
+                                            placeholder="0"
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Sidebar / Summary Column (4 Cols) */}
+                    <div className="lg:col-span-4 space-y-6">
+                        {/* Final Balance Recap */}
+                        <div className="bg-gradient-to-br from-emerald-900 to-emerald-950 text-white p-8 rounded-[2.5rem] shadow-2xl shadow-emerald-950/20 relative overflow-hidden group border border-white/5">
+                            <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-3xl group-hover:bg-emerald-400/10 transition-all duration-700" />
+                            <div className="relative z-10 space-y-8">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2.5 bg-white/10 text-white rounded-xl">
+                                        <Calculator className="w-5 h-5" />
+                                    </div>
+                                    <h3 className="text-[11px] font-black text-white uppercase tracking-widest">Ringkasan Nilai Jurnal</h3>
+                                </div>
+
+                                <div className="space-y-6">
+                                    <div className="flex justify-between items-center pb-4 border-b border-white/10">
+                                        <span className="text-[9px] font-black text-emerald-500/60 uppercase tracking-widest">Nilai Gross</span>
+                                        <span className="text-sm font-black font-mono">Rp {nominal?.toLocaleString('id-ID')}</span>
+                                    </div>
+                                    <div className="flex justify-between items-center pb-4 border-b border-white/10">
+                                        <span className="text-[9px] font-black text-emerald-500/60 uppercase tracking-widest">Total Pajak</span>
+                                        <span className="text-sm font-black font-mono text-amber-400">- Rp {totalPajakCalculated.toLocaleString('id-ID')}</span>
+                                    </div>
+                                    <div className="pt-2">
+                                        <span className="text-[9px] font-black text-emerald-500/60 uppercase tracking-widest block mb-2">Nilai Netto (Aliran Kas Sebenarnya)</span>
+                                        <span className="text-2xl font-black font-mono text-emerald-400">Rp {(nominal - totalPajakCalculated).toLocaleString('id-ID')}</span>
+                                    </div>
+                                </div>
+
+                                <div className="p-4 bg-white/5 rounded-2xl border border-white/10 flex items-start gap-3">
+                                    <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
+                                    <p className="text-[8px] font-bold text-emerald-500/60 uppercase tracking-widest leading-relaxed">
+                                        Jurnal akan diverifikasi secara otomatis oleh sistem saat disimpan untuk memastikan integritas buku besar.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Audit Log Info */}
+                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md space-y-4">
+                            <div className="flex items-center gap-3 mb-2">
+                                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                    <Info className="w-4 h-4" />
+                                </div>
+                                <h3 className="text-[11px] font-black text-slate-800 uppercase tracking-widest">Digital Audit Trail</h3>
+                            </div>
+                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight leading-relaxed">
+                                Setiap perubahan pada jurnal kas umum akan dicatat dalam riwayat riwayat sistem untuk keperluan audit transparansi pemerintahan desa.
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div className="flex gap-4">
-                <button
-                    type="button"
-                    onClick={() => router.back()}
-                    className="px-6 py-3 rounded-xl border border-slate-200 text-slate-600 font-medium hover:bg-slate-50 transition-colors flex items-center gap-2"
-                >
-                    <ArrowLeft className="w-4 h-4" /> Batal
-                </button>
-                <div className="flex-1 flex flex-col items-end gap-2">
-                    <TactileButton variant="primary" type="submit" disabled={isSaving || overSpend} className="w-full justify-center disabled:opacity-50">
-                        {isSaving ? (
-                            <>
-                                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                                Memproses...
-                            </>
-                        ) : (
-                            <>
-                                <Save className="w-5 h-5 mr-2" />
-                                Catat Ke Buku
-                            </>
-                        )}
-                    </TactileButton>
-                    {overSpend && (
-                        <span className="text-red-500 font-medium text-xs flex items-center bg-red-50 px-2 py-1 rounded-md">
-                            <AlertCircle className="w-3 h-3 mr-1" /> Tidak dapat menyimpan, saldo tidak mencukupi!
-                        </span>
-                    )}
-                </div>
-            </div>
-        </form>
+            </form>
+        </main>
     );
+}
+
+function LayoutGrid(props: any) {
+    return (
+        <svg
+            {...props}
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+        >
+            <rect width="7" height="7" x="3" y="3" rx="1" />
+            <rect width="7" height="7" x="14" y="3" rx="1" />
+            <rect width="7" height="7" x="14" y="14" rx="1" />
+            <rect width="7" height="7" x="3" y="14" rx="1" />
+        </svg>
+    )
 }

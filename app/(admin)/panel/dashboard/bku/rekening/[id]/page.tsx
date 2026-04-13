@@ -8,15 +8,9 @@ export default function EditRekeningPage() {
     const params = useParams();
 
     return (
-        <main>
-            <div className="mb-8">
-                <SectionHeading
-                    align="left"
-                    title="Ubah Dompet Kas"
-                    subtitle="Perbarui data rekening buku kas umum"
-                />
-            </div>
+        <main className="animate-in fade-in duration-700">
             <RekeningKasForm id={params.id as string} />
         </main>
     );
 }
+

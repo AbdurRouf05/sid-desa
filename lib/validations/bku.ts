@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const BkuTypeSchema = z.enum(["Masuk", "Keluar", "Pindah Buku"]);
 
-export const BkuTransactionSchema = z.object({
+export const BkuTransaksiSchema = z.object({
   id: z.string().optional(),
   tipe_transaksi: BkuTypeSchema,
   nominal: z.number().positive({ message: "Nominal harus lebih dari 0" }),
@@ -10,9 +10,17 @@ export const BkuTransactionSchema = z.object({
   uraian: z.string().min(3, { message: "Uraian terlalu pendek" }),
   rekening_sumber_id: z.string().optional(),
   rekening_tujuan_id: z.string().optional(),
-  bukti_file: z.any().optional(), // For file inputs
+  bukti_file: z.any().optional(), 
   
-  // Frontend-only tax fields
+  // Tax logging support
+  pajak_logs: z.object({
+    pph21: z.number().default(0),
+    pph22: z.number().default(0),
+    pph23: z.number().default(0),
+    ppn: z.number().default(0),
+  }).optional(),
+
+  // Legacy fields for compatibility
   has_pajak: z.boolean().optional(),
   jenis_pajak: z.string().optional(),
   nominal_pajak: z.number().optional(),
@@ -65,6 +73,7 @@ export const PajakLogSchema = z.object({
   path: ["ntpn"]
 });
 
-export type BkuTransactionForm = z.infer<typeof BkuTransactionSchema>;
+export type BkuTransaksiData = z.infer<typeof BkuTransaksiSchema>;
 export type RekeningKasForm = z.infer<typeof RekeningKasSchema>;
 export type PajakLogForm = z.infer<typeof PajakLogSchema>;
+

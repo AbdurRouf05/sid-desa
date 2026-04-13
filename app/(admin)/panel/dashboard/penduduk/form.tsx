@@ -89,7 +89,7 @@ export default function PendudukEditorPage({ isEdit = false }: { isEdit?: boolea
         try {
             const formData = new FormData();
             Object.entries(data).forEach(([key, value]) => {
-                if (value !== undefined) formData.append(key, value);
+                if (value !== undefined && value !== "") formData.append(key, value);
             });
 
             // Handle File Upload
@@ -122,23 +122,23 @@ export default function PendudukEditorPage({ isEdit = false }: { isEdit?: boolea
     };
 
     return (
-        <main className="max-w-5xl mx-auto pb-20 p-4 md:p-0">
-            <form onSubmit={handleSubmit(onSubmit)}>
-                {/* Header */}
-                <div className="flex items-center justify-between mb-8 sticky top-0 bg-slate-50/90 backdrop-blur-md py-4 z-40 border-b border-slate-200 -mx-4 md:-mx-8 px-4 md:px-8">
+        <main className="max-w-7xl mx-auto pb-20 animate-in fade-in duration-500 px-4 md:px-0">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {/* Clean Integrated Header */}
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 py-2 mb-6">
                     <div className="flex items-center gap-4">
                         <Link
                             href="/panel/dashboard/penduduk"
-                            className="p-2 hover:bg-white rounded-full transition-colors border border-transparent hover:border-slate-200"
+                            className="p-2.5 hover:bg-white rounded-xl transition-all border border-transparent hover:border-slate-200 shadow-sm hover:shadow-md bg-slate-50 md:bg-transparent"
                         >
-                            <ArrowLeft className="w-6 h-6 text-slate-600" />
+                            <ArrowLeft className="w-5 h-5 text-slate-600" />
                         </Link>
                         <div>
-                            <h1 className="text-xl md:text-2xl font-bold text-slate-900">
-                                {isEdit ? "Edit Data Penduduk" : "Tambah Penduduk Baru"}
+                            <h1 className="text-2xl font-black text-slate-800 tracking-tight uppercase">
+                                {isEdit ? "Perbarui Warga" : "Tambah Warga Baru"}
                             </h1>
-                            <p className="text-xs md:text-sm text-slate-500 hidden md:block">
-                                Isikan informasi kependudukan warga secara lengkap dan benar.
+                            <p className="text-sm text-slate-500 mt-1">
+                                Pastikan data kependudukan valid sesuai dengan dokumen resmi.
                             </p>
                         </div>
                     </div>
@@ -146,85 +146,92 @@ export default function PendudukEditorPage({ isEdit = false }: { isEdit?: boolea
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 md:px-6 py-2 md:py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-emerald-900/10 transition-all disabled:opacity-70"
+                        className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm shadow-emerald-200 transition-all active:scale-95 disabled:opacity-70 group"
                     >
-                        {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                        <span className="hidden md:inline">{isEdit ? "Simpan Perubahan" : "Simpan Data"}</span>
-                        <span className="md:hidden">{isEdit ? "Simpan" : "Tambah"}</span>
+                        {isLoading ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                            <Save className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                        )}
+                        {isEdit ? "Simpan Perubahan" : "Simpan Data Warga"}
                     </button>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Left Side: Personal Info */}
-                    <div className="lg:col-span-2 space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    {/* Main Content Area - 8 Cols */}
+                    <div className="lg:col-span-8 space-y-6">
                         {/* Section: Identitas Utama */}
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-6">
-                            <div className="flex items-center gap-2 border-b border-slate-50 pb-4 mb-2">
-                                <CreditCard className="w-5 h-5 text-emerald-600" />
-                                <h3 className="font-bold text-slate-800">Identitas Utama</h3>
+                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                            <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
+                                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                    <CreditCard className="w-5 h-5" />
+                                </div>
+                                <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Identitas Utama</h3>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">NIK (Nomor Induk Kependudukan)</label>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div className="space-y-2">
+                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">NIK (16 Digit)</label>
                                     <input
                                         {...register("nik")}
                                         maxLength={16}
-                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-mono"
-                                        placeholder="16 Digit NIK"
+                                        className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all font-mono text-sm"
+                                        placeholder="320..."
                                     />
-                                    {errors.nik && <p className="text-xs text-red-500 mt-1">{errors.nik.message}</p>}
+                                    {errors.nik && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.nik.message}</p>}
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">No. KK (Kartu Keluarga)</label>
+                                <div className="space-y-2">
+                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">No. Kartu Keluarga</label>
                                     <input
                                         {...register("no_kk")}
                                         maxLength={16}
-                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-mono"
-                                        placeholder="16 Digit No. KK"
+                                        className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all font-mono text-sm"
+                                        placeholder="320..."
                                     />
                                 </div>
-                                <div className="md:col-span-2">
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Nama Lengkap (Sesuai KTP)</label>
+                                <div className="md:col-span-2 space-y-2">
+                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Nama Lengkap (Sesuai KTP)</label>
                                     <input
                                         {...register("nama_lengkap")}
-                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all uppercase"
+                                        className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all uppercase text-sm font-bold tracking-wide"
                                         placeholder="CONTOH: BUDI SANTOSO"
                                     />
-                                    {errors.nama_lengkap && <p className="text-xs text-red-500 mt-1">{errors.nama_lengkap.message}</p>}
+                                    {errors.nama_lengkap && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.nama_lengkap.message}</p>}
                                 </div>
                             </div>
                         </div>
 
                         {/* Section: Kelahiran & Gender */}
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-6">
-                            <div className="flex items-center gap-2 border-b border-slate-50 pb-4 mb-2">
-                                <Calendar className="w-5 h-5 text-emerald-600" />
-                                <h3 className="font-bold text-slate-800">Kelahiran & Gender</h3>
+                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                            <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
+                                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                    <Calendar className="w-5 h-5" />
+                                </div>
+                                <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Kelahiran & Gender</h3>
                             </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Tempat Lahir</label>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                <div className="space-y-2">
+                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Tempat Lahir</label>
                                     <input
                                         {...register("tempat_lahir")}
-                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                                        className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm"
                                         placeholder="Kota/Kab"
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Tanggal Lahir</label>
+                                <div className="space-y-2">
+                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Tanggal Lahir</label>
                                     <input
                                         type="date"
                                         {...register("tanggal_lahir")}
-                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                                        className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm"
                                     />
                                 </div>
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Jenis Kelamin</label>
+                                <div className="space-y-2">
+                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Jenis Kelamin</label>
                                     <select
                                         {...register("jenis_kelamin")}
-                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                                        className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm appearance-none"
                                     >
                                         <option value="Laki-laki">Laki-laki</option>
                                         <option value="Perempuan">Perempuan</option>
@@ -233,103 +240,107 @@ export default function PendudukEditorPage({ isEdit = false }: { isEdit?: boolea
                             </div>
                         </div>
 
-                        {/* Section: Domisili */}
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-6">
-                            <div className="flex items-center gap-2 border-b border-slate-50 pb-4 mb-2">
-                                <MapPin className="w-5 h-5 text-emerald-600" />
-                                <h3 className="font-bold text-slate-800">Alamat & Domisili</h3>
+                        {/* Section: Alamat */}
+                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                            <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
+                                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                    <MapPin className="w-5 h-5" />
+                                </div>
+                                <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Alamat & Domisili</h3>
                             </div>
 
-                            <div className="grid grid-cols-1 gap-6">
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Alamat Dusun/Jalan</label>
-                                    <textarea
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+                                <div className="md:col-span-2 space-y-2">
+                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Alamat Dusun/Jalan</label>
+                                    <input
                                         {...register("alamat")}
-                                        className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none resize-none h-20"
+                                        className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm"
                                         placeholder="Contoh: Dusun Krajan"
                                     />
                                 </div>
-                                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-bold text-slate-700 mb-2">RT</label>
-                                        <input
-                                            {...register("rt")}
-                                            placeholder="000"
-                                            className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-center"
-                                        />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-bold text-slate-700 mb-2">RW</label>
-                                        <input
-                                            {...register("rw")}
-                                            placeholder="000"
-                                            className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none text-center"
-                                        />
-                                    </div>
+                                <div className="space-y-2">
+                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">RT</label>
+                                    <input
+                                        {...register("rt")}
+                                        placeholder="000"
+                                        className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm text-center font-mono"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">RW</label>
+                                    <input
+                                        {...register("rw")}
+                                        placeholder="000"
+                                        className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm text-center font-mono"
+                                    />
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Right Side: Additional Details */}
-                    <div className="space-y-6">
-                        {/* Section: Status Sosial */}
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
-                            <div className="flex items-center gap-2 mb-2">
-                                <Briefcase className="w-5 h-5 text-emerald-600" />
-                                <h3 className="font-bold text-slate-800">Status & Pekerjaan</h3>
+                    {/* Sidebar Area - 4 Cols */}
+                    <div className="lg:col-span-4 space-y-6">
+                        {/* Section: Status & Pekerjaan */}
+                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                            <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
+                                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                    <Briefcase className="w-5 h-5" />
+                                </div>
+                                <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Status Pekerjaan</h3>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-2">Agama</label>
-                                <select
-                                    {...register("agama")}
-                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20"
-                                >
-                                    <option value="Islam">Islam</option>
-                                    <option value="Kristen">Kristen</option>
-                                    <option value="Katolik">Katolik</option>
-                                    <option value="Hindu">Hindu</option>
-                                    <option value="Budha">Budha</option>
-                                    <option value="Khonghucu">Khonghucu</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-2">Status Perkawinan</label>
-                                <select
-                                    {...register("status_kawin")}
-                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20"
-                                >
-                                    <option value="Belum Kawin">Belum Kawin</option>
-                                    <option value="Kawin">Kawin</option>
-                                    <option value="Cerai Hidup">Cerai Hidup</option>
-                                    <option value="Cerai Mati">Cerai Mati</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-2">Pekerjaan</label>
-                                <input
-                                    {...register("pekerjaan")}
-                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20"
-                                    placeholder="Contoh: Petani"
-                                />
+                            <div className="space-y-5">
+                                <div className="space-y-2">
+                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Agama</label>
+                                    <select
+                                        {...register("agama")}
+                                        className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 transition-all text-sm appearance-none"
+                                    >
+                                        <option value="Islam">Islam</option>
+                                        <option value="Kristen">Kristen</option>
+                                        <option value="Katolik">Katolik</option>
+                                        <option value="Hindu">Hindu</option>
+                                        <option value="Budha">Budha</option>
+                                        <option value="Khonghucu">Khonghucu</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Status Perkawinan</label>
+                                    <select
+                                        {...register("status_kawin")}
+                                        className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 transition-all text-sm appearance-none"
+                                    >
+                                        <option value="Belum Kawin">Belum Kawin</option>
+                                        <option value="Kawin">Kawin</option>
+                                        <option value="Cerai Hidup">Cerai Hidup</option>
+                                        <option value="Cerai Mati">Cerai Mati</option>
+                                    </select>
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Pekerjaan Utama</label>
+                                    <input
+                                        {...register("pekerjaan")}
+                                        className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 transition-all text-sm"
+                                        placeholder="Contoh: Petani"
+                                    />
+                                </div>
                             </div>
                         </div>
 
                         {/* Section: Pendidikan */}
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
-                            <div className="flex items-center gap-2 mb-2">
-                                <GraduationCap className="w-5 h-5 text-emerald-600" />
-                                <h3 className="font-bold text-slate-800">Pendidikan</h3>
+                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                            <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
+                                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                    <GraduationCap className="w-5 h-5" />
+                                </div>
+                                <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Pendidikan</h3>
                             </div>
 
-                            <div>
-                                <label className="block text-sm font-bold text-slate-700 mb-2">Pendidikan Terakhir</label>
+                            <div className="space-y-2">
+                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Pendidikan Terakhir</label>
                                 <select
                                     {...register("pendidikan")}
-                                    className="w-full px-4 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500/20"
+                                    className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 transition-all text-sm appearance-none"
                                 >
                                     <option value="Tidak/Belum Sekolah">Tidak/Belum Sekolah</option>
                                     <option value="SD">SD</option>
@@ -346,24 +357,26 @@ export default function PendudukEditorPage({ isEdit = false }: { isEdit?: boolea
                         </div>
 
                         {/* Section: Foto KTP */}
-                        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-4">
-                            <div className="flex items-center gap-2 mb-2">
-                                <Camera className="w-5 h-5 text-emerald-600" />
-                                <h3 className="font-bold text-slate-800">Foto KTP / Identitas</h3>
+                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                            <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
+                                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                    <Camera className="w-5 h-5" />
+                                </div>
+                                <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Dokumen KTP</h3>
                             </div>
 
-                            <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:bg-slate-50 transition-colors relative group overflow-hidden">
+                            <div className="relative group cursor-pointer">
                                 {previewUrl ? (
-                                    <div className="relative aspect-video rounded-lg overflow-hidden bg-slate-100 mb-2">
-                                        <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-xs font-bold">
-                                            Ganti Gambar
+                                    <div className="relative aspect-[3/2] rounded-xl overflow-hidden bg-slate-100 border border-slate-200">
+                                        <img src={previewUrl} alt="Preview KTP" className="w-full h-full object-cover" />
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[10px] font-black uppercase tracking-widest">
+                                            Ganti Foto
                                         </div>
                                     </div>
                                 ) : (
-                                    <div className="py-8 text-slate-400">
-                                        <User className="w-10 h-10 mx-auto mb-2 opacity-50" />
-                                        <p className="text-sm">Klik untuk upload foto KTP</p>
+                                    <div className="aspect-[3/2] rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center bg-slate-50 group-hover:bg-slate-100 transition-all">
+                                        <User className="w-10 h-10 text-slate-300 mb-2" />
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Upload KTP</p>
                                     </div>
                                 )}
                                 <input

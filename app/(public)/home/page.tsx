@@ -12,7 +12,6 @@ import { ExternalLink } from "lucide-react";
 import { HeroSlider, HeroSlide } from "@/components/home/hero-slider";
 import { StatsDashboard } from "@/components/home/stats-dashboard";
 import { FeaturesGrid } from "@/components/home/features-grid";
-import { SocialWall } from "@/components/home/social-wall";
 import { NewsFeed } from "@/components/home/news-feed";
 import { LocationsMap } from "@/components/home/locations-map";
 
@@ -134,13 +133,6 @@ export default function Home() {
 
             {/* 3. FEATURES (Value Proposition) */}
             <FeaturesGrid />
-
-            {/* 4. SOCIAL MEDIA HUB (Already extracted) */}
-            <section className="py-20 bg-white">
-                <div className="container mx-auto px-4">
-                    <SocialWall />
-                </div>
-            </section>
 
             {/* 6. NEWS */}
             <NewsFeed news={news} loading={newsLoading} />

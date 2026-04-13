@@ -169,20 +169,20 @@ function DashboardInner() {
                                     />
 
                                     {/* Overlay Gradient */}
-                                    <div className="absolute inset-0 z-20 bg-gradient-to-tr from-slate-900/90 via-slate-900/30 to-transparent flex items-center p-8 md:p-16 lg:p-24">
+                                    <div className="absolute inset-0 z-20 bg-gradient-to-r from-slate-900/90 via-slate-900/40 to-transparent flex items-end p-6 md:p-12 lg:px-16 lg:pb-20">
                                         <div className={cn(
                                             "max-w-4xl transition-all duration-1000 delay-300 transform",
                                             currentSlide === idx ? "translate-x-0 opacity-100" : "-translate-x-12 opacity-0"
                                         )}>
-                                            <div className="flex flex-col gap-3 md:gap-5">
-                                                <div className="w-16 md:w-20 mb-2">
+                                            <div className="flex flex-col items-start text-left gap-2 md:gap-3">
+                                                <div className="w-12 md:w-14 mb-2">
                                                     <img src="/logo3-removebg-preview.png" alt="Logo" className="drop-shadow-2xl brightness-110" />
                                                 </div>
-                                                <h2 className="text-3xl md:text-5xl lg:text-7xl font-black text-white drop-shadow-2xl uppercase tracking-tighter leading-[0.9]">
+                                                <h2 className="text-3xl md:text-5xl lg:text-5xl font-black text-white drop-shadow-2xl uppercase tracking-tighter leading-[0.9]">
                                                     {item.title}
                                                 </h2>
                                                 {item.subtitle && (
-                                                    <p className="text-base md:text-lg lg:text-xl font-medium text-emerald-50/90 max-w-2xl drop-shadow-md leading-relaxed line-clamp-3">
+                                                    <p className="text-sm md:text-base lg:text-base font-medium text-emerald-50/90 max-w-xl drop-shadow-md leading-relaxed line-clamp-3">
                                                         {item.subtitle}
                                                     </p>
                                                 )}
@@ -221,14 +221,14 @@ function DashboardInner() {
                                     alt={`Slide ${idx + 1}`} 
                                     className="absolute inset-0 w-full h-full object-cover"
                                 />
-                                <div className="absolute inset-0 z-20 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent flex flex-col justify-end p-8 md:p-16">
-                                    <div className="w-20 md:w-24 mb-4">
+                                <div className="absolute inset-0 z-20 bg-gradient-to-r from-slate-900/90 via-slate-900/30 to-transparent flex flex-col justify-end items-start p-6 md:p-12 lg:px-16 lg:pb-20">
+                                    <div className="w-14 md:w-16 mb-4">
                                         <img src="/logo3-removebg-preview.png" alt="Logo" className="drop-shadow-lg" />
                                     </div>
-                                    <h2 className="text-3xl md:text-5xl lg:text-6xl font-black mb-2 text-white drop-shadow-md uppercase tracking-tight">
+                                    <h2 className="text-3xl md:text-5xl lg:text-5xl font-black mb-2 text-white drop-shadow-md uppercase tracking-tight">
                                         {profil?.nama_desa ? `DESA ${profil.nama_desa}` : 'PORTAL RESMI DESA'}
                                     </h2>
-                                    <p className="text-lg md:text-xl font-medium text-emerald-50 max-w-3xl drop-shadow-sm leading-relaxed opacity-90">
+                                    <p className="text-sm md:text-base font-medium text-emerald-50 max-w-2xl drop-shadow-sm leading-relaxed opacity-90">
                                         Selamat datang di pusat informasi dan layanan digital terpadu masyarakat desa.
                                     </p>
                                 </div>

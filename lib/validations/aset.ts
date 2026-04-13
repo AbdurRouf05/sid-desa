@@ -19,4 +19,5 @@ export const InventarisDesaSchema = z.object({
   kondisi: z.enum(['Baik', 'Rusak Ringan', 'Rusak Berat', 'Dihapus/Lelang']),
 });
 
-export type InventarisDesaForm = z.infer<typeof InventarisDesaSchema>;
+export type InventarisDesa = z.infer<typeof InventarisDesaSchema>;
+

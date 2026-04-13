@@ -51,22 +51,29 @@ export default function AdminLoginPage() {
         setError("");
 
         try {
-            // Try regular users collection first
-            await pb.collection('users').authWithPassword(data.email, data.password);
-            document.cookie = `pb_auth=${pb.authStore.token}; path=/; max-age=86400; SameSite=Strict`;
-            router.push("/panel/dashboard");
-        } catch (err: any) {
-            // Only log if it's not a 400 (Bad Request / Invalid Credentials) error
-            if (err.status !== 400) {
-                console.error("Login Error:", err);
-            }
-
-            // Fallback: Try Super User Auth (PocketBase v0.25+)
+            // Priority: Try Super User Auth for this project (PocketBase v0.25+)
+            // This avoids the 404 error if 'users' collection doesn't exist.
             try {
                 await pb.collection('_superusers').authWithPassword(data.email, data.password);
                 document.cookie = `pb_auth=${pb.authStore.token}; path=/; max-age=86400; SameSite=Strict`;
                 router.push("/panel/dashboard");
-            } catch (adminErr) {
+                return; // Success
+            } catch (err: any) {
+                // If _superusers fails, we continue to check 'users' or throw error
+                if (err.status !== 404 && err.status !== 400) {
+                    throw err; 
+                }
+            }
+
+            // Fallback: Try regular users collection (Only if _superusers didn't match)
+            await pb.collection('users').authWithPassword(data.email, data.password);
+            document.cookie = `pb_auth=${pb.authStore.token}; path=/; max-age=86400; SameSite=Strict`;
+            router.push("/panel/dashboard");
+        } catch (err: any) {
+            // Mute the 404 console error for 'users' if we already failed auth
+            if (err.status === 404) {
+                setError("Akun tidak ditemukan. SIlakan hubungi administrator.");
+            } else {
                 setError("Email atau password salah.");
             }
         } finally {

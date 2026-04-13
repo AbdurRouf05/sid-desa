@@ -5,7 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pb } from "@/lib/pb";
-import { Loader2, Save, ArrowLeft, HelpCircle } from "lucide-react";
+import { Loader2, Save, ArrowLeft, HelpCircle, Calendar, Tag, CreditCard, Activity } from "lucide-react";
 import Link from "next/link";
 import { ApbdesData, ApbdesSchema } from "@/lib/validations/apbdes";
 import { ApbdesRealisasi } from "@/types";
@@ -64,22 +64,23 @@ export default function ApbdesFormPage({ isEdit = false }: { isEdit?: boolean })
     };
 
     return (
-        <main className="max-w-3xl mx-auto pb-20">
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <div className="flex items-center justify-between mb-8 sticky top-0 bg-slate-50/90 backdrop-blur-md py-4 z-40 border-b border-slate-200 -mx-8 px-8">
+        <main className="max-w-5xl mx-auto pb-20 animate-in fade-in duration-500 px-4 md:px-0">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {/* Clean Integrated Header */}
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 py-2 mb-6">
                     <div className="flex items-center gap-4">
                         <Link
                             href="/panel/dashboard/apbdes"
-                            className="p-2 hover:bg-white rounded-full transition-colors border border-transparent hover:border-slate-200"
+                            className="p-2.5 hover:bg-white rounded-xl transition-all border border-transparent hover:border-slate-200 shadow-sm hover:shadow-md bg-slate-50 md:bg-transparent"
                         >
-                            <ArrowLeft className="w-6 h-6 text-slate-600" />
+                            <ArrowLeft className="w-5 h-5 text-slate-600" />
                         </Link>
                         <div>
-                            <h1 className="text-2xl font-bold text-slate-900">
-                                {isEdit ? "Edit Data APBDes" : "Input APBDes Baru"}
+                            <h1 className="text-2xl font-black text-slate-800 tracking-tight uppercase">
+                                {isEdit ? "Perbarui Anggaran" : "Input Anggaran Baru"}
                             </h1>
-                            <p className="text-sm text-slate-500">
-                                Lengkapi data anggaran dan realisasi administrasi desa.
+                            <p className="text-sm text-slate-500 mt-1">
+                                Kelola transparansi anggaran pendapatan dan belanja desa.
                             </p>
                         </div>
                     </div>
@@ -87,88 +88,103 @@ export default function ApbdesFormPage({ isEdit = false }: { isEdit?: boolean })
                     <button
                         type="submit"
                         disabled={isLoading}
-                        className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-emerald-900/10 transition-all disabled:opacity-70"
+                        className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm shadow-emerald-200 transition-all active:scale-95 disabled:opacity-70 group"
                     >
-                        {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
-                        Simpan Data
+                        {isLoading ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                            <Save className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                        )}
+                        Simpan Anggaran
                     </button>
                 </div>
 
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-2">Tahun Anggaran</label>
+                <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                        {/* Tahun Anggaran */}
+                        <div className="space-y-2">
+                            <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                <Calendar className="w-3 h-3" /> Tahun Anggaran
+                            </label>
                             <input
                                 type="number"
                                 {...register("tahun_anggaran")}
-                                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                                className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm font-mono font-bold"
                             />
-                            {errors.tahun_anggaran && <p className="text-sm text-red-500 mt-1">{errors.tahun_anggaran.message}</p>}
+                            {errors.tahun_anggaran && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.tahun_anggaran.message}</p>}
                         </div>
 
-                        <div>
-                            <div className="flex items-center mb-2">
-                                <label className="block text-sm font-bold text-slate-700">Kategori Utama</label>
-                                <div className="relative group inline-block ml-2 cursor-help">
-                                    <HelpCircle className="w-4 h-4 text-slate-400" />
-                                    <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all w-56 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-xl z-50 pointer-events-none">
-                                        Pilih Kategori Utama (Pendapatan / Belanja / Pembiayaan). Total anggaran akan dijumlahkan berdasarkan kategori ini.
-                                        <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-slate-800"></div>
+                        {/* Kategori Utama */}
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                    <Tag className="w-3 h-3" /> Kategori Utama
+                                </label>
+                                <div className="relative group cursor-help">
+                                    <HelpCircle className="w-3.5 h-3.5 text-slate-300" />
+                                    <div className="absolute right-0 bottom-full mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all w-64 p-3 bg-emerald-800 text-white text-[10px] leading-relaxed rounded-xl shadow-xl z-50 pointer-events-none font-medium">
+                                        Pilih Kategori Utama (Pendapatan / Belanja / Pembiayaan).
                                     </div>
                                 </div>
                             </div>
                             <select
                                 {...register("kategori")}
-                                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
+                                className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm font-bold appearance-none"
                             >
-                                <option value="Pendapatan">Pendapatan</option>
-                                <option value="Belanja">Belanja</option>
-                                <option value="Pembiayaan">Pembiayaan</option>
+                                <option value="Pendapatan">PENDAPATAN</option>
+                                <option value="Belanja">BELANJA</option>
+                                <option value="Pembiayaan">PEMBIAYAAN</option>
                             </select>
-                            {errors.kategori && <p className="text-sm text-red-500 mt-1">{errors.kategori.message}</p>}
+                            {errors.kategori && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.kategori.message}</p>}
                         </div>
-                    </div>
 
-                    <div>
-                        <div className="flex items-center mb-2">
-                            <label className="block text-sm font-bold text-slate-700">Sub Kategori / Rincian Bidang</label>
-                            <div className="relative group inline-block ml-2 cursor-help">
-                                <HelpCircle className="w-4 h-4 text-slate-400" />
-                                <div className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all w-64 p-3 bg-slate-800 text-white text-xs rounded-lg shadow-xl z-50 pointer-events-none">
-                                    Format Detail (mirip Ngembal Kulon). Contoh untuk Pendapatan: "Bagi Hasil Pajak", "Alokasi Dana Desa". Contoh untuk Belanja: "Bidang Penyelenggaran Pemerintahan", "Bidang Pembangunan".
-                                    <div className="absolute left-1/2 -translate-x-1/2 top-full w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-slate-800"></div>
+                        {/* Nama Bidang */}
+                        <div className="md:col-span-2 space-y-2">
+                            <div className="flex items-center justify-between">
+                                <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                    <CreditCard className="w-3 h-3" /> Sub Kategori / Rincian Bidang
+                                </label>
+                                <div className="relative group cursor-help">
+                                    <HelpCircle className="w-3.5 h-3.5 text-slate-300" />
+                                    <div className="absolute right-0 bottom-full mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all w-72 p-4 bg-emerald-800 text-white text-[10px] leading-relaxed rounded-xl shadow-xl z-50 pointer-events-none font-medium">
+                                        Contoh Pendapatan: "Bagi Hasil Pajak", "ADD".<br/>Contoh Belanja: "Penyelenggaran Pemerintahan", "Pembangunan".
+                                    </div>
                                 </div>
                             </div>
+                            <input
+                                {...register("nama_bidang")}
+                                className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm font-bold placeholder:font-normal"
+                                placeholder="Contoh: Bidang Penyelenggaran Pemerintahan Desa"
+                            />
+                            {errors.nama_bidang && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.nama_bidang.message}</p>}
                         </div>
-                        <input
-                            {...register("nama_bidang")}
-                            className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all"
-                            placeholder="Contoh (Pendapatan): Alokasi Dana Desa | Contoh (Belanja): Bidang Pembangunan"
-                        />
-                        {errors.nama_bidang && <p className="text-sm text-red-500 mt-1">{errors.nama_bidang.message}</p>}
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-2">Target Anggaran (Rp)</label>
+                        {/* Anggaran */}
+                        <div className="space-y-2">
+                            <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                Target Anggaran (Rp)
+                            </label>
                             <input
                                 type="number"
                                 {...register("anggaran")}
-                                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-mono"
+                                className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm font-mono font-bold"
                                 placeholder="0"
                             />
-                            {errors.anggaran && <p className="text-sm text-red-500 mt-1">{errors.anggaran.message}</p>}
+                            {errors.anggaran && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.anggaran.message}</p>}
                         </div>
 
-                        <div>
-                            <label className="block text-sm font-bold text-slate-700 mb-2">Realisasi (Rp)</label>
+                        {/* Realisasi */}
+                        <div className="space-y-2">
+                            <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                <Activity className="w-3 h-3" /> Realisasi (Rp)
+                            </label>
                             <input
                                 type="number"
                                 {...register("realisasi")}
-                                className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none transition-all font-mono"
+                                className="w-full px-5 py-3 bg-emerald-50/20 border border-emerald-100 rounded-xl focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm font-mono font-bold text-emerald-700"
                                 placeholder="0"
                             />
-                            {errors.realisasi && <p className="text-sm text-red-500 mt-1">{errors.realisasi.message}</p>}
+                            {errors.realisasi && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.realisasi.message}</p>}
                         </div>
                     </div>
                 </div>

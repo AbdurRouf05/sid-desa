@@ -62,55 +62,55 @@ export default function AdminPendudukPage() {
     return (
         <main className="p-4 md:p-8">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 py-2 mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold text-slate-900">Data Induk Penduduk</h1>
-                    <p className="text-slate-500">Kelola informasi dasar dan administrasi warga desa secara terpusat.</p>
+                    <h1 className="text-2xl font-black text-slate-800 tracking-tight uppercase">Data Induk Penduduk</h1>
+                    <p className="text-sm text-slate-500 mt-1">Kelola informasi dasar dan administrasi warga desa secara terpusat.</p>
                 </div>
                 <Link
                     href="/panel/dashboard/penduduk/baru"
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-emerald-900/10"
+                    className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm shadow-emerald-200 transition-all active:scale-95 group text-sm"
                 >
-                    <Plus className="w-5 h-5" />
+                    <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
                     Tambah Penduduk
                 </Link>
             </div>
 
             {/* Filter / Search */}
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 mb-6 flex flex-col md:flex-row items-center gap-4">
-                <div className="relative flex-1 max-w-md w-full">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 mb-6 flex flex-col md:flex-row items-center gap-4 transition-all hover:shadow-md">
+                <div className="relative group flex-1 max-w-xl w-full">
+                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-emerald-500 transition-colors" />
                     <input
                         type="text"
                         placeholder="Cari Nama atau NIK..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                        className="w-full pl-12 pr-6 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm font-medium"
                     />
                 </div>
-                <div className="flex items-center gap-2 w-full md:w-auto">
-                    <button className="flex items-center gap-2 px-4 py-2 text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors text-sm font-medium">
+                <div className="flex items-center gap-3 w-full md:w-auto">
+                    <button className="flex items-center gap-2 px-5 py-3 text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all text-sm font-bold shadow-sm">
                         <Filter className="w-4 h-4" />
-                        Filter
+                        Penyaringan
                     </button>
-                    <div className="text-sm text-slate-500 bg-slate-50 px-3 py-2 rounded-lg border border-slate-100">
-                        Total: <span className="font-bold text-slate-900">{residents.length}</span> Warga
+                    <div className="text-xs font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 flex items-center gap-2">
+                        Total: <span className="text-slate-800">{residents.length}</span> Warga
                     </div>
                 </div>
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden transition-all hover:shadow-md">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse min-w-[800px]">
                         <thead>
-                            <tr className="bg-slate-50 border-b border-slate-100">
-                                <th className="px-6 py-4 font-bold text-slate-700 text-sm w-16 text-center">No</th>
-                                <th className="px-6 py-4 font-bold text-slate-700 text-sm">NIK</th>
-                                <th className="px-6 py-4 font-bold text-slate-700 text-sm">Nama Lengkap</th>
-                                <th className="px-6 py-4 font-bold text-slate-700 text-sm">Jenis Kelamin</th>
-                                <th className="px-6 py-4 font-bold text-slate-700 text-sm">Alamat</th>
-                                <th className="px-6 py-4 font-bold text-slate-700 text-sm w-32 text-right">Aksi</th>
+                            <tr className="bg-slate-50/50 border-b border-slate-100">
+                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] w-16 text-center">No</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">NIK</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Nama Lengkap</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Jenis Kelamin</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Alamat</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] w-32 text-right px-8">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">

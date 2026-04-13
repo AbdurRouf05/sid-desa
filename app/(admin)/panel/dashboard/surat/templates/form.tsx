@@ -183,7 +183,7 @@ export default function TemplateEditorPage({ isEdit = false }: { isEdit?: boolea
                             </div>
                             <textarea
                                 {...register("template_html")}
-                                className="w-full h-[500px] p-4 font-mono text-sm bg-slate-900 text-emerald-400 rounded-xl focus:ring-4 focus:ring-emerald-500/10 outline-none border border-slate-800"
+                                className="w-full h-[500px] p-4 font-mono text-sm bg-emerald-950 text-emerald-400 rounded-xl focus:ring-4 focus:ring-emerald-500/10 outline-none border border-emerald-900"
                                 placeholder="<html>...</html>"
                             />
                             {errors.template_html && <p className="text-xs text-red-500 mt-1">{errors.template_html.message}</p>}

@@ -5,9 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { pb } from "@/lib/pb";
-import { SectionHeading } from "@/components/ui/section-heading";
-import { Save, ArrowLeft, Loader2, Users, FileText, X } from "lucide-react";
-import { TactileButton } from "@/components/ui/tactile-button";
+import { Save, ArrowLeft, Loader2, Users, FileText, X, Calendar, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { MutasiSchema, MutasiData } from "@/lib/validations/mutasi";
 import { cn } from "@/lib/utils";
@@ -40,7 +38,7 @@ export default function MutasiFormPage({ isEdit = false, params }: { isEdit?: bo
                     setValue("nik", record.nik || "");
                     setValue("nama_lengkap", record.nama_lengkap);
                     setValue("jenis_mutasi", record.jenis_mutasi);
-                    setValue("tanggal_mutasi", record.tanggal_mutasi.split(' ')[0]); // Convert Pocketbase date to input date
+                    setValue("tanggal_mutasi", record.tanggal_mutasi.split(' ')[0]);
                     setValue("keterangan", record.keterangan || "");
                     if (record.dokumen_bukti) {
                         setExistingFile(pb.files.getUrl(record, record.dokumen_bukti));
@@ -66,16 +64,11 @@ export default function MutasiFormPage({ isEdit = false, params }: { isEdit?: bo
 
     const removeFile = () => {
         setSelectedFile(null);
-        // If they want to remove existing file, we might need an API call or marking it for removal, but keeping it simple for now
     };
 
     const onSubmit = async (data: MutasiData) => {
         setIsLoading(true);
         try {
-            // Debug: check auth status
-            console.log("Auth valid:", pb.authStore.isValid, "Token:", pb.authStore.token ? "present" : "missing");
-            
-            // Build payload — use FormData only when a file is attached
             if (selectedFile) {
                 const formData = new FormData();
                 formData.append("nama_lengkap", data.nama_lengkap);
@@ -91,7 +84,6 @@ export default function MutasiFormPage({ isEdit = false, params }: { isEdit?: bo
                     await pb.collection("mutasi_penduduk").create(formData);
                 }
             } else {
-                // JSON payload (no file) — more reliable with PocketBase
                 const payload: Record<string, any> = {
                     nama_lengkap: data.nama_lengkap,
                     jenis_mutasi: data.jenis_mutasi,
@@ -99,8 +91,6 @@ export default function MutasiFormPage({ isEdit = false, params }: { isEdit?: bo
                 };
                 if (data.nik && data.nik.trim()) payload.nik = data.nik.trim();
                 if (data.keterangan && data.keterangan.trim()) payload.keterangan = data.keterangan.trim();
-
-                console.log("Sending payload:", JSON.stringify(payload));
 
                 if (isEdit && params?.id) {
                     await pb.collection("mutasi_penduduk").update(params.id, payload);
@@ -110,7 +100,7 @@ export default function MutasiFormPage({ isEdit = false, params }: { isEdit?: bo
             }
             router.push("/panel/dashboard/mutasi");
         } catch (error: any) {
-            console.error("Error saving mutasi — full response:", JSON.stringify(error?.response));
+            console.error("Error saving mutasi:", JSON.stringify(error?.response));
             const detail = error?.response?.data
                 ? Object.entries(error.response.data).map(([k, v]: any) => `${k}: ${v?.message}`).join(', ')
                 : error.message;
@@ -131,132 +121,177 @@ export default function MutasiFormPage({ isEdit = false, params }: { isEdit?: bo
     };
 
     if (pageLoading) {
-        return <div className="p-8 text-center text-slate-500 flex justify-center items-center"><Loader2 className="animate-spin mr-2" /> Memuat form...</div>;
+        return (
+            <div className="p-8 flex justify-center items-center gap-2 text-slate-500">
+                <Loader2 className="w-5 h-5 animate-spin" />
+                <span className="text-sm font-medium">Memuat formulir...</span>
+            </div>
+        );
     }
 
     return (
-        <main className="space-y-6">
-            <div className="flex items-center gap-4 mb-8">
-                <Link href="/panel/dashboard/mutasi">
-                    <button className="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                        <ArrowLeft className="w-5 h-5 text-slate-600" />
-                    </button>
-                </Link>
-                <SectionHeading 
-                    title={isEdit ? "Edit Catatan Mutasi" : "Catat Mutasi Baru"} 
-                    subtitle={isEdit ? "Perbarui detail riwayat mutasi penduduk." : "Tambahkan pencatatan warga lahir, mati, datang, atau pergi."} 
-                />
-            </div>
-
-            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-100">
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-                    
-                    {/* Grid Top */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-4 md:col-span-2">
-                             <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl space-y-6">
-                                <div>
-                                    <label className="block text-sm font-bold text-slate-700 mb-2">Jenis Mutasi <span className="text-red-500">*</span></label>
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                        {["Lahir", "Mati", "Datang", "Pergi"].map((jns) => (
-                                            <label 
-                                                key={jns} 
-                                                className={cn(
-                                                    "cursor-pointer flex items-center justify-center py-3 border-2 rounded-xl text-sm font-bold transition-all",
-                                                    watchJenisMutasi === jns 
-                                                        ? "border-emerald-500 bg-emerald-500 text-white shadow-md shadow-emerald-500/20" 
-                                                        : "border-slate-200 bg-white text-slate-500 hover:border-emerald-200"
-                                                )}
-                                            >
-                                                <input type="radio" value={jns} {...register("jenis_mutasi")} className="sr-only" />
-                                                {jns}
-                                            </label>
-                                        ))}
-                                    </div>
-                                    {errors.jenis_mutasi && <p className="text-red-500 text-xs mt-1">{errors.jenis_mutasi.message}</p>}
-                                </div>
-                             </div>
+        <main className="max-w-5xl mx-auto pb-20 animate-in fade-in duration-500 px-4 md:px-0">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                {/* Clean Integrated Header */}
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 py-2 mb-6">
+                    <div className="flex items-center gap-4">
+                        <Link
+                            href="/panel/dashboard/mutasi"
+                            className="p-2.5 hover:bg-white rounded-xl transition-all border border-transparent hover:border-slate-200 shadow-sm hover:shadow-md bg-slate-50 md:bg-transparent"
+                        >
+                            <ArrowLeft className="w-5 h-5 text-slate-600" />
+                        </Link>
+                        <div>
+                            <h1 className="text-2xl font-black text-slate-800 tracking-tight uppercase">
+                                {isEdit ? "Perbarui Mutasi" : "Catat Mutasi Baru"}
+                            </h1>
+                            <p className="text-sm text-slate-500 mt-1">
+                                {isEdit ? "Perbarui detail riwayat mutasi penduduk." : "Pencatatan warga lahir, mati, datang, atau pergi."}
+                            </p>
                         </div>
-
-                        {/* Nama Lengkap */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                                Nama Lengkap <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                {...register("nama_lengkap")}
-                                placeholder="Nama lengkap warga"
-                                className={cn(
-                                    "w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 transition-all",
-                                    errors.nama_lengkap ? "border-red-300 focus:ring-red-500/20 focus:border-red-500" : "border-slate-200 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                )}
-                            />
-                            {errors.nama_lengkap && <p className="text-red-500 text-xs">{errors.nama_lengkap.message}</p>}
-                            {watchJenisMutasi === "Lahir" && <p className="text-slate-400 text-xs">Untuk bayi yang belum punya nama, isi dengan "BAYI NYONYA [NAMA IBU]"</p>}
-                        </div>
-
-                        {/* NIK */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
-                                Nomor Induk Kependudukan (NIK)
-                                {watchJenisMutasi !== "Lahir" && <span className="text-red-500">*</span>}
-                            </label>
-                            <input
-                                {...register("nik")}
-                                placeholder="16 digit NIK"
-                                maxLength={16}
-                                className={cn(
-                                    "w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 transition-all",
-                                    errors.nik ? "border-red-300 focus:ring-red-500/20 focus:border-red-500" : "border-slate-200 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                )}
-                            />
-                            {errors.nik && <p className="text-red-500 text-xs">{errors.nik.message}</p>}
-                            {watchJenisMutasi === "Lahir" ? (
-                                <p className="text-slate-400 text-xs">Kosongkan jika bayi baru lahir dan belum diterbitkan NIK.</p>
-                            ) : (
-                                <p className="text-slate-400 text-xs">Wajib diisi 16 digit sesuai identitas resmi.</p>
-                            )}
-                        </div>
-                        
-                        {/* Tanggal */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700">Tanggal Kejadian <span className="text-red-500">*</span></label>
-                            <input
-                                type="date"
-                                {...register("tanggal_mutasi")}
-                                className={cn(
-                                    "w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 transition-all",
-                                    errors.tanggal_mutasi ? "border-red-300 focus:ring-red-500/20 focus:border-red-500" : "border-slate-200 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                )}
-                            />
-                            {errors.tanggal_mutasi && <p className="text-red-500 text-xs">{errors.tanggal_mutasi.message}</p>}
-                        </div>
-
                     </div>
 
-                    <div className="border-t border-slate-100 pt-6"></div>
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className="w-full md:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm shadow-emerald-200 transition-all active:scale-95 disabled:opacity-70 group"
+                    >
+                        {isLoading ? (
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                            <Save className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+                        )}
+                        {isEdit ? "Simpan Perubahan" : "Simpan Pencatatan"}
+                    </button>
+                </div>
 
-                    {/* Keterangan & Dokumen */}
+                <div className="space-y-6">
+                    {/* Section: Jenis Mutasi */}
+                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                        <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
+                            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                <Users className="w-5 h-5" />
+                            </div>
+                            <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Jenis Mutasi</h3>
+                        </div>
+
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            {["Lahir", "Mati", "Datang", "Pergi"].map((jns) => (
+                                <label 
+                                    key={jns} 
+                                    className={cn(
+                                        "cursor-pointer flex items-center justify-center py-3 border-2 rounded-xl text-sm font-bold transition-all",
+                                        watchJenisMutasi === jns 
+                                            ? "border-emerald-500 bg-emerald-500 text-white shadow-md shadow-emerald-500/20" 
+                                            : "border-slate-200 bg-white text-slate-500 hover:border-emerald-200 hover:bg-emerald-50/30"
+                                    )}
+                                >
+                                    <input type="radio" value={jns} {...register("jenis_mutasi")} className="sr-only" />
+                                    {jns}
+                                </label>
+                            ))}
+                        </div>
+                        {errors.jenis_mutasi && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight mt-2">{errors.jenis_mutasi.message}</p>}
+                    </div>
+
+                    {/* Section: Data Warga */}
+                    <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                        <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
+                            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+                                <CreditCard className="w-5 h-5" />
+                            </div>
+                            <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Data Warga</h3>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            {/* Nama Lengkap */}
+                            <div className="space-y-2">
+                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                    Nama Lengkap <span className="text-red-400">*</span>
+                                </label>
+                                <input
+                                    {...register("nama_lengkap")}
+                                    placeholder="Nama lengkap warga"
+                                    className={cn(
+                                        "w-full px-5 py-3 bg-slate-50/50 border rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:bg-white outline-none transition-all text-sm font-bold uppercase tracking-wide",
+                                        errors.nama_lengkap ? "border-red-300 focus:border-red-500" : "border-slate-200 focus:border-emerald-500"
+                                    )}
+                                />
+                                {errors.nama_lengkap && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.nama_lengkap.message}</p>}
+                                {watchJenisMutasi === "Lahir" && <p className="text-[10px] text-slate-400">Untuk bayi: isi "BAYI NYONYA [NAMA IBU]"</p>}
+                            </div>
+
+                            {/* NIK */}
+                            <div className="space-y-2">
+                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                    NIK (16 Digit) {watchJenisMutasi !== "Lahir" && <span className="text-red-400">*</span>}
+                                </label>
+                                <input
+                                    {...register("nik")}
+                                    placeholder="320..."
+                                    maxLength={16}
+                                    className={cn(
+                                        "w-full px-5 py-3 bg-slate-50/50 border rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:bg-white outline-none transition-all font-mono text-sm",
+                                        errors.nik ? "border-red-300 focus:border-red-500" : "border-slate-200 focus:border-emerald-500"
+                                    )}
+                                />
+                                {errors.nik && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.nik.message}</p>}
+                                {watchJenisMutasi === "Lahir" && <p className="text-[10px] text-slate-400">Kosongkan jika belum diterbitkan NIK.</p>}
+                            </div>
+
+                            {/* Tanggal Kejadian */}
+                            <div className="space-y-2">
+                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
+                                    Tanggal Kejadian <span className="text-red-400">*</span>
+                                </label>
+                                <input
+                                    type="date"
+                                    {...register("tanggal_mutasi")}
+                                    className={cn(
+                                        "w-full px-5 py-3 bg-slate-50/50 border rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:bg-white outline-none transition-all text-sm",
+                                        errors.tanggal_mutasi ? "border-red-300 focus:border-red-500" : "border-slate-200 focus:border-emerald-500"
+                                    )}
+                                />
+                                {errors.tanggal_mutasi && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.tanggal_mutasi.message}</p>}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Section: Keterangan & Dokumen */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Keterangan */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700">Keterangan Tambahan</label>
-                            <textarea
-                                {...register("keterangan")}
-                                rows={4}
-                                placeholder="Detail tambahan... cth: Pindah ke alamat RT 01 RW 02, Meninggal karena sakit, dll."
-                                className={cn(
-                                    "w-full px-4 py-2.5 border rounded-xl focus:outline-none focus:ring-2 transition-all resize-none",
-                                    errors.keterangan ? "border-red-300 focus:ring-red-500/20 focus:border-red-500" : "border-slate-200 focus:ring-emerald-500/20 focus:border-emerald-500"
-                                )}
-                            />
-                            {errors.keterangan && <p className="text-red-500 text-xs">{errors.keterangan.message}</p>}
+                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                            <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
+                                <div className="p-2 bg-amber-50 text-amber-600 rounded-xl">
+                                    <FileText className="w-5 h-5" />
+                                </div>
+                                <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Keterangan</h3>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Detail Tambahan</label>
+                                <textarea
+                                    {...register("keterangan")}
+                                    rows={4}
+                                    placeholder="cth: Pindah ke RT 01 RW 02, Meninggal karena sakit, dll."
+                                    className={cn(
+                                        "w-full px-5 py-3 bg-slate-50/50 border rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:bg-white outline-none transition-all resize-none text-sm",
+                                        errors.keterangan ? "border-red-300 focus:border-red-500" : "border-slate-200 focus:border-emerald-500"
+                                    )}
+                                />
+                            </div>
                         </div>
 
                         {/* Dokumen Bukti */}
-                        <div className="space-y-2">
-                            <label className="text-sm font-bold text-slate-700">Lampirkan Dokumen Bukti <span className="text-slate-400 font-normal">(Opsional)</span></label>
-                            <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 flex flex-col items-center justify-center bg-slate-50 relative group min-h-[120px]">
+                        <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 transition-all hover:shadow-md">
+                            <div className="flex items-center gap-3 mb-6 border-b border-slate-50 pb-4">
+                                <div className="p-2 bg-rose-50 text-rose-600 rounded-xl">
+                                    <FileText className="w-5 h-5" />
+                                </div>
+                                <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest">Dokumen Bukti</h3>
+                            </div>
+
+                            <div className="relative group cursor-pointer">
                                 <input 
                                     type="file" 
                                     accept="image/*,.pdf"
@@ -266,66 +301,41 @@ export default function MutasiFormPage({ isEdit = false, params }: { isEdit?: bo
                                 />
                                 
                                 {selectedFile ? (
-                                    <div className="flex flex-col items-center relative z-20 w-full">
-                                        <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-3 py-2 rounded-lg border border-emerald-100 w-full max-w-[250px]">
-                                            <FileText className="w-5 h-5 shrink-0" />
-                                            <span className="text-xs truncate flex-1 font-medium">{selectedFile.name}</span>
-                                            <button 
-                                                type="button" 
-                                                onClick={removeFile}
-                                                className="p-1 hover:bg-emerald-200 rounded-md shrink-0 text-emerald-700 transition-colors z-30 relative"
-                                            >
-                                                <X className="w-4 h-4" />
-                                            </button>
-                                        </div>
+                                    <div className="flex items-center gap-2 text-emerald-600 bg-emerald-50 px-4 py-3 rounded-xl border border-emerald-100 relative z-20">
+                                        <FileText className="w-5 h-5 shrink-0" />
+                                        <span className="text-sm truncate flex-1 font-medium">{selectedFile.name}</span>
+                                        <button 
+                                            type="button" 
+                                            onClick={removeFile}
+                                            className="p-1 hover:bg-emerald-200 rounded-md shrink-0 text-emerald-700 transition-colors z-30 relative"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
                                     </div>
                                 ) : (
-                                    <div className="text-center pointer-events-none">
-                                        <FileText className="w-8 h-8 text-slate-300 mx-auto mb-2 group-hover:text-emerald-500 transition-colors" />
-                                        <p className="text-sm font-medium text-slate-600">Klik / Tarik File Bukti</p>
-                                        <p className="text-xs text-emerald-600/70 mt-1 font-medium bg-emerald-50 px-2 py-1 rounded inline-block">
-                                            Opsional: Image/PDF maks 5MB ({getDokumenSubtext()})
-                                        </p>
+                                    <div className="aspect-[3/2] rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center bg-slate-50 group-hover:bg-slate-100 transition-all pointer-events-none">
+                                        <FileText className="w-10 h-10 text-slate-300 mb-2 group-hover:text-emerald-500 transition-colors" />
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Klik untuk Upload</p>
+                                        <p className="text-[10px] text-slate-400 mt-1">{getDokumenSubtext()}</p>
                                     </div>
                                 )}
                             </div>
-                            
-                            {/* Tampilkan file yang sudah ada jika mode edit */}
+
+                            {/* Existing file indicator */}
                             {isEdit && existingFile && !selectedFile && (
-                                <div className="mt-2 text-sm flex items-center justify-between bg-blue-50/50 p-2.5 rounded-lg border border-blue-100">
-                                    <span className="text-blue-700 flex items-center gap-2">
-                                        <FileText className="w-4 h-4" /> File tersimpan saat ini
+                                <div className="mt-3 text-sm flex items-center justify-between bg-blue-50 p-3 rounded-xl border border-blue-100">
+                                    <span className="text-blue-700 flex items-center gap-2 text-xs font-bold">
+                                        <FileText className="w-4 h-4" /> File tersimpan
                                     </span>
-                                    <a href={existingFile} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline font-medium text-xs">
-                                        Lihat File
+                                    <a href={existingFile} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline font-bold text-[10px] uppercase tracking-widest">
+                                        Lihat
                                     </a>
                                 </div>
                             )}
                         </div>
                     </div>
-
-                    <div className="pt-6 border-t border-slate-100 flex justify-end gap-3">
-                        <Link href="/panel/dashboard/mutasi">
-                            <TactileButton variant="secondary" type="button" disabled={isLoading}>
-                                Batal
-                            </TactileButton>
-                        </Link>
-                        <TactileButton variant="primary" type="submit" disabled={isLoading}>
-                            {isLoading ? (
-                                <>
-                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                    Menyimpan...
-                                </>
-                            ) : (
-                                <>
-                                    <Save className="w-4 h-4 mr-2" />
-                                    Simpan Pencatatan
-                                </>
-                            )}
-                        </TactileButton>
-                    </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </main>
     );
 }
