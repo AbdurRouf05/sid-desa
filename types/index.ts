@@ -36,7 +36,7 @@ export interface News {
 export interface ApbdesRealisasi {
     id: string;
     tahun_anggaran: number;
-    kategori: 'Pendapatan' | 'Belanja' | 'Pembiayaan';
+    kategori: 'Alokasi Dana Desa (ADD)' | 'Dana Desa (DD)' | 'BHP/BHR' | 'Bunga Bank';
     nama_bidang: string;
     anggaran: number;
     realisasi: number;
