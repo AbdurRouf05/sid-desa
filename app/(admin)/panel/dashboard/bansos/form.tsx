@@ -20,7 +20,7 @@ export default function BansosFormPage({ isEdit = false, recordId }: { isEdit?: 
     const [catLoading, setCatLoading] = useState(false);
 
     const { register, handleSubmit, setValue, watch, control, formState: { errors } } = useForm<BansosData>({
-        resolver: zodResolver(BansosSchema),
+        resolver: zodResolver(BansosSchema) as any,
         defaultValues: {
             jenis_bantuan: "",
             tahun_penerimaan: new Date().getFullYear(),
