@@ -172,3 +172,16 @@ export interface PenerimaBansos {
         };
     };
 }
+
+export interface PbbWarga {
+    id: string;
+    nop: string;
+    nama_wajib_pajak: string;
+    dusun_koordinator: string;
+    nominal_tagihan: number;
+    status_pembayaran: 'Belum Lunas' | 'Lunas';
+    denda?: number;
+    tanggal_bayar?: string;
+    created: string;
+    updated: string;
+}

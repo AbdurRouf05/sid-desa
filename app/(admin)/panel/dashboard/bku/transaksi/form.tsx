@@ -25,7 +25,7 @@ export function BkuTransaksiForm({ initialData }: BkuFormProps) {
     const [rekenings, setRekenings] = useState<RekeningKas[]>([]);
     
     const { register, handleSubmit, setValue, watch, control, formState: { errors } } = useForm<BkuTransaksiData>({
-        resolver: zodResolver(BkuTransaksiSchema),
+        resolver: zodResolver(BkuTransaksiSchema) as any,
         defaultValues: {
             tanggal: initialData?.tanggal || new Date().toISOString().split('T')[0],
             uraian: initialData?.uraian || "",
@@ -81,10 +81,10 @@ export function BkuTransaksiForm({ initialData }: BkuFormProps) {
             await Promise.all(existingPajak.map(p => pb.collection("pajak_log").delete(p.id)));
 
             const tasks = [];
-            if (data.pajak_logs.pph21 > 0) tasks.push(pb.collection("pajak_log").create({ bku_id: record.id, jenis_pajak: "PPh 21", nominal_pajak: data.pajak_logs.pph21, status: "Belum Disetor" }));
-            if (data.pajak_logs.pph22 > 0) tasks.push(pb.collection("pajak_log").create({ bku_id: record.id, jenis_pajak: "PPh 22", nominal_pajak: data.pajak_logs.pph22, status: "Belum Disetor" }));
-            if (data.pajak_logs.pph23 > 0) tasks.push(pb.collection("pajak_log").create({ bku_id: record.id, jenis_pajak: "PPh 23", nominal_pajak: data.pajak_logs.pph23, status: "Belum Disetor" }));
-            if (data.pajak_logs.ppn > 0) tasks.push(pb.collection("pajak_log").create({ bku_id: record.id, jenis_pajak: "PPN", nominal_pajak: data.pajak_logs.ppn, status: "Belum Disetor" }));
+            if (data.pajak_logs?.pph21 && data.pajak_logs.pph21 > 0) tasks.push(pb.collection("pajak_log").create({ bku_id: record.id, jenis_pajak: "PPh 21", nominal_pajak: data.pajak_logs.pph21, status: "Belum Disetor" }));
+            if (data.pajak_logs?.pph22 && data.pajak_logs.pph22 > 0) tasks.push(pb.collection("pajak_log").create({ bku_id: record.id, jenis_pajak: "PPh 22", nominal_pajak: data.pajak_logs.pph22, status: "Belum Disetor" }));
+            if (data.pajak_logs?.pph23 && data.pajak_logs.pph23 > 0) tasks.push(pb.collection("pajak_log").create({ bku_id: record.id, jenis_pajak: "PPh 23", nominal_pajak: data.pajak_logs.pph23, status: "Belum Disetor" }));
+            if (data.pajak_logs?.ppn && data.pajak_logs.ppn > 0) tasks.push(pb.collection("pajak_log").create({ bku_id: record.id, jenis_pajak: "PPN", nominal_pajak: data.pajak_logs.ppn, status: "Belum Disetor" }));
             
             await Promise.all(tasks);
 

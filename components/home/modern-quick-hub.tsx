@@ -68,26 +68,35 @@ export function ModernQuickHub({ onActionClick }: QuickHubProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {hubItems.map((item, index) => {
-                        const ItemWrapper = item.type === 'link' ? Link : 'button';
-                        const wProps = item.type === 'link' ? { href: item.href || "#" } : { onClick: item.action };
+                        const sharedClassName = cn(
+                            "flex flex-col items-start p-6 rounded-2xl border transition-all duration-300 text-left group",
+                            "hover:shadow-lg hover:-translate-y-1",
+                            item.color
+                        );
 
-                        return (
-                            <ItemWrapper
-                                key={index}
-                                {...wProps}
-                                className={cn(
-                                    "flex flex-col items-start p-6 rounded-2xl border transition-all duration-300 text-left group",
-                                    "hover:shadow-lg hover:-translate-y-1",
-                                    item.color
-                                )}
-                            >
+                        const content = (
+                            <>
                                 <div className="bg-white p-3 rounded-xl shadow-sm mb-4 transition-transform group-hover:scale-110">
                                     {item.icon}
                                 </div>
                                 <h3 className="text-lg font-bold text-slate-800 mb-1">{item.title}</h3>
                                 <p className="text-sm font-medium text-slate-600">{item.desc}</p>
-                            </ItemWrapper>
-                        )
+                            </>
+                        );
+
+                        if (item.type === 'link') {
+                            return (
+                                <Link key={index} href={item.href || "#"} className={sharedClassName}>
+                                    {content}
+                                </Link>
+                            );
+                        }
+
+                        return (
+                            <button type="button" key={index} onClick={item.action} className={sharedClassName}>
+                                {content}
+                            </button>
+                        );
                     })}
                 </div>
             </div>
