@@ -46,8 +46,8 @@ export default function TanahDesaPage() {
 
     const filteredData = useMemo(() => {
         return data.filter(item => 
-            item.lokasi.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            item.peruntukan.toLowerCase().includes(searchQuery.toLowerCase())
+            (item.lokasi || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (item.peruntukan || "").toLowerCase().includes(searchQuery.toLowerCase())
         );
     }, [data, searchQuery]);
 
