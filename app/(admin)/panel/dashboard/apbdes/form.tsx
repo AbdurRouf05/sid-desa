@@ -19,7 +19,7 @@ export default function ApbdesFormPage({ isEdit = false }: { isEdit?: boolean })
         resolver: zodResolver(ApbdesSchema) as any,
         defaultValues: {
             tahun_anggaran: new Date().getFullYear(),
-            kategori: "Pendapatan",
+            kategori: "Alokasi Dana Desa (ADD)",
             nama_bidang: "",
             anggaran: 0,
             realisasi: 0,
@@ -80,7 +80,7 @@ export default function ApbdesFormPage({ isEdit = false }: { isEdit?: boolean })
                                 {isEdit ? "Perbarui Anggaran" : "Input Anggaran Baru"}
                             </h1>
                             <p className="text-sm text-slate-500 mt-1">
-                                Kelola transparansi anggaran pendapatan dan belanja desa.
+                                Kelola transparansi anggaran berdasarkan sumber dana desa.
                             </p>
                         </div>
                     </div>
@@ -114,16 +114,16 @@ export default function ApbdesFormPage({ isEdit = false }: { isEdit?: boolean })
                             {errors.tahun_anggaran && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.tahun_anggaran.message}</p>}
                         </div>
 
-                        {/* Kategori Utama */}
+                        {/* Sumber Dana */}
                         <div className="space-y-2">
                             <div className="flex items-center justify-between">
                                 <label className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                                    <Tag className="w-3 h-3" /> Kategori Utama
+                                    <Tag className="w-3 h-3" /> Sumber Dana
                                 </label>
                                 <div className="relative group cursor-help">
                                     <HelpCircle className="w-3.5 h-3.5 text-slate-300" />
                                     <div className="absolute right-0 bottom-full mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all w-64 p-3 bg-emerald-800 text-white text-[10px] leading-relaxed rounded-xl shadow-xl z-50 pointer-events-none font-medium">
-                                        Pilih Kategori Utama (Pendapatan / Belanja / Pembiayaan).
+                                        Pilih asal sumber dana anggaran.
                                     </div>
                                 </div>
                             </div>
@@ -131,12 +131,14 @@ export default function ApbdesFormPage({ isEdit = false }: { isEdit?: boolean })
                                 {...register("kategori")}
                                 className="w-full px-5 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm font-bold appearance-none"
                             >
-                                <option value="Pendapatan">PENDAPATAN</option>
-                                <option value="Belanja">BELANJA</option>
-                                <option value="Pembiayaan">PEMBIAYAAN</option>
+                                <option value="Alokasi Dana Desa (ADD)">ALOKASI DANA DESA (ADD)</option>
+                                <option value="Dana Desa (DD)">DANA DESA (DD)</option>
+                                <option value="BHP/BHR">BHP / BHR</option>
+                                <option value="Bunga Bank">BUNGA BANK</option>
                             </select>
                             {errors.kategori && <p className="text-[10px] font-bold text-red-500 uppercase tracking-tight">{errors.kategori.message}</p>}
                         </div>
+
 
                         {/* Nama Bidang */}
                         <div className="md:col-span-2 space-y-2">

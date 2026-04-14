@@ -791,9 +791,10 @@
                 "system": false,
                 "type": "select",
                 "values": [
-                    "Pendapatan",
-                    "Belanja",
-                    "Pembiayaan"
+                    "Alokasi Dana Desa (ADD)",
+                    "Dana Desa (DD)",
+                    "BHP/BHR",
+                    "Bunga Bank"
                 ]
             },
             {

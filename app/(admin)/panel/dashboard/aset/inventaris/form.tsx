@@ -22,11 +22,11 @@ export function InventarisForm({ initialData }: InventarisFormProps) {
     const router = useRouter();
     const [isSaving, setIsSaving] = useState(false);
 
-    const { register, handleSubmit, formState: { errors }, reset, watch } = useForm<InventarisDesa>({
+    const { register, handleSubmit, formState: { errors }, reset, watch, setValue } = useForm<InventarisDesa>({
         resolver: zodResolver(InventarisDesaSchema),
         defaultValues: {
             nama_barang: "",
-            kategori: "",
+            kategori: "Lainnya",
             kuantitas: 1,
             tahun_perolehan: new Date().getFullYear(),
             kondisi: "Baik",
@@ -35,6 +35,7 @@ export function InventarisForm({ initialData }: InventarisFormProps) {
 
     const namaBarang = watch("nama_barang");
     const kondisi = watch("kondisi");
+    const kategoriValue = watch("kategori");
 
     useEffect(() => {
         if (initialData) {
@@ -128,15 +129,24 @@ export function InventarisForm({ initialData }: InventarisFormProps) {
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="space-y-2">
+                                    <div className="space-y-4">
                                         <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] px-1">Klasifikasi / Kategori</label>
-                                        <div className="relative">
-                                            <input
-                                                {...register("kategori")}
-                                                className="w-full h-12 px-5 bg-slate-50 border border-slate-200 rounded-2xl focus:border-emerald-500 outline-none transition-all text-[11px] font-black uppercase tracking-widest"
-                                                placeholder="MISAL: ELEKTRONIK / MESIN / MEUBEL"
-                                            />
-                                            <Tag className="absolute right-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300" />
+                                        <div className="flex flex-wrap gap-2">
+                                            {["Bangunan", "Kendaraan", "Elektronik", "Mebel", "Lainnya"].map((k) => (
+                                                <button
+                                                    key={k}
+                                                    type="button"
+                                                    onClick={() => setValue("kategori", k as any)}
+                                                    className={cn(
+                                                        "px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all active:scale-95",
+                                                        kategoriValue === k 
+                                                            ? "bg-emerald-600 text-white border-emerald-500 shadow-lg shadow-emerald-900/10"
+                                                            : "bg-slate-50 border-slate-200 text-slate-400 hover:bg-slate-100"
+                                                    )}
+                                                >
+                                                    {k}
+                                                </button>
+                                            ))}
                                         </div>
                                         {errors.kategori && <p className="text-[10px] font-bold text-red-500 uppercase px-1">{errors.kategori.message}</p>}
                                     </div>
@@ -204,6 +214,7 @@ export function InventarisForm({ initialData }: InventarisFormProps) {
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
                     {/* Sidebar / Summary Column (4 Cols) */}

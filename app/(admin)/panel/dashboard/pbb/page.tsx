@@ -4,15 +4,17 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { pb } from "@/lib/pb";
 import { PbbWarga } from "@/types";
-import { Plus, Search, Trash2, Edit2, Download, CheckCircle, Clock, PieChart, Target, Wallet, History } from "lucide-react";
+import { Plus, Search, Trash2, Edit2, Download, CheckCircle, Clock, PieChart, Target, Wallet, History, Loader2 as Spinner } from "lucide-react";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils";
 import { formatRupiah, formatDate } from "@/lib/number-utils";
+import { toast } from "sonner";
 
 export default function PbbPage() {
     const [data, setData] = useState<PbbWarga[]>([]);
     const [loading, setLoading] = useState(true);
+    const [updatingId, setUpdatingId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [filterDusun, setFilterDusun] = useState<string>("Semua");
 
@@ -42,6 +44,23 @@ export default function PbbPage() {
         } catch (error) {
             console.error("Failed to delete", error);
             alert("Gagal menghapus catatan PBB.");
+        }
+    };
+
+    const handleMarkAsPaid = async (item: PbbWarga) => {
+        setUpdatingId(item.id);
+        try {
+            await pb.collection("pbb_warga").update(item.id, {
+                status_pembayaran: "Lunas",
+                tanggal_bayar: new Date().toISOString()
+            });
+            toast.success(`PBB ${item.nama_wajib_pajak} berhasil ditandai LUNAS.`);
+            fetchData();
+        } catch (error) {
+            console.error("Failed to update status", error);
+            toast.error("Gagal mengubah status pembayaran.");
+        } finally {
+            setUpdatingId(null);
         }
     };
 
@@ -290,16 +309,28 @@ export default function PbbPage() {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right pr-8">
-                                            <div className="flex gap-2 justify-end opacity-40 group-hover:opacity-100 transition-opacity">
+                                            <div className="flex gap-2 justify-end items-center opacity-40 group-hover:opacity-100 transition-opacity">
+                                                {item.status_pembayaran !== "Lunas" && (
+                                                    <button
+                                                        onClick={() => handleMarkAsPaid(item)}
+                                                        disabled={updatingId === item.id}
+                                                        className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all border border-transparent hover:border-emerald-100"
+                                                        title="Tandai Sudah Bayar (Lunas)"
+                                                    >
+                                                        {updatingId === item.id ? <Spinner className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
+                                                    </button>
+                                                )}
                                                 <Link
                                                     href={`/panel/dashboard/pbb/${item.id}`}
                                                     className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all border border-transparent hover:border-blue-100"
+                                                    title="Edit Data"
                                                 >
                                                     <Edit2 className="w-4 h-4" />
                                                 </Link>
                                                 <button 
                                                     onClick={() => handleDelete(item.id)}
                                                     className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all border border-transparent hover:border-red-100"
+                                                    title="Hapus Data"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>

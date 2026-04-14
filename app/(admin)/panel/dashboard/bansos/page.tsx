@@ -4,10 +4,11 @@ import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { pb } from "@/lib/pb";
 import { PenerimaBansos } from "@/types";
-import { Plus, Search, Trash2, Edit2, Users, FileText, Calendar, ShieldCheck, Activity } from "lucide-react";
+import { Plus, Search, Trash2, Edit2, Users, FileText, Calendar, ShieldCheck, Activity, FileSpreadsheet } from "lucide-react";
 import { TableSkeleton } from "@/components/ui/table-skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils";
+import { ImportBansosDialog } from "@/components/admin/bansos/import-dialog";
 
 export default function BansosPage() {
     const [data, setData] = useState<PenerimaBansos[]>([]);
@@ -71,9 +72,9 @@ export default function BansosPage() {
     const filteredData = useMemo(() => {
         return data.filter(item => {
             const matchesSearch = item.nama.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                  (item.nik && item.nik.includes(searchQuery));
+                                   (item.nik && item.nik.includes(searchQuery));
             const matchesFilter = filterJenis === "Semua" || 
-                                  (item.expand?.jenis_bantuan?.nama === filterJenis);
+                                   (item.expand?.jenis_bantuan?.nama === filterJenis);
             return matchesSearch && matchesFilter;
         });
     }, [data, searchQuery, filterJenis]);
@@ -100,12 +101,16 @@ export default function BansosPage() {
                     <h1 className="text-2xl font-black text-slate-800 tracking-tight uppercase">Penerima Bansos</h1>
                     <p className="text-sm text-slate-500 mt-1">Pusat pengelolaan data bantuan sosial warga desa.</p>
                 </div>
-                <Link href="/panel/dashboard/bansos/baru" className="w-full md:w-auto">
-                    <button className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm shadow-emerald-200 transition-all active:scale-95 group text-sm w-full md:w-auto">
-                        <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
-                        Tambah Penerima
-                    </button>
-                </Link>
+                <div className="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+                    <ImportBansosDialog onComplete={fetchData} />
+                    
+                    <Link href="/panel/dashboard/bansos/baru" className="w-full md:w-auto">
+                        <button className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm shadow-emerald-200 transition-all active:scale-95 group text-sm w-full md:w-auto">
+                            <Plus className="w-5 h-5 group-hover:rotate-90 transition-transform" />
+                            Tambah Penerima
+                        </button>
+                    </Link>
+                </div>
             </div>
 
             {/* Quick Stats Grid */}

@@ -58,7 +58,7 @@ export default function AdminApbdesPage() {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 py-2 mb-2">
                 <div>
                     <h1 className="text-2xl font-black text-slate-800 tracking-tight uppercase">Transparansi APBDes</h1>
-                    <p className="text-sm text-slate-500 mt-1">Kelola data anggaran dan realisasi (Pendapatan, Belanja, Pembiayaan).</p>
+                    <p className="text-sm text-slate-500 mt-1">Kelola data anggaran dan realisasi berdasarkan sumber dana desa.</p>
                 </div>
                 <Link
                     href="/panel/dashboard/apbdes/baru"
@@ -106,7 +106,7 @@ export default function AdminApbdesPage() {
                         <thead>
                             <tr className="bg-slate-50/50 border-b border-slate-100">
                                 <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Tahun</th>
-                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Kategori</th>
+                                <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Sumber Dana</th>
                                 <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Nama Bidang</th>
                                 <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Anggaran</th>
                                 <th className="px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Realisasi</th>
@@ -141,13 +141,15 @@ export default function AdminApbdesPage() {
                                         <td className="px-6 py-4">
                                             <span className={cn(
                                                 "px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border",
-                                                item.kategori === 'Pendapatan' ? 'bg-blue-50 text-blue-700 border-blue-100' :
-                                                item.kategori === 'Belanja' ? 'bg-red-50 text-red-700 border-red-100' :
-                                                'bg-amber-50 text-amber-700 border-amber-100'
+                                                item.kategori === 'Alokasi Dana Desa (ADD)' ? 'bg-blue-50 text-blue-700 border-blue-100' :
+                                                item.kategori === 'Dana Desa (DD)' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
+                                                item.kategori === 'BHP/BHR' ? 'bg-amber-50 text-amber-700 border-amber-100' :
+                                                'bg-indigo-50 text-indigo-700 border-indigo-100'
                                             )}>
                                                 {item.kategori}
                                             </span>
                                         </td>
+
                                         <td className="px-6 py-4">
                                             <p className="text-sm font-bold text-slate-700">{item.nama_bidang}</p>
                                         </td>

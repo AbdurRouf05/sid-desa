@@ -47,10 +47,15 @@ export function ModernApbdes({ onViewDetails }: ApbdesProps) {
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState({
         year: new Date().getFullYear(),
-        pendapatan: { realized: 0, budget: 0 },
-        belanja: { realized: 0, budget: 0 },
-        pembiayaan: { realized: 0, budget: 0 }
+        sources: [] as { label: string; realized: number; budget: number; color: string }[]
     });
+
+    const getColor = (category: string) => {
+        if (category.includes("ADD")) return "bg-gradient-to-r from-blue-400 to-blue-600";
+        if (category.includes("DD")) return "bg-gradient-to-r from-emerald-400 to-emerald-600";
+        if (category.includes("BHP")) return "bg-gradient-to-r from-amber-400 to-amber-600";
+        return "bg-gradient-to-r from-indigo-400 to-indigo-600";
+    };
 
     useEffect(() => {
         const fetchApbdes = async () => {
@@ -63,28 +68,28 @@ export function ModernApbdes({ onViewDetails }: ApbdesProps) {
                 
                 if (records.length > 0) {
                     const targetYear = records[0].tahun_anggaran; // use the year we found
-                    let pendRev = 0, pendBud = 0;
-                    let belRev = 0, belBud = 0;
-                    let pembRev = 0, pembBud = 0;
+                    const grouped: Record<string, { realized: number; budget: number }> = {};
 
                     records.filter(r => r.tahun_anggaran === targetYear).forEach(r => {
-                        const rlz = r.realisasi || 0;
-                        const bdg = r.anggaran || 0;
-                        if (r.kategori === 'Pendapatan') { pendRev += rlz; pendBud += bdg; }
-                        else if (r.kategori === 'Belanja') { belRev += rlz; belBud += bdg; }
-                        else if (r.kategori === 'Pembiayaan') { pembRev += rlz; pembBud += bdg; }
+                        const cat = r.kategori;
+                        if (!grouped[cat]) grouped[cat] = { realized: 0, budget: 0 };
+                        grouped[cat].realized += (r.realisasi || 0);
+                        grouped[cat].budget += (r.anggaran || 0);
                     });
+
+                    const sourceList = Object.entries(grouped).map(([label, values]) => ({
+                        label,
+                        ...values,
+                        color: getColor(label)
+                    }));
 
                     setData({
                         year: targetYear,
-                        pendapatan: { realized: pendRev, budget: pendBud },
-                        belanja: { realized: belRev, budget: belBud },
-                        pembiayaan: { realized: pembRev, budget: pembBud }
+                        sources: sourceList
                     });
                 }
             } catch (err) {
                 console.error("Failed to load apbdes", err);
-                // Fallback softly handled by keeping zeroes
             } finally {
                 setLoading(false);
             }
@@ -93,94 +98,69 @@ export function ModernApbdes({ onViewDetails }: ApbdesProps) {
         fetchApbdes();
     }, []);
 
-    const isEmpty = !loading && data.pendapatan.budget === 0 && data.belanja.budget === 0 && data.pembiayaan.budget === 0;
+    const isEmpty = !loading && data.sources.length === 0;
 
     return (
-        <section id="apbdesa" className="py-8 md:py-10 bg-transparent relative overflow-hidden w-full h-full flex flex-col">
-             {/* Decorative Background */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-100/50 rounded-full blur-3xl opacity-50 -translate-y-1/2 translate-x-1/2"></div>
-            <div className="absolute bottom-0 left-0 w-80 h-80 bg-blue-100/50 rounded-full blur-3xl opacity-50 translate-y-1/2 -translate-x-1/2"></div>
-
-            <div className="container mx-auto px-4 md:px-8 relative z-10 flex-1">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-12">
-                    <div className="max-w-2xl">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold mb-3 md:mb-4">
-                            <CircleDollarSign className="w-4 h-4" /> Transparansi
+        <section id="apbdesa" className="py-2 md:py-4 bg-white relative overflow-hidden w-full h-full flex flex-col rounded-xl">
+            <div className="container mx-auto px-4 md:px-6 relative z-10 flex-1 flex flex-col">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <div>
+                        <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-wider mb-2">
+                            <CircleDollarSign className="w-3 h-3" /> Transparansi
                         </div>
-                        <h2 className="text-2xl md:text-3xl font-bold text-slate-800 tracking-tight">Keterbukaan Anggaran (APBDesa)</h2>
-                        <p className="text-slate-600 mt-1 md:mt-2 text-sm md:text-base">Realisasi Anggaran Pendapatan dan Belanja Desa Tahun {data.year}.</p>
+                        <h2 className="text-lg md:text-xl font-black text-slate-800 tracking-tight uppercase">Dana Transparansi Desa</h2>
+                        <p className="text-slate-500 text-[10px] md:text-xs font-medium">Realisasi Anggaran Tahun {data.year}.</p>
                     </div>
-                    <button onClick={onViewDetails} className="flex items-center gap-2 text-emerald-600 font-bold hover:text-emerald-700 transition-colors mt-4 md:mt-0 bg-emerald-50 hover:bg-emerald-100 px-4 py-2 rounded-full text-sm">
-                        Laporan Lengkap <ArrowRight className="w-4 h-4" />
+                    <button 
+                        onClick={onViewDetails} 
+                        className="flex items-center gap-2 text-emerald-600 font-black hover:text-white transition-all bg-emerald-50 hover:bg-emerald-600 px-4 py-2 rounded-lg text-[10px] uppercase tracking-widest border border-emerald-100 shadow-sm"
+                    >
+                        Laporan Lengkap <ArrowRight className="w-3 h-3" />
                     </button>
                 </div>
 
                 {isEmpty ? (
-                    <div className="bg-white rounded-3xl p-12 shadow-xl shadow-slate-200/40 border border-slate-100 text-center col-span-full">
-                        <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <CircleDollarSign className="w-10 h-10 text-amber-500" />
+                    <div className="flex-1 flex items-center justify-center py-8">
+                        <div className="text-center max-w-sm">
+                            <h3 className="text-sm font-bold text-slate-700 mb-1 uppercase tracking-wider">Data Belum Tersedia</h3>
+                            <p className="text-slate-400 text-[10px]">Data sedang diproses oleh admin desa.</p>
                         </div>
-                        <h3 className="text-xl font-bold text-slate-700 mb-2">Data APBDes Belum Tersedia</h3>
-                        <p className="text-slate-500 max-w-md mx-auto">Data realisasi anggaran tahun {data.year} sedang dalam proses input oleh petugas desa. Silakan periksa kembali nanti.</p>
                     </div>
                 ) : (
-                    <>
-                    {/* Pendapatan */}
-                    <div className="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/40 border border-slate-100 hover:border-emerald-200 transition-colors">
-                        <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mb-6">
-                            <HandCoins className="w-6 h-6" />
-                        </div>
-                        <h3 className="text-xl font-bold text-slate-800 mb-6">Pendapatan Desa</h3>
-                        <ProgressBar 
-                            label="Total Pendapatan" 
-                            realized={data.pendapatan.realized} 
-                            budget={data.pendapatan.budget} 
-                            colorClass="bg-gradient-to-r from-emerald-400 to-emerald-600" 
-                        />
-                         <div className="mt-4 pt-4 border-t border-slate-100 text-sm text-slate-500">
-                            Terdiri dari PADes, Dana Desa (DD), ADD, dan Bagi Hasil Pajak.
-                        </div>
+                    <div className="flex flex-wrap gap-4">
+                        {data.sources.map((source, idx) => (
+                            <div key={idx} className="group bg-slate-50/50 rounded-2xl p-5 border border-slate-100 hover:border-emerald-200 hover:bg-white hover:shadow-xl hover:shadow-emerald-500/5 transition-all duration-300 w-full md:w-[calc(50%-1rem)] lg:w-[calc(33.33%-1rem)] xl:w-[calc(25%-1rem)] min-w-[280px]">
+                                <div className="flex items-start justify-between mb-4">
+                                    <div className={cn(
+                                        "w-8 h-8 rounded-lg flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform",
+                                        source.label.includes("ADD") ? "bg-blue-500 text-white" :
+                                        source.label.includes("DD") ? "bg-emerald-500 text-white" :
+                                        "bg-amber-500 text-white"
+                                    )}>
+                                        <HandCoins className="w-4 h-4" />
+                                    </div>
+                                    <div className={cn(
+                                        "px-2 py-1 rounded text-[10px] font-black uppercase tracking-widest",
+                                        (source.realized / source.budget) >= 1 ? "bg-emerald-100 text-emerald-700" : "bg-blue-100 text-blue-700"
+                                    )}>
+                                        {(source.realized / source.budget) >= 1 ? "Selesai" : "Berjalan"}
+                                    </div>
+                                </div>
+                                
+                                <h3 className="text-xs font-black text-slate-800 mb-4 h-8 overflow-hidden line-clamp-2 uppercase tracking-wide leading-tight">
+                                    {source.label}
+                                </h3>
+                                
+                                <ProgressBar 
+                                    label="Progres Realisasi" 
+                                    realized={source.realized} 
+                                    budget={source.budget} 
+                                    colorClass={source.color} 
+                                />
+                            </div>
+                        ))}
                     </div>
-
-                    {/* Belanja */}
-                    <div className="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/40 border border-slate-100 hover:border-blue-200 transition-colors">
-                        <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
-                            <TrendingUp className="w-6 h-6" />
-                        </div>
-                        <h3 className="text-xl font-bold text-slate-800 mb-6">Belanja Desa</h3>
-                        <ProgressBar 
-                            label="Total Pembelanjaan" 
-                            realized={data.belanja.realized} 
-                            budget={data.belanja.budget} 
-                            colorClass="bg-gradient-to-r from-blue-400 to-blue-600" 
-                        />
-                         <div className="mt-4 pt-4 border-t border-slate-100 text-sm text-slate-500">
-                            Penyelenggaraan Pemerintahan, Pembangunan, dan Pemberdayaan.
-                        </div>
-                    </div>
-
-                     {/* Pembiayaan */}
-                     <div className="bg-white rounded-3xl p-8 shadow-xl shadow-slate-200/40 border border-slate-100 hover:border-violet-200 transition-colors">
-                        <div className="w-12 h-12 bg-violet-100 text-violet-600 rounded-2xl flex items-center justify-center mb-6">
-                            <CircleDollarSign className="w-6 h-6" />
-                        </div>
-                        <h3 className="text-xl font-bold text-slate-800 mb-6">Pembiayaan Desa</h3>
-                        <ProgressBar 
-                            label="Penerimaan & Pengeluaran" 
-                            realized={data.pembiayaan.realized} 
-                            budget={data.pembiayaan.budget} 
-                            colorClass="bg-gradient-to-r from-violet-400 to-violet-600" 
-                        />
-                         <div className="mt-4 pt-4 border-t border-slate-100 text-sm text-slate-500">
-                            Sisa Lebih Perhitungan Anggaran (SiLPA) tahun sebelumnya.
-                        </div>
-                    </div>
-                    </>
                 )}
-
-                <button onClick={onViewDetails} className="md:hidden w-full mt-8 flex justify-center items-center gap-2 bg-slate-100 text-slate-700 px-6 py-3 rounded-full font-bold active:bg-slate-200 hover:bg-slate-200 transition-colors">
-                    Lihat Laporan Lengkap <ArrowRight className="w-4 h-4" />
-                </button>
             </div>
         </section>
     );
