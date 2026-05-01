@@ -7,8 +7,18 @@ export const revalidate = 300;
 
 export async function GET() {
     try {
+        // Authenticate as admin if credentials are provided
+        if (process.env.POCKETBASE_ADMIN_EMAIL && process.env.POCKETBASE_ADMIN_PASSWORD) {
+            await pb.admins.authWithPassword(
+                process.env.POCKETBASE_ADMIN_EMAIL,
+                process.env.POCKETBASE_ADMIN_PASSWORD
+            );
+        }
+
         const today = new Date();
         today.setHours(0, 0, 0, 0);
+
+        const fifteenMinsAgo = new Date(Date.now() - 15 * 60 * 1000);
 
         const yesterday = new Date(today);
         yesterday.setDate(yesterday.getDate() - 1);
@@ -25,13 +35,19 @@ export async function GET() {
             skipTotal: false
         });
 
+        // Fetch Active Now (last 15 mins)
+        const activeReq = pb.collection('analytics_events').getList(1, 1, {
+            filter: `created >= "${fifteenMinsAgo.toISOString()}"`,
+            skipTotal: false
+        });
+
         // Fetch Yesterday Views
         const yesterdayReq = pb.collection('analytics_events').getList(1, 1, {
             filter: `event_type = "page_view" && created >= "${yesterday.toISOString()}" && created < "${today.toISOString()}"`,
             skipTotal: false
         });
 
-        const [totalRes, todayRes, yesterdayRes] = await Promise.all([totalReq, todayReq, yesterdayReq]);
+        const [totalRes, todayRes, yesterdayRes, activeRes] = await Promise.all([totalReq, todayReq, yesterdayReq, activeReq]);
 
         // Just get the top browser/OS from a recent sampling to save complex DB aggregration time
         const recentSample = await pb.collection('analytics_events').getList(1, 50, {
@@ -74,6 +90,7 @@ export async function GET() {
             hari_ini: todayRes.totalItems || 0,
             kemarin: yesterdayRes.totalItems || 0,
             total: totalRes.totalItems || 0,
+            aktif: activeRes.totalItems || 0,
             top_os: topOs,
             top_browser: topBrowser
         });

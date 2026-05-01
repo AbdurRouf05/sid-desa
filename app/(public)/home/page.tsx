@@ -109,12 +109,13 @@ export default function Home() {
     }, []);
 
     // --- SEO: STRUCTURED DATA ---
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
     const websiteSchema = {
         name: "SID Sumberanyar",
-        url: "https://sumberanyar.id",
+        url: appUrl,
         potentialAction: {
             "@type": "SearchAction",
-            target: "https://sumberanyar.id/search?q={search_term_string}",
+            target: `${appUrl}/search?q={search_term_string}`,
             "query-input": "required name=search_term_string"
         }
     };

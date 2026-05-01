@@ -112,17 +112,7 @@ export function DashboardSidebar({ activeView, onNavigate, className }: Dashboar
             </div>
             </div>
 
-            {/* Powered By Footer Sidebar */}
-             <div className="p-4 border-t border-slate-200 text-center shrink-0">
-                <a 
-                    href="https://sumberanyar.id" 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="inline-block bg-desa-primary text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-desa-primary-dark transition shadow-sm"
-                >
-                    https://sumberanyar.id
-                </a>
-            </div>
+
             
         </aside>
     );

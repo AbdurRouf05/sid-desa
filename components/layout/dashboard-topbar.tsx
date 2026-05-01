@@ -57,13 +57,9 @@ export function DashboardTopbar({ onMenuClick, onSettingsClick, onSearch, onNavi
         async function fetchInitialData() {
             try {
                 // 1. Visitors
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                const visRes = await pb.collection('analytics_events').getList(1, 1, {
-                    filter: `event_type = "page_view" && created >= "${today.toISOString()}"`,
-                    skipTotal: false,
-                }).catch(() => ({ totalItems: 0 }));
-                setVisitorCount(visRes.totalItems || 0);
+                const res = await fetch('/api/analytics/stats/public');
+                const data = await res.json();
+                setVisitorCount(data.aktif || 0);
 
                 // 2. Recommendations (Latest News & Services)
                 const [newsRes, layRes] = await Promise.all([
@@ -96,7 +92,7 @@ export function DashboardTopbar({ onMenuClick, onSettingsClick, onSearch, onNavi
                 const query = searchQuery.trim();
                 const [newsRes, layRes] = await Promise.all([
                     pb.collection('berita_desa').getList(1, 5, { 
-                        filter: `(title ~ "${query}" || category ~ "${query}") && is_published = true`, 
+                        filter: `(judul ~ "${query}" || kategori ~ "${query}") && is_published = true`, 
                         sort: '-created' 
                     }),
                     pb.collection('layanan_desa').getList(1, 3, { 

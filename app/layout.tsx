@@ -23,7 +23,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const config = await getSiteConfig();
 
   const title = config?.company_name || "SID Sumberanyar";
-  const desc = "Sistem Informasi Desa (SID) Sumberanyar: Portal resmi Desa Sumberanyar, Kec. Rowokangkung, Kab. Lumajang. Layanan administrasi, informasi publik, dan transparansi pemerintahan desa.";
+  const desc = config?.meta_description || "Website Resmi Desa Sumberanyar, Kecamatan Rowokangkung, Kabupaten Lumajang, Jawa Timur. Temukan informasi terbaru seputar profil desa, layanan administrasi, transparansi APBDes, berita terkini, dan pengumuman resmi.";
 
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://sumberanyar.local:3000"),
@@ -48,9 +48,9 @@ export async function generateMetadata(): Promise<Metadata> {
       }],
     },
     icons: {
-      icon: config?.favicon ? pb.files.getURL(config, config.favicon) : "/favicon.ico",
-      shortcut: config?.favicon ? pb.files.getURL(config, config.favicon) : "/favicon.ico",
-      apple: config?.favicon ? pb.files.getURL(config, config.favicon) : "/apple-touch-icon.png",
+      icon: config?.favicon_url || (config?.favicon ? pb.files.getURL(config, config.favicon) : "/logo3-removebg-preview.png"),
+      shortcut: config?.favicon_url || (config?.favicon ? pb.files.getURL(config, config.favicon) : "/logo3-removebg-preview.png"),
+      apple: config?.favicon_url || (config?.favicon ? pb.files.getURL(config, config.favicon) : "/logo3-removebg-preview.png"),
     },
   };
 }
@@ -67,20 +67,20 @@ export default async function RootLayout({
     alternateName: "SID Sumberanyar",
     url: process.env.NEXT_PUBLIC_APP_URL || "http://sumberanyar.local:3000",
     logo: "/logo.png",
-    description: "Portal resmi Sistem Informasi Desa (SID) Sumberanyar, Kecamatan Nguling, Kabupaten Pasuruan, Jawa Timur.",
+    description: config?.meta_description || "Portal resmi Sistem Informasi Desa (SID) Sumberanyar, Kecamatan Rowokangkung, Kabupaten Lumajang, Jawa Timur.",
     contactPoint: {
       "@type": "ContactPoint",
-      telephone: config?.phone_wa || "+62-812-3456-7890",
+      telephone: config?.kontak_telp || "+62-812-3456-7890",
       contactType: "Pelayanan Masyarakat",
       areaServed: "ID",
       availableLanguage: ["Indonesian", "Javanese"]
     },
     address: {
       "@type": "PostalAddress",
-      streetAddress: config?.address || "Jl. Raya Sumberanyar No. 1",
-      addressLocality: "Nguling",
-      addressRegion: "Jawa Timur",
-      postalCode: "67171",
+      streetAddress: config?.alamat_lengkap || "Jl. Raya Sumberanyar No. 1",
+      addressLocality: config?.kecamatan || "Rowokangkung",
+      addressRegion: config?.kabupaten || "Lumajang",
+      postalCode: config?.kode_pos || "67359",
       addressCountry: "ID"
     },
     sameAs: config?.social_links ? Object.values(config.social_links) : []

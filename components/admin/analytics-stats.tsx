@@ -32,10 +32,8 @@ export function AnalyticsStats() {
     useEffect(() => {
         async function fetchData() {
             try {
-                // Fetch last 500 records to show a good overview
-                // Fetch last 500 records to show a good overview
                 const records = await pb.collection('analytics_events').getList(1, 500, {
-                    sort: '-id', // Revert to ID sort for compatibility
+                    sort: '-created', // Use created for real chronological sorting
                 });
 
                 const items = records.items;

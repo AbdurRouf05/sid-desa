@@ -29,10 +29,10 @@ export function useSmartAnalytics() {
         maxScrollRef.current = 0;
 
         // 1. Session & Visitor ID Management
-        let sessionId = sessionStorage.getItem('analytics_session_id');
+        let sessionId = sessionStorage.getItem('analytics_sid');
         if (!sessionId) {
             sessionId = crypto.randomUUID();
-            sessionStorage.setItem('analytics_session_id', sessionId);
+            sessionStorage.setItem('analytics_sid', sessionId);
         }
 
         let visitorId = localStorage.getItem('analytics_visitor_id');

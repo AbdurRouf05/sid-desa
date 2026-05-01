@@ -22,7 +22,7 @@ const TiktokIcon = ({ className }: { className?: string }) => (
 
 export function ModernFooter() {
     const [contactInfo, setContactInfo] = useState({
-        address: "Jl. Raya Sumberanyar No. 1, Sumberanyar, Pasuruan",
+        address: "Jl. Raya Sumberanyar No. 1, Rowokangkung, Lumajang",
         phone: "0812-3456-7890",
         email: "desa@sumberanyar.id",
         companyName: "Pemerintah Desa Sumberanyar",
@@ -45,9 +45,9 @@ export function ModernFooter() {
                 if (result.items.length > 0) {
                     const config = result.items[0];
                     setContactInfo({
-                        address: config.address || "Jl. Raya Sumberanyar No. 1, Sumberanyar, Pasuruan",
-                        phone: config.phone_wa || "0812-3456-7890",
-                        email: config.email_official || "desa@sumberanyar.id",
+                        address: config.alamat_lengkap || "Jl. Raya Sumberanyar No. 1, Rowokangkung, Lumajang",
+                        phone: config.kontak_telp || "0812-3456-7890",
+                        email: config.kontak_email || "desa@sumberanyar.id",
                         companyName: config.company_name || "Pemerintah Desa Sumberanyar",
                         logoSecondary: config.logo_secondary ? pb.files.getURL(config, config.logo_secondary) : null,
                         nib: config.nib || "",

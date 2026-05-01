@@ -75,7 +75,7 @@ export default function TentangKamiPage() {
                         name: "SID Sumberanyar",
                         foundingDate: "2020-08",
                         legalName: "Pemerintah Desa Sumberanyar",
-                        logo: "https://sumberanyar.id/logo.png",
+                        logo: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/logo.png`,
                         sameAs: [
                             "https://www.facebook.com/PemerintahDesaSumberanyar",
                             "https://www.instagram.com/pemerintahdesasumberanyar"

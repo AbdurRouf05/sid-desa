@@ -14,6 +14,14 @@ export interface SiteConfig {
     logo_secondary?: string;
     favicon?: string;
     og_image?: string;
+    meta_description?: string;
+    favicon_url?: string;
+    kontak_telp?: string;
+    kontak_email?: string;
+    alamat_lengkap?: string;
+    kecamatan?: string;
+    kabupaten?: string;
+    kode_pos?: string;
     social_links?: any;
 }
 
@@ -49,8 +57,21 @@ export const getSiteConfig = unstable_cache(
 
             const record = await Promise.race([fetchPromise, timeoutPromise]) as any;
 
+            // Map database fields to application interface
+            const config: SiteConfig = {
+                ...DEFAULT_SITE_CONFIG,
+                id: record.id,
+                company_name: record.company_name || record.nama_desa || DEFAULT_SITE_CONFIG.company_name,
+                address: record.alamat_lengkap || DEFAULT_SITE_CONFIG.address,
+                phone_wa: record.kontak_telp || DEFAULT_SITE_CONFIG.phone_wa,
+                email_official: record.kontak_email || DEFAULT_SITE_CONFIG.email_official,
+                logo_primary: record.logo_url || record.logo_primary,
+                favicon: record.favicon_url || record.favicon,
+                // Pass-through other fields
+                ...record 
+            };
+
             // Map map_embed_url from social_links if not present in root (Schema workaround)
-            const config = record as unknown as SiteConfig;
             if (!config.map_embed_url && record.social_links && record.social_links.map_embed_url) {
                 config.map_embed_url = record.social_links.map_embed_url;
             }
