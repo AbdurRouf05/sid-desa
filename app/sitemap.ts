@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 import { pb } from '@/lib/pb';
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://sumberanyar.local:3000';
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://desasumberanyar.com';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Static Routes

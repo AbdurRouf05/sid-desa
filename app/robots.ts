@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
-  const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://sumberanyar.local:3000';
+  const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://desasumberanyar.com';
   
   return {
     rules: {
