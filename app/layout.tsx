@@ -22,23 +22,52 @@ const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", displa
 export async function generateMetadata(): Promise<Metadata> {
   const config = await getSiteConfig();
 
-  const title = config?.company_name || "SID Sumberanyar";
-  const desc = config?.meta_description || "Website Resmi Desa Sumberanyar, Kecamatan Rowokangkung, Kabupaten Lumajang, Jawa Timur. Temukan informasi terbaru seputar profil desa, layanan administrasi, transparansi APBDes, berita terkini, dan pengumuman resmi.";
+  const title = "Website Resmi Desa Sumberanyar";
+  const desc = config?.meta_description || "Website Resmi Desa Sumberanyar, Kecamatan Rowokangkung, Kabupaten Lumajang, Jawa Timur. Layanan publik digital, transparansi APBDes, dan berita terkini.";
+
+  const iconUrl = config?.favicon_url || (config?.favicon ? pb.files.getURL(config, config.favicon) : "/logo3-removebg-preview.png");
 
   return {
     metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://sumberanyar.local:3000"),
     title: {
       template: `%s | ${title}`,
-      default: `${title} - Portal Desa Digital`,
+      default: title,
     },
     description: desc,
-    keywords: ["SID Sumberanyar", "Desa Sumberanyar", "Pemerintah Desa", "Kecamatan Rowokangkung", "Kabupaten Lumajang", "Sistem Informasi Desa", title],
+    keywords: [
+      "Website Resmi Desa Sumberanyar", 
+      "Desa Sumberanyar", 
+      "Rowokangkung", 
+      "Lumajang", 
+      "Website Desa", 
+      "Web Desa", 
+      "Portal Desa Sumberanyar",
+      "Kecamatan Rowokangkung",
+      "Kabupaten Lumajang",
+      "Pemerintah Desa Sumberanyar",
+      "Layanan Desa Online",
+      "Berita Desa Sumberanyar",
+      "Rowokangkung Lumajang",
+      "Desa Rowokangkung",
+      "Sistem Informasi Desa Lumajang"
+    ],
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        'max-video-preview': -1,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
     openGraph: {
       type: "website",
       locale: "id_ID",
       url: process.env.NEXT_PUBLIC_APP_URL || "http://sumberanyar.local:3000",
       siteName: title,
-      title: `${title} - Portal Desa Digital`,
+      title: title,
       description: desc,
       images: [{
         url: config?.og_image ? pb.files.getURL(config, config.og_image) : "/og-image.jpg",
@@ -48,10 +77,24 @@ export async function generateMetadata(): Promise<Metadata> {
       }],
     },
     icons: {
-      icon: config?.favicon_url || (config?.favicon ? pb.files.getURL(config, config.favicon) : "/logo3-removebg-preview.png"),
-      shortcut: config?.favicon_url || (config?.favicon ? pb.files.getURL(config, config.favicon) : "/logo3-removebg-preview.png"),
-      apple: config?.favicon_url || (config?.favicon ? pb.files.getURL(config, config.favicon) : "/logo3-removebg-preview.png"),
+      icon: [
+        { url: iconUrl },
+        { url: iconUrl, sizes: '32x32', type: 'image/png' },
+        { url: iconUrl, sizes: '16x16', type: 'image/png' },
+      ],
+      shortcut: iconUrl,
+      apple: [
+        { url: iconUrl },
+        { url: iconUrl, sizes: '180x180', type: 'image/png' },
+      ],
+      other: [
+        {
+          rel: 'apple-touch-icon-precomposed',
+          url: iconUrl,
+        },
+      ],
     },
+    manifest: "/site.webmanifest",
   };
 }
 
@@ -63,8 +106,8 @@ export default async function RootLayout({
   const config = await getSiteConfig();
 
   const orgSchema = {
-    name: config?.company_name || "Pemerintah Desa Sumberanyar",
-    alternateName: "SID Sumberanyar",
+    name: "Website Resmi Desa Sumberanyar",
+    alternateName: "Pemerintah Desa Sumberanyar",
     url: process.env.NEXT_PUBLIC_APP_URL || "http://sumberanyar.local:3000",
     logo: "/logo.png",
     description: config?.meta_description || "Portal resmi Sistem Informasi Desa (SID) Sumberanyar, Kecamatan Rowokangkung, Kabupaten Lumajang, Jawa Timur.",
