@@ -3,7 +3,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { pb } from "@/lib/pb";
-import DOMPurify from 'isomorphic-dompurify';
 import { 
     Search, 
     User, 
@@ -436,7 +435,7 @@ export default function SmartLetterWizardPage() {
                                     .prose-print table { border: none !important; }
                                     .prose-print td { border: none !important; padding: 2px 0; }
                                 `}</style>
-                                <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(previewHtml) }} className="prose-print" />
+                                <div dangerouslySetInnerHTML={{ __html: previewHtml }} className="prose-print" />
                             </div>
                         </div>
                     </div>

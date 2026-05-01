@@ -6,7 +6,6 @@ import { FormLapor } from "@/components/portal/form-lapor";
 import { FormBansos } from "@/components/portal/form-bansos";
 import { pb } from "@/lib/pb";
 import { LayananDesa } from "@/types";
-import DOMPurify from 'isomorphic-dompurify';
 
 interface ModernPusatLayananProps {
     defaultServiceId?: string;
@@ -97,7 +96,7 @@ export function ModernPusatLayanan({ defaultServiceId }: ModernPusatLayananProps
                                             <div 
                                                 className="prose prose-sm prose-emerald max-w-none text-slate-700 leading-snug [&>div>strong]:text-emerald-800 [&>div>strong]:block [&>div>strong]:mb-2 [&>div>strong]:text-[13px] [&>div>ul]:pl-4 [&>div>ul>li]:mb-1 [&>div>ul>li]:text-xs"
                                                 dangerouslySetInnerHTML={{
-                                                    __html: DOMPurify.sanitize(srv.konten)
+                                                    __html: srv.konten
                                                 }}
                                             />
                                         ) : (
