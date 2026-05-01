@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const iconUrl = config?.favicon_url || (config?.favicon ? pb.files.getURL(config, config.favicon) : "/logo3-removebg-preview.png");
 
   return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://sumberanyar.local:3000"),
+    metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "https://www.desasumberanyar.com"),
     title: {
       template: `%s | ${title}`,
       default: title,
@@ -65,7 +65,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       type: "website",
       locale: "id_ID",
-      url: process.env.NEXT_PUBLIC_APP_URL || "http://sumberanyar.local:3000",
+      url: process.env.NEXT_PUBLIC_APP_URL || "https://www.desasumberanyar.com",
       siteName: title,
       title: title,
       description: desc,
@@ -108,7 +108,7 @@ export default async function RootLayout({
   const orgSchema = {
     name: "Website Resmi Desa Sumberanyar",
     alternateName: "Pemerintah Desa Sumberanyar",
-    url: process.env.NEXT_PUBLIC_APP_URL || "http://sumberanyar.local:3000",
+    url: process.env.NEXT_PUBLIC_APP_URL || "https://www.desasumberanyar.com",
     logo: "/logo.png",
     description: config?.meta_description || "Portal resmi Sistem Informasi Desa (SID) Sumberanyar, Kecamatan Rowokangkung, Kabupaten Lumajang, Jawa Timur.",
     contactPoint: {
