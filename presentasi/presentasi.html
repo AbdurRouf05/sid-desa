@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan KP - SID Desa Sumberanyar</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        // Palet kustom jika diperlukan, Tailwind otomatis mendukung emerald-500 dsb.
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            background-color: #f0fdf4; /* Emerald 50 */
+        }
+
+        /* --- ANIMATED BACKGROUND --- */
+        .animated-bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: float 12s infinite ease-in-out alternate;
+        }
+
+        .orb-1 {
+            top: -10%; left: -10%; 
+            width: 50vw; height: 50vw;
+            background: radial-gradient(circle, rgba(16,185,129,0.8) 0%, rgba(5,150,105,0) 70%); /* Emerald */
+            animation-delay: 0s;
+        }
+        
+        .orb-2 {
+            bottom: -20%; right: -10%; 
+            width: 60vw; height: 60vw;
+            background: radial-gradient(circle, rgba(20,184,166,0.7) 0%, rgba(13,148,136,0) 70%); /* Teal */
+            animation-duration: 15s;
+            animation-delay: -5s;
+        }
+
+        .orb-3 {
+            top: 30%; left: 40%; 
+            width: 45vw; height: 45vw;
+            background: radial-gradient(circle, rgba(52,211,153,0.5) 0%, rgba(16,185,129,0) 70%); /* Light Emerald */
+            animation-duration: 18s;
+            animation-delay: -2s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(5vw, -5vh) scale(1.1); }
+            66% { transform: translate(-3vw, 4vh) scale(0.9); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+        /* --- SLIDE TRANSITIONS --- */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform: translateX(30px) scale(0.98);
+            pointer-events: none;
+            z-index: 0;
+            overflow-y: auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+            pointer-events: auto;
+            z-index: 10;
+        }
+
+        .slide.previous {
+            transform: translateX(-30px) scale(0.98);
+        }
+
+        /* Hide scrollbar for slides but keep functionality */
+        .slide::-webkit-scrollbar { width: 6px; }
+        .slide::-webkit-scrollbar-track { background: transparent; }
+        .slide::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.3); border-radius: 10px; }
+        .slide::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.6); }
+
+        #doc-main-content::-webkit-scrollbar { width: 8px; }
+        #doc-main-content::-webkit-scrollbar-track { background: transparent; }
+        #doc-main-content::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.4); border-radius: 4px; }
+
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Glass Panel Styling */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+        }
+        
+        .glass-panel-dark {
+            background: rgba(6, 78, 59, 0.85); /* emerald-900 */
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased h-screen w-screen overflow-hidden relative">
+
+    <!-- ========================================== -->
+    <!-- ANIMATED BACKGROUND LAYER                  -->
+    <!-- ========================================== -->
+    <div class="animated-bg-container">
+        <div class="bg-orb orb-1"></div>
+        <div class="bg-orb orb-2"></div>
+        <div class="bg-orb orb-3"></div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: PRESENTATION MODE (SLIDES)         -->
+    <!-- ========================================== -->
+    <div id="view-presentation" class="w-full h-full relative block">
+        
+        <!-- Navigation Controls -->
+        <button id="prevBtn" onclick="prevSlide()" class="fixed left-4 md:left-8 top-1/2 -translate-y-1/2 z-50 bg-emerald-600/90 hover:bg-emerald-700 text-white w-12 h-12 rounded-full shadow-lg backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110 disabled:opacity-30 disabled:hover:scale-100 disabled:cursor-not-allowed">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button id="nextBtn" onclick="nextSlide()" class="fixed right-4 md:right-8 top-1/2 -translate-y-1/2 z-50 bg-emerald-600/90 hover:bg-emerald-700 text-white w-12 h-12 rounded-full shadow-lg backdrop-blur-sm flex items-center justify-center transition-all hover:scale-110 disabled:opacity-30 disabled:hover:scale-100 disabled:cursor-not-allowed">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+
+        <!-- Indicators -->
+        <div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex gap-3 bg-white/40 backdrop-blur-md px-4 py-2 rounded-full shadow-sm border border-white/50" id="slide-indicators">
+            <!-- Injected by JS -->
+        </div>
+
+        <!-- Slide 1: Cover -->
+        <div class="slide active" id="slide-0">
+            <div class="glass-panel w-full max-w-5xl rounded-3xl p-8 md:p-14 text-center relative overflow-hidden">
+                <!-- Decorative accent -->
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 via-teal-500 to-emerald-400"></div>
+                
+                <div class="mb-6 inline-block bg-emerald-100/80 text-emerald-800 px-5 py-2 rounded-full text-sm font-bold tracking-wide border border-emerald-200 shadow-sm backdrop-blur-sm">
+                    <i class="fas fa-book-open mr-2"></i> Laporan Kerja Praktik
+                </div>
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 leading-tight drop-shadow-sm">
+                    Pengembangan Sistem Informasi Desa (SID) Terintegrasi
+                </h1>
+                <p class="text-xl text-emerald-700 font-semibold mb-10">
+                    Kantor Desa Sumberanyar, Kec. Rowokangkung
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 bg-white/60 p-8 rounded-2xl border border-white/80 text-left shadow-inner">
+                    <div>
+                        <p class="text-sm text-gray-500 mb-2 uppercase tracking-wider font-semibold">Dosen Pembimbing Lapangan</p>
+                        <p class="font-bold text-gray-800 text-lg border-b border-emerald-200 pb-2 inline-block">Maysas Yafi Urrochman, S.M., M.Kom.</p>
+                        <p class="text-sm text-gray-500 mt-6 mb-2 uppercase tracking-wider font-semibold">Instansi Akademik</p>
+                        <p class="font-bold text-gray-800">Informatika, ITB Widya Gama Lumajang (2026)</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500 mb-3 uppercase tracking-wider font-semibold">Tim Pengembang (10 Mahasiswa)</p>
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm font-semibold text-gray-700">
+                            <span class="flex items-center gap-2"><i class="fas fa-user-circle text-emerald-500"></i> 1. Abdur Rouf</span>
+                            <span class="flex items-center gap-2"><i class="fas fa-user-circle text-emerald-500"></i> 6. A. Rafi H.</span>
+                            <span class="flex items-center gap-2"><i class="fas fa-user-circle text-emerald-500"></i> 2. A. Firman A.N.</span>
+                            <span class="flex items-center gap-2"><i class="fas fa-user-circle text-emerald-500"></i> 7. Akmal I.N.</span>
+                            <span class="flex items-center gap-2"><i class="fas fa-user-circle text-emerald-500"></i> 3. Aldi Januar S.</span>
+                            <span class="flex items-center gap-2"><i class="fas fa-user-circle text-emerald-500"></i> 8. Adam Paundra M.</span>
+                            <span class="flex items-center gap-2"><i class="fas fa-user-circle text-emerald-500"></i> 4. A. Muntolib F.</span>
+                            <span class="flex items-center gap-2"><i class="fas fa-user-circle text-emerald-500"></i> 9. Firnanda I.</span>
+                            <span class="flex items-center gap-2"><i class="fas fa-user-circle text-emerald-500"></i> 5. Dani Ahmad K.</span>
+                            <span class="flex items-center gap-2"><i class="fas fa-user-circle text-emerald-500"></i> 10. Akhmad N.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Abstrak -->
+        <div class="slide" id="slide-1">
+            <div class="glass-panel w-full max-w-5xl rounded-3xl p-8 md:p-14">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-emerald-900 mb-8 border-b-4 border-emerald-500 pb-3 inline-block drop-shadow-sm">Abstrak & Latar Belakang</h2>
+                <div class="grid md:grid-cols-2 gap-10 items-center">
+                    <div>
+                        <p class="text-gray-700 leading-relaxed mb-5 text-justify text-lg">
+                            Kerja Praktik ini dilaksanakan di Kantor Desa Sumberanyar dengan fokus pada pengembangan sistem administrasi desa. Sebelumnya, proses manual rentan terhadap kesalahan, keterlambatan pelayanan, dan fragmentasi data kependudukan.
+                        </p>
+                        <p class="text-gray-700 leading-relaxed text-justify text-lg">
+                            Tujuan utama adalah digitalisasi untuk meningkatkan <strong>efisiensi operasional</strong>, <strong>akurasi data</strong>, dan <strong>transparansi keuangan</strong> melalui Sistem Informasi Desa (SID) terintegrasi.
+                        </p>
+                    </div>
+                    <div class="bg-emerald-50/80 p-8 rounded-2xl border border-emerald-200/50 shadow-lg backdrop-blur-sm">
+                        <h3 class="font-bold text-emerald-900 mb-5 text-xl flex items-center"><i class="fas fa-bullseye text-emerald-600 mr-3 text-2xl"></i> Target Pemecahan Masalah</h3>
+                        <ul class="space-y-4 text-gray-800 font-medium">
+                            <li class="flex items-start"><i class="fas fa-check-circle text-emerald-600 mt-1 mr-3 text-lg"></i> Menggantikan administrasi manual yang lambat.</li>
+                            <li class="flex items-start"><i class="fas fa-check-circle text-emerald-600 mt-1 mr-3 text-lg"></i> Integrasi data warga, persuratan, dan keuangan.</li>
+                            <li class="flex items-start"><i class="fas fa-check-circle text-emerald-600 mt-1 mr-3 text-lg"></i> Antarmuka responsif berbasis "Desa Teal".</li>
+                            <li class="flex items-start"><i class="fas fa-check-circle text-emerald-600 mt-1 mr-3 text-lg"></i> Meminimalisir human error.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Metodologi & Teknologi -->
+        <div class="slide" id="slide-2">
+            <div class="glass-panel w-full max-w-5xl rounded-3xl p-8 md:p-14">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-emerald-900 mb-10 border-b-4 border-emerald-500 pb-3 inline-block drop-shadow-sm">Metodologi & Tech Stack</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-4">
+                    <!-- Agile -->
+                    <div class="bg-white/80 p-8 rounded-2xl shadow-lg border-t-4 border-blue-500 hover:-translate-y-2 transition duration-300">
+                        <div class="text-blue-500 text-4xl mb-5"><i class="fas fa-sync-alt animate-spin-slow"></i></div>
+                        <h3 class="font-bold text-xl mb-3 text-gray-900">Metode Agile (Scrum)</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">Pelaksanaan iteratif dengan sistem kerja remote dan hybrid. Evaluasi rutin setiap minggu untuk mengakomodasi perubahan kebutuhan Desa.</p>
+                    </div>
+                    <!-- Framework -->
+                    <div class="bg-white/80 p-8 rounded-2xl shadow-lg border-t-4 border-black hover:-translate-y-2 transition duration-300">
+                        <div class="text-black text-4xl mb-5"><i class="fab fa-react"></i></div>
+                        <h3 class="font-bold text-xl mb-3 text-gray-900">Next.js & Tailwind</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">Pemanfaatan Next.js untuk Frontend dan Backend dengan styling Tailwind CSS untuk merancang identitas visual yang responsif.</p>
+                    </div>
+                    <!-- Database -->
+                    <div class="bg-white/80 p-8 rounded-2xl shadow-lg border-t-4 border-emerald-500 hover:-translate-y-2 transition duration-300">
+                        <div class="text-emerald-600 text-4xl mb-5"><i class="fas fa-database"></i></div>
+                        <h3 class="font-bold text-xl mb-3 text-gray-900">PocketBase</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">Digunakan sebagai backend mandiri (BaaS) penyedia sistem manajemen basis data dan API yang ringan serta real-time.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Tahapan Pelaksanaan -->
+        <div class="slide" id="slide-3">
+            <div class="glass-panel w-full max-w-5xl rounded-3xl p-8 md:p-14">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-emerald-900 mb-10 border-b-4 border-emerald-500 pb-3 inline-block drop-shadow-sm">Tahapan Pelaksanaan</h2>
+                
+                <div class="relative border-l-4 border-emerald-300 ml-4 md:ml-2 space-y-8 pb-4">
+                    <div class="relative pl-8">
+                        <div class="absolute w-6 h-6 bg-emerald-500 rounded-full -left-[15px] top-1 border-4 border-white shadow-md"></div>
+                        <h4 class="font-bold text-gray-900 text-xl mb-1">1. Observasi & Analisis <span class="text-emerald-600 text-sm ml-2 bg-emerald-100 px-2 py-1 rounded-md">Minggu 1-2</span></h4>
+                        <p class="text-gray-600">Wawancara perangkat desa, identifikasi masalah manual, perancangan ERD, UI/UX, inisiasi repository.</p>
+                    </div>
+                    <div class="relative pl-8">
+                        <div class="absolute w-6 h-6 bg-emerald-500 rounded-full -left-[15px] top-1 border-4 border-white shadow-md"></div>
+                        <h4 class="font-bold text-gray-900 text-xl mb-1">2. Pengembangan Fitur Utama <span class="text-emerald-600 text-sm ml-2 bg-emerald-100 px-2 py-1 rounded-md">Minggu 3-6</span></h4>
+                        <p class="text-gray-600">Portal publik, pengaduan, manajemen kependudukan, Surat Pintar (jsPDF), Buku Kas Umum, integrasi grafik (Recharts).</p>
+                    </div>
+                    <div class="relative pl-8">
+                        <div class="absolute w-6 h-6 bg-emerald-500 rounded-full -left-[15px] top-1 border-4 border-white shadow-md"></div>
+                        <h4 class="font-bold text-gray-900 text-xl mb-1">3. Penyempurnaan Sistem <span class="text-emerald-600 text-sm ml-2 bg-emerald-100 px-2 py-1 rounded-md">Minggu 7-8</span></h4>
+                        <p class="text-gray-600">Export Excel (XLSX), kalkulasi PPN/PPh, logic inventaris aset, dan penyusunan draft Manual Book.</p>
+                    </div>
+                    <div class="relative pl-8">
+                        <div class="absolute w-6 h-6 bg-emerald-500 rounded-full -left-[15px] top-1 border-4 border-white shadow-md"></div>
+                        <h4 class="font-bold text-gray-900 text-xl mb-1">4. UAT & Serah Terima <span class="text-emerald-600 text-sm ml-2 bg-emerald-100 px-2 py-1 rounded-md">Minggu 9</span></h4>
+                        <p class="text-gray-600">Quality Assurance, security test, User Acceptance Test (UAT) bersama perangkat desa, dan serah terima sistem.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Hasil Modul (Overview) -->
+        <div class="slide" id="slide-4">
+            <div class="glass-panel w-full max-w-5xl rounded-3xl p-8 md:p-14">
+                <h2 class="text-3xl md:text-4xl font-extrabold text-emerald-900 mb-6 border-b-4 border-emerald-500 pb-3 inline-block drop-shadow-sm">Hasil & Modul Sistem</h2>
+                <p class="text-gray-700 text-lg mb-8">Aplikasi administrasi desa terintegrasi yang mencakup enam modul esensial:</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-6 text-center">
+                    <div class="p-6 border border-white/60 shadow-lg rounded-2xl bg-white/70 hover:bg-emerald-50/90 transition duration-300 hover:-translate-y-1">
+                        <div class="w-16 h-16 mx-auto bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-newspaper text-2xl text-emerald-600"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">Portal Berita Publik</h4>
+                    </div>
+                    <div class="p-6 border border-white/60 shadow-lg rounded-2xl bg-white/70 hover:bg-emerald-50/90 transition duration-300 hover:-translate-y-1">
+                        <div class="w-16 h-16 mx-auto bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-bullhorn text-2xl text-emerald-600"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">Layanan Pengaduan</h4>
+                    </div>
+                    <div class="p-6 border border-white/60 shadow-lg rounded-2xl bg-white/70 hover:bg-emerald-50/90 transition duration-300 hover:-translate-y-1">
+                        <div class="w-16 h-16 mx-auto bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-users text-2xl text-emerald-600"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">Data Kependudukan</h4>
+                    </div>
+                    <div class="p-6 border border-white/60 shadow-lg rounded-2xl bg-white/70 hover:bg-emerald-50/90 transition duration-300 hover:-translate-y-1">
+                        <div class="w-16 h-16 mx-auto bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-envelope-open-text text-2xl text-emerald-600"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">Surat Pintar Otomatis</h4>
+                    </div>
+                    <div class="p-6 border border-white/60 shadow-lg rounded-2xl bg-white/70 hover:bg-emerald-50/90 transition duration-300 hover:-translate-y-1">
+                        <div class="w-16 h-16 mx-auto bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-book text-2xl text-emerald-600"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">Buku Kas Umum (BKU)</h4>
+                    </div>
+                    <div class="p-6 border border-white/60 shadow-lg rounded-2xl bg-white/70 hover:bg-emerald-50/90 transition duration-300 hover:-translate-y-1">
+                        <div class="w-16 h-16 mx-auto bg-emerald-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-boxes text-2xl text-emerald-600"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-900">Inventaris Aset</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Kesimpulan & Transisi -->
+        <div class="slide" id="slide-5">
+            <div class="glass-panel-dark w-full max-w-4xl rounded-3xl p-10 md:p-16 text-center text-white relative overflow-hidden">
+                <!-- Decorative dark accent -->
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-300 via-teal-300 to-emerald-300"></div>
+                
+                <div class="w-24 h-24 mx-auto bg-emerald-800/80 rounded-full flex items-center justify-center mb-8 border border-emerald-500 shadow-[0_0_30px_rgba(16,185,129,0.5)]">
+                    <i class="fas fa-check text-5xl text-emerald-300"></i>
+                </div>
+                
+                <h2 class="text-4xl md:text-5xl font-extrabold mb-6">Kesimpulan</h2>
+                <p class="text-lg md:text-xl text-emerald-100 mb-12 leading-relaxed max-w-2xl mx-auto">
+                    Sistem Informasi Desa (SID) berhasil diimplementasikan, membawa perubahan dari proses manual menjadi digital. Tata kelola administrasi Kantor Desa Sumberanyar kini menjadi lebih <strong>efisien, transparan, cepat</strong>, dan terpusat dalam satu ekosistem digital.
+                </p>
+                
+                <div class="p-8 bg-emerald-950/60 rounded-2xl border border-emerald-700/50 shadow-inner backdrop-blur-md">
+                    <h3 class="text-2xl font-bold text-white mb-3">Lihat Antarmuka Sistem</h3>
+                    <p class="text-emerald-200 text-md mb-8">Beralih ke mode template dokumentasi untuk melihat detail setiap modul, penjelasan teknis, dan rancangan UI/UX.</p>
+                    <button onclick="toggleMode('documentation')" class="bg-gradient-to-r from-emerald-400 to-teal-500 text-emerald-950 hover:from-emerald-300 hover:to-teal-400 px-8 py-4 rounded-full font-bold text-lg transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(52,211,153,0.4)] flex items-center justify-center mx-auto gap-3">
+                        <span>Buka Dokumentasi Web</span>
+                        <i class="fas fa-external-link-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: DOCUMENTATION MODE (TEMPLATE)      -->
+    <!-- ========================================== -->
+    <div id="view-documentation" class="w-full h-full hidden flex-col md:flex-row bg-transparent">
+        
+        <!-- Sidebar Navigation (Glassmorphic) -->
+        <nav class="w-full md:w-72 bg-emerald-950/90 backdrop-blur-2xl text-emerald-100 h-auto md:h-full flex-shrink-0 flex flex-col shadow-2xl z-20 border-r border-emerald-800/50">
+            <div class="p-6 bg-emerald-950/50 flex justify-between items-center border-b border-emerald-800/50">
+                <div>
+                    <h2 class="text-white font-bold text-xl tracking-wide">Docs SID</h2>
+                    <p class="text-xs text-emerald-400 mt-1 uppercase tracking-wider font-semibold">Desa Sumberanyar</p>
+                </div>
+                <button onclick="toggleMode('presentation')" class="text-emerald-300 hover:text-white bg-emerald-800/50 hover:bg-emerald-700 p-2 rounded-lg transition-all" title="Kembali ke Presentasi">
+                    <i class="fas fa-sign-out-alt rotate-180"></i>
+                </button>
+            </div>
+            
+            <div class="overflow-y-auto flex-grow py-6 px-4 space-y-2 custom-scrollbar">
+                <a href="#doc-intro" class="doc-nav flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-emerald-800/60 hover:text-white transition active-nav">
+                    <i class="fas fa-home w-5 text-center text-emerald-400"></i> Pengantar
+                </a>
+                
+                <p class="px-4 pt-6 pb-2 text-xs font-bold text-emerald-500/70 uppercase tracking-widest">Modul Publik</p>
+                <a href="#doc-portal" class="doc-nav flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-emerald-800/60 hover:text-white transition">
+                    <i class="fas fa-newspaper w-5 text-center text-emerald-400"></i> Portal Informasi
+                </a>
+                <a href="#doc-pengaduan" class="doc-nav flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-emerald-800/60 hover:text-white transition">
+                    <i class="fas fa-bullhorn w-5 text-center text-emerald-400"></i> Layanan Pengaduan
+                </a>
+                
+                <p class="px-4 pt-6 pb-2 text-xs font-bold text-emerald-500/70 uppercase tracking-widest">Modul Admin</p>
+                <a href="#doc-penduduk" class="doc-nav flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-emerald-800/60 hover:text-white transition">
+                    <i class="fas fa-users w-5 text-center text-emerald-400"></i> Data Kependudukan
+                </a>
+                <a href="#doc-surat" class="doc-nav flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-emerald-800/60 hover:text-white transition">
+                    <i class="fas fa-envelope w-5 text-center text-emerald-400"></i> Surat Pintar
+                </a>
+                <a href="#doc-bku" class="doc-nav flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-emerald-800/60 hover:text-white transition">
+                    <i class="fas fa-money-check-alt w-5 text-center text-emerald-400"></i> Buku Kas Umum
+                </a>
+                <a href="#doc-aset" class="doc-nav flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium hover:bg-emerald-800/60 hover:text-white transition">
+                    <i class="fas fa-boxes w-5 text-center text-emerald-400"></i> Inventaris Aset
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content Area (Glassmorphic) -->
+        <main class="flex-grow overflow-y-auto bg-white/70 backdrop-blur-xl scroll-smooth pb-20" id="doc-main-content">
+            
+            <div class="max-w-4xl mx-auto p-6 md:p-12 space-y-24">
+                
+                <!-- Section: Intro -->
+                <section id="doc-intro" class="pt-8 scroll-mt-10">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold mb-6 shadow-sm border border-emerald-200">
+                        <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></span> Dokumentasi Sistem
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 tracking-tight">Antarmuka Sistem Informasi Desa</h1>
+                    <p class="text-gray-700 leading-relaxed mb-8 text-lg">
+                        Dokumentasi ini berisi penjelasan detail fungsionalitas dan tangkapan layar (screenshot) dari setiap modul yang dikembangkan untuk Kantor Desa Sumberanyar. Antarmuka dirancang menggunakan Tailwind CSS dengan identitas visual <strong>"Hijau Emerald & Teal"</strong> yang menitikberatkan pada kemudahan penggunaan (usability) bagi aparatur desa.
+                    </p>
+                    <div class="bg-blue-50/80 backdrop-blur-sm border border-blue-200 text-blue-900 p-6 rounded-2xl flex items-start gap-5 shadow-sm">
+                        <i class="fas fa-info-circle mt-1 text-2xl text-blue-500"></i>
+                        <div>
+                            <p class="font-bold text-base mb-1">Instruksi Tim Pengembang:</p>
+                            <p class="text-sm leading-relaxed text-blue-800">Area abu-abu bergaris putus-putus di bawah ini adalah *placeholder*. Tim dapat mengganti kotak tersebut dengan tag <code>&lt;img src="..."&gt;</code> yang mengarah ke screenshot antarmuka sistem yang sebenarnya.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Section Template Function for concise code -->
+                <script>
+                    function docSection(id, title, desc, features, imgText) {
+                        document.write(`
+                        <section id="${id}" class="scroll-mt-10">
+                            <h2 class="text-3xl font-extrabold text-gray-900 mb-3 border-b-2 border-emerald-200 pb-3 inline-block">${title}</h2>
+                            <p class="text-emerald-700 font-medium mb-8 text-lg">${desc}</p>
+                            
+                            <div class="bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-lg border border-white/50 mb-8">
+                                <h3 class="font-bold text-gray-900 mb-4 text-lg flex items-center"><i class="fas fa-list-ul mr-3 text-emerald-500"></i> Fungsionalitas Utama:</h3>
+                                <ul class="space-y-3 text-gray-700">
+                                    ${features.map(f => `<li class="flex items-start"><i class="fas fa-check text-emerald-500 mt-1 mr-3"></i> ${f}</li>`).join('')}
+                                </ul>
+                            </div>
+
+                            <!-- PLACEHOLDER GAMBAR -->
+                            <div class="w-full aspect-video bg-gray-100/80 backdrop-blur-sm flex flex-col items-center justify-center text-gray-500 rounded-2xl border-2 border-dashed border-emerald-300 hover:bg-emerald-50 hover:border-emerald-500 hover:text-emerald-600 transition-all group shadow-sm cursor-pointer">
+                                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md mb-4 group-hover:scale-110 transition duration-300">
+                                    <i class="fas fa-image text-3xl"></i>
+                                </div>
+                                <span class="font-bold text-lg">${imgText}</span>
+                                <p class="text-sm mt-2 opacity-70">Rekomendasi resolusi: 1920x1080 (16:9)</p>
+                            </div>
+                        </section>
+                        `);
+                    }
+                </script>
+
+                <!-- Injected Sections -->
+                <script>
+                    docSection(
+                        'doc-portal', 
+                        '1. Portal Informasi Desa', 
+                        'Modul Front-facing yang diakses langsung oleh masyarakat luas.',
+                        ['Menampilkan berita terbaru, pengumuman desa, dan agenda kegiatan.', 'Fitur optimasi SEO dari Next.js untuk keterbacaan publik.', 'Tampilan responsif (Mobile-first) menggunakan Tailwind.'],
+                        'Tabel 1. Portal Informasi Desa'
+                    );
+                    
+                    docSection(
+                        'doc-pengaduan', 
+                        '2. Layanan Pengaduan', 
+                        'Sistem pelaporan aspirasi dan keluhan warga secara terdigitalisasi.',
+                        ['Formulir pengaduan publik yang terhubung langsung ke dashboard Admin via PocketBase API.', 'Validasi form ketat (No Dynamic input) untuk mencegah spam.', 'Status tracking (Menunggu, Diproses, Selesai) yang dikelola oleh Kasi Pelayanan.'],
+                        'Tabel 2. Layanan Pengaduan'
+                    );
+
+                    docSection(
+                        'doc-penduduk', 
+                        '3. Manajemen Data Kependudukan', 
+                        'Modul inti (Core module) untuk Master Data warga Sumberanyar.',
+                        ['Pengelolaan data warga secara terpusat (CRUD: Create, Read, Update, Delete).', 'Sistem search dan filter cepat berdasarkan NIK, Nama, atau Dusun.', 'Data berelasi dengan modul Surat Pintar untuk autofill dokumen.'],
+                        'Tabel 3. Data Kependudukan'
+                    );
+
+                    docSection(
+                        'doc-surat', 
+                        '4. Surat Pintar Otomatis', 
+                        'Automasi pembuatan dokumen persuratan birokrasi warga.',
+                        ['Render cetak surat otomatis menggunakan library jsPDF (PDF Generation).', 'Autofill data: Admin cukup memasukkan NIK, sisa data otomatis terisi dari Database Penduduk.', 'Berbagai template surat (SKU, Surat Keterangan Domisili, dll).'],
+                        'Tabel 4. Surat Pintar'
+                    );
+
+                    docSection(
+                        'doc-bku', 
+                        '5. Buku Kas Umum (BKU)', 
+                        'Pencatatan sirkulasi finansial dan anggaran desa oleh Kaur Keuangan.',
+                        ['Pencatatan Pemasukan, Pengeluaran, dan kalkulasi Running Balance secara otomatis.', 'Kalkulasi Pajak otomatis (PPN/PPh) pada transaksi yang memenuhi syarat.', 'Integrasi grafik visual menggunakan Recharts untuk memantau tren.', 'Fitur Ekspor Laporan ke format Excel (XLSX).'],
+                        'Tabel 5. Buku Kas Umum'
+                    );
+
+                    docSection(
+                        'doc-aset', 
+                        '6. Inventaris Aset Desa', 
+                        'Manajemen barang, tanah, dan fasilitas milik desa.',
+                        ['Pencatatan aset bergerak (kendaraan dinas) dan tidak bergerak (tanah kas desa, bangunan).', 'Pelacakan kondisi barang (Baik, Rusak Ringan, Rusak Berat).', 'Pencatatan tahun perolehan dan sumber dana pembelian.'],
+                        'Tabel 6. Inventaris Aset'
+                    );
+                </script>
+                
+                <div class="text-center pb-12 pt-10 border-t border-gray-200">
+                    <button onclick="toggleMode('presentation')" class="bg-emerald-900 text-white hover:bg-emerald-800 px-8 py-4 rounded-xl font-bold transition shadow-xl hover:-translate-y-1 flex items-center justify-center mx-auto gap-3 text-lg">
+                        <i class="fas fa-arrow-left"></i> Kembali ke Presentasi Slide
+                    </button>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Logic Script -->
+    <script>
+        // --- 1. Slide Presentation Logic ---
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        
+        // Setup Indicators
+        const indicatorContainer = document.getElementById('slide-indicators');
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('div');
+            dot.className = `w-3 h-3 rounded-full cursor-pointer transition-all duration-300 ${i === 0 ? 'bg-emerald-600 scale-125' : 'bg-gray-400/50 hover:bg-emerald-400'}`;
+            dot.onclick = () => goToSlide(i);
+            indicatorContainer.appendChild(dot);
+        }
+
+        function updateUI() {
+            // Update slides classes
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'previous');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else if (index < currentSlide) {
+                    slide.classList.add('previous');
+                }
+            });
+
+            // Update buttons
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === totalSlides - 1;
+
+            // Update indicators
+            const dots = indicatorContainer.children;
+            for (let i = 0; i < dots.length; i++) {
+                if (i === currentSlide) {
+                    dots[i].className = 'w-3 h-3 rounded-full cursor-pointer transition-all duration-300 bg-emerald-600 scale-125 shadow-sm';
+                } else {
+                    dots[i].className = 'w-3 h-3 rounded-full cursor-pointer transition-all duration-300 bg-gray-400/50 hover:bg-emerald-400';
+                }
+            }
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                updateUI();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateUI();
+            }
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateUI();
+        }
+
+        // Keyboard navigation for slides
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('view-presentation').classList.contains('hidden')) return;
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Initialize UI
+        updateUI();
+
+
+        // --- 2. View Toggle Logic (Presentation <-> Documentation) ---
+        function toggleMode(mode) {
+            const presentationView = document.getElementById('view-presentation');
+            const documentationView = document.getElementById('view-documentation');
+
+            if (mode === 'documentation') {
+                presentationView.classList.replace('block', 'hidden');
+                documentationView.classList.replace('hidden', 'flex');
+                documentationView.classList.add('fade-in');
+                // Reset scroll
+                document.getElementById('doc-main-content').scrollTop = 0;
+            } else {
+                documentationView.classList.replace('flex', 'hidden');
+                presentationView.classList.replace('hidden', 'block');
+                presentationView.classList.add('fade-in');
+            }
+        }
+
+        // --- 3. Documentation Sidebar Active Link Logic ---
+        const docMainContent = document.getElementById('doc-main-content');
+        const sections = document.querySelectorAll('main section');
+        const navLinks = document.querySelectorAll('.doc-nav');
+
+        docMainContent.addEventListener('scroll', () => {
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                // Add an offset to trigger active state slightly before reaching top
+                if (docMainContent.scrollTop >= (sectionTop - 200)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('bg-emerald-800/60', 'text-white', 'active-nav');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('bg-emerald-800/60', 'text-white', 'active-nav');
+                }
+            });
+        });
+
+    </script>
+</body>
+</html>

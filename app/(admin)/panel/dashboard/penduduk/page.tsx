@@ -20,6 +20,7 @@ export default function AdminPendudukPage() {
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [search, setSearch] = useState("");
+    const [genderFilter, setGenderFilter] = useState("Semua");
 
     const fetchResidents = async () => {
         setLoading(true);
@@ -28,8 +29,17 @@ export default function AdminPendudukPage() {
                 sort: '-created',
                 requestKey: null
             };
+            
+            const filters = [];
             if (search && search.trim() !== "") {
-                queryOptions.filter = `nama_lengkap ~ "${search}" || nik ~ "${search}"`;
+                filters.push(`(nama_lengkap ~ "${search}" || nik ~ "${search}")`);
+            }
+            if (genderFilter !== "Semua") {
+                filters.push(`jenis_kelamin = "${genderFilter}"`);
+            }
+            
+            if (filters.length > 0) {
+                queryOptions.filter = filters.join(" && ");
             }
 
             const result = await pb.collection('data_penduduk').getList(page, 20, queryOptions);
@@ -47,7 +57,7 @@ export default function AdminPendudukPage() {
             fetchResidents();
         }, 300);
         return () => clearTimeout(timeout);
-    }, [page, search]);
+    }, [page, search, genderFilter]);
 
     const handleDelete = async (id: string, name: string) => {
         if (!window.confirm(`Yakin ingin menghapus data penduduk "${name}"?`)) return;
@@ -77,8 +87,8 @@ export default function AdminPendudukPage() {
             </div>
 
             {/* Filter / Search */}
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 mb-6 flex flex-col md:flex-row items-center gap-4 transition-all hover:shadow-md">
-                <div className="relative group flex-1 max-w-xl w-full">
+            <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 mb-6 flex flex-col lg:flex-row items-center gap-4 transition-all hover:shadow-md">
+                <div className="relative group flex-1 w-full">
                     <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-300 group-focus-within:text-emerald-500 transition-colors" />
                     <input
                         type="text"
@@ -88,12 +98,22 @@ export default function AdminPendudukPage() {
                         className="w-full pl-12 pr-6 py-3 bg-slate-50/50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 focus:bg-white outline-none transition-all text-sm font-medium"
                     />
                 </div>
-                <div className="flex items-center gap-3 w-full md:w-auto">
-                    <button className="flex items-center gap-2 px-5 py-3 text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 transition-all text-sm font-bold shadow-sm">
-                        <Filter className="w-4 h-4" />
-                        Penyaringan
-                    </button>
-                    <div className="text-xs font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-4 py-3 rounded-xl border border-slate-100 flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                    <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200">
+                        {["Semua", "Laki-laki", "Perempuan"].map((g) => (
+                            <button
+                                key={g}
+                                onClick={() => { setGenderFilter(g); setPage(1); }}
+                                className={cn(
+                                    "px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
+                                    genderFilter === g ? "bg-white text-emerald-600 shadow-sm" : "text-slate-400 hover:text-slate-600"
+                                )}
+                            >
+                                {g}
+                            </button>
+                        ))}
+                    </div>
+                    <div className="text-xs font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-4 py-3.5 rounded-xl border border-slate-100 flex items-center gap-2">
                         Total: <span className="text-slate-800">{residents.length}</span> Warga
                     </div>
                 </div>
