@@ -57,46 +57,62 @@ export function ModernApbdesFull({ onBack }: ApbdesFullProps) {
     const [loading, setLoading] = useState(true);
     const [year, setYear] = useState<number>(new Date().getFullYear());
     
+    const [availableYears, setAvailableYears] = useState<number[]>([new Date().getFullYear()]);
+    
     const [summary, setSummary] = useState<Record<string, { budget: number; realized: number; items: ApbdesRealisasi[] }>>({});
 
-    useEffect(() => {
-        const fetchApbdes = async () => {
-            setLoading(true);
-            try {
-                const currentYear = new Date().getFullYear();
-                const records = await pb.collection('apbdes_realisasi').getFullList<ApbdesRealisasi>({
-                    filter: `tahun_anggaran >= ${currentYear - 1}`,
-                    sort: 'kategori,nama_bidang'
-                });
-                
-                if (records.length > 0) {
-                    const targetYear = records[0].tahun_anggaran;
-                    setYear(targetYear);
-
-                    const currentRecords = records.filter(r => r.tahun_anggaran === targetYear);
-                    const grouped: Record<string, { budget: number; realized: number; items: ApbdesRealisasi[] }> = {};
-
-                    currentRecords.forEach(r => {
-                        const cat = r.kategori;
-                        if (!grouped[cat]) {
-                            grouped[cat] = { budget: 0, realized: 0, items: [] };
-                        }
-                        grouped[cat].budget += r.anggaran;
-                        grouped[cat].realized += r.realisasi;
-                        grouped[cat].items.push(r);
-                    });
-
-                    setSummary(grouped);
-                }
-            } catch (err) {
-                console.error("Gagal memuat APBDes", err);
-            } finally {
-                setLoading(false);
+    const fetchAvailableYears = async () => {
+        try {
+            const records = await pb.collection('apbdes_realisasi').getFullList({
+                fields: 'tahun_anggaran',
+                sort: '-tahun_anggaran'
+            });
+            const years = Array.from(new Set(records.map(r => r.tahun_anggaran))).sort((a, b) => b - a);
+            if (years.length > 0) {
+                setAvailableYears(years);
+                // If current year not in data, default to most recent year
+                if (!years.includes(year)) setYear(years[0]);
             }
-        };
+        } catch (e) {
+            console.error("Gagal memuat daftar tahun", e);
+        }
+    };
 
-        fetchApbdes();
+    const fetchApbdes = async () => {
+        setLoading(true);
+        try {
+            const records = await pb.collection('apbdes_realisasi').getFullList<ApbdesRealisasi>({
+                filter: `tahun_anggaran = ${year}`,
+                sort: 'kategori,nama_bidang'
+            });
+            
+            const grouped: Record<string, { budget: number; realized: number; items: ApbdesRealisasi[] }> = {};
+
+            records.forEach(r => {
+                const cat = r.kategori;
+                if (!grouped[cat]) {
+                    grouped[cat] = { budget: 0, realized: 0, items: [] };
+                }
+                grouped[cat].budget += r.anggaran;
+                grouped[cat].realized += r.realisasi;
+                grouped[cat].items.push(r);
+            });
+
+            setSummary(grouped);
+        } catch (err) {
+            console.error("Gagal memuat APBDes", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchAvailableYears();
     }, []);
+
+    useEffect(() => {
+        fetchApbdes();
+    }, [year]);
 
     const categories = Object.keys(summary);
 
@@ -118,12 +134,28 @@ export function ModernApbdesFull({ onBack }: ApbdesFullProps) {
                         </h2>
                     </div>
                 </div>
-                <button 
-                    onClick={onBack}
-                    className="md:hidden px-3 py-1 bg-white/10 text-white rounded-lg text-[10px] font-black uppercase tracking-widest border border-white/20"
-                >
-                    Kembali
-                </button>
+                <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 bg-white/10 p-1 rounded-xl border border-white/20">
+                        {availableYears.map((y) => (
+                            <button
+                                key={y}
+                                onClick={() => setYear(y)}
+                                className={cn(
+                                    "px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all",
+                                    year === y ? "bg-white text-emerald-600 shadow-sm" : "text-white/60 hover:text-white"
+                                )}
+                            >
+                                {y}
+                            </button>
+                        ))}
+                    </div>
+                    <button 
+                        onClick={onBack}
+                        className="md:hidden px-3 py-2 bg-white/10 text-white rounded-lg text-[10px] font-black uppercase tracking-widest border border-white/20"
+                    >
+                        Kembali
+                    </button>
+                </div>
             </div>
 
             <div className="p-4 md:p-6 max-w-7xl mx-auto">
