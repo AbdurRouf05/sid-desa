@@ -75,20 +75,28 @@ export function DashboardSidebar({ activeView, onNavigate, className }: Dashboar
                             className={cn(
                                 "flex flex-col items-center justify-center p-4 rounded-2xl border transition-all duration-300 gap-3 group relative overflow-hidden",
                                 link.isWide ? "col-span-2 h-[100px] bg-gradient-to-br from-[#15803d] to-[#0f5c2c] border-none shadow-md" : "h-[100px] bg-white border-slate-200 shadow-sm hover:border-slate-300 hover:shadow-md",
-                                activeView === link.id && !link.isWide
+                                (activeView === link.id || 
+                                 (link.id === "apbdes" && activeView === "transparansi-detail") ||
+                                 (link.id === "identitas" && (activeView === "berita" || activeView === "berita-detail"))) && !link.isWide
                                     ? "bg-emerald-50 border-emerald-500 ring-1 ring-emerald-500 shadow-emerald-100" 
                                     : ""
                             )}
                         >
                             <div className={cn(
                                 "transition-transform group-hover:scale-110",
-                                link.isWide ? "text-emerald-400" : (activeView === link.id ? "text-emerald-600" : "text-slate-600")
+                                link.isWide ? "text-emerald-400" : 
+                                ((activeView === link.id || 
+                                 (link.id === "apbdes" && activeView === "transparansi-detail") ||
+                                 (link.id === "identitas" && (activeView === "berita" || activeView === "berita-detail"))) ? "text-emerald-600" : "text-slate-600")
                             )}>
                                 {link.icon}
                             </div>
                             <span className={cn(
                                 "text-xs font-bold tracking-wide text-center leading-tight z-10",
-                                link.isWide ? "text-white" : (activeView === link.id ? "text-emerald-700" : "text-slate-700")
+                                link.isWide ? "text-white" : 
+                                ((activeView === link.id || 
+                                 (link.id === "apbdes" && activeView === "transparansi-detail") ||
+                                 (link.id === "identitas" && (activeView === "berita" || activeView === "berita-detail"))) ? "text-emerald-700" : "text-slate-700")
                             )}>
                                 {link.label}
                             </span>

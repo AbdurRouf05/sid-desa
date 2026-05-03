@@ -49,6 +49,8 @@ export function ModernApbdes({ onViewDetails }: ApbdesProps) {
         year: new Date().getFullYear(),
         sources: [] as { label: string; realized: number; budget: number; color: string }[]
     });
+    const [availableYears, setAvailableYears] = useState<number[]>([new Date().getFullYear()]);
+    const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
 
     const getColor = (category: string) => {
         if (category.includes("ADD")) return "bg-gradient-to-r from-blue-400 to-blue-600";
@@ -57,46 +59,62 @@ export function ModernApbdes({ onViewDetails }: ApbdesProps) {
         return "bg-gradient-to-r from-indigo-400 to-indigo-600";
     };
 
-    useEffect(() => {
-        const fetchApbdes = async () => {
-            try {
-                // Fetch all apbdes for recent year
-                const currentYear = new Date().getFullYear();
-                const records = await pb.collection('apbdes_realisasi').getFullList({
-                    filter: `tahun_anggaran >= ${currentYear - 1}` // attempt to get current or last year
-                });
-                
-                if (records.length > 0) {
-                    const targetYear = records[0].tahun_anggaran; // use the year we found
-                    const grouped: Record<string, { realized: number; budget: number }> = {};
-
-                    records.filter(r => r.tahun_anggaran === targetYear).forEach(r => {
-                        const cat = r.kategori;
-                        if (!grouped[cat]) grouped[cat] = { realized: 0, budget: 0 };
-                        grouped[cat].realized += (r.realisasi || 0);
-                        grouped[cat].budget += (r.anggaran || 0);
-                    });
-
-                    const sourceList = Object.entries(grouped).map(([label, values]) => ({
-                        label,
-                        ...values,
-                        color: getColor(label)
-                    }));
-
-                    setData({
-                        year: targetYear,
-                        sources: sourceList
-                    });
-                }
-            } catch (err) {
-                console.error("Failed to load apbdes", err);
-            } finally {
-                setLoading(false);
+    const fetchAvailableYears = async () => {
+        try {
+            const records = await pb.collection('apbdes_realisasi').getFullList({
+                fields: 'tahun_anggaran',
+                sort: '-tahun_anggaran'
+            });
+            const years = Array.from(new Set(records.map(r => r.tahun_anggaran))).sort((a, b) => b - a);
+            if (years.length > 0) {
+                setAvailableYears(years);
+                if (!years.includes(selectedYear)) setSelectedYear(years[0]);
             }
-        };
+        } catch (e) {
+            console.error("Gagal memuat tahun", e);
+        }
+    };
 
-        fetchApbdes();
+    const fetchApbdes = async () => {
+        setLoading(true);
+        try {
+            const records = await pb.collection('apbdes_realisasi').getFullList({
+                filter: `tahun_anggaran = ${selectedYear}`
+            });
+            
+            const grouped: Record<string, { realized: number; budget: number }> = {};
+
+            records.forEach(r => {
+                const cat = r.kategori;
+                if (!grouped[cat]) grouped[cat] = { realized: 0, budget: 0 };
+                grouped[cat].realized += (r.realisasi || 0);
+                grouped[cat].budget += (r.anggaran || 0);
+            });
+
+            const sourceList = Object.entries(grouped).map(([label, values]) => ({
+                label,
+                ...values,
+                color: getColor(label)
+            }));
+
+            setData({
+                year: selectedYear,
+                sources: sourceList
+            });
+        } catch (err) {
+            console.error("Failed to load apbdes", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchAvailableYears();
     }, []);
+
+    useEffect(() => {
+        fetchApbdes();
+    }, [selectedYear]);
 
     const isEmpty = !loading && data.sources.length === 0;
 
@@ -109,7 +127,25 @@ export function ModernApbdes({ onViewDetails }: ApbdesProps) {
                             <CircleDollarSign className="w-3 h-3" /> Transparansi
                         </div>
                         <h2 className="text-lg md:text-xl font-black text-slate-800 tracking-tight uppercase">Dana Transparansi Desa</h2>
-                        <p className="text-slate-500 text-[10px] md:text-xs font-medium">Realisasi Anggaran Tahun {data.year}.</p>
+                        <div className="flex items-center gap-4 mt-1">
+                            <p className="text-slate-500 text-[10px] md:text-xs font-medium">Realisasi Anggaran Tahun {data.year}.</p>
+                            <div className="flex gap-1.5">
+                                {availableYears.map(y => (
+                                    <button 
+                                        key={y}
+                                        onClick={() => setSelectedYear(y)}
+                                        className={cn(
+                                            "text-[9px] font-black px-2 py-0.5 rounded border transition-all",
+                                            selectedYear === y 
+                                                ? "bg-emerald-600 text-white border-emerald-600 shadow-sm" 
+                                                : "bg-white text-slate-400 border-slate-200 hover:border-emerald-300"
+                                        )}
+                                    >
+                                        {y}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                     <button 
                         onClick={onViewDetails} 

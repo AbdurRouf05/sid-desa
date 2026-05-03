@@ -547,7 +547,7 @@ function DashboardInner() {
                         <div className={`flex flex-col xl:flex-row h-full flex-1 ${activeView === 'berita-detail' ? 'gap-0' : 'gap-4 w-full'}`}>
                             <div className="flex-1 min-w-0 flex flex-col h-full gap-4">
                                 {/* Title Bar */}
-                                {activeView !== 'berita-detail' && (
+                                {activeView !== 'berita-detail' && activeView !== 'transparansi-detail' && (
                                     <div className="sticky top-0 z-20 bg-white/90 backdrop-blur rounded-xl shadow-sm border border-slate-200 p-4 shrink-0 flex items-center justify-between">
                                         <h1 className="text-lg font-bold text-slate-800 uppercase tracking-widest flex items-center gap-2">
                                             <span className="w-1.5 h-6 bg-desa-primary rounded-full"></span> 
@@ -560,7 +560,8 @@ function DashboardInner() {
                                                 'berita': 'Info & Berita',
                                                 'berita-detail': 'Baca Artikel',
                                                 'pengaduan': 'Ruang Lapor & Aduan',
-                                                'cek-bansos': 'Cek Status Bansos'
+                                                'cek-bansos': 'Cek Status Bansos',
+                                                'transparansi-detail': 'Detail Transparansi APBDes'
                                             }[activeView] || activeView}
                                         </h1>
                                     </div>
