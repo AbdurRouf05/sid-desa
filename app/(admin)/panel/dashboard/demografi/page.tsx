@@ -6,7 +6,7 @@ import { Plus, Trash2, Save, BarChart3, Users, X, Info } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-const KATEGORI_OPTIONS = ["Jenis Kelamin", "Kelompok Usia", "Agama", "Pendidikan", "Pekerjaan"];
+const KATEGORI_OPTIONS = ["Jenis Kelamin", "Kesejahteraan", "Status", "Kelompok Usia", "Agama", "Pendidikan", "Pekerjaan"];
 
 interface DemografiRecord {
     id: string;
@@ -101,7 +101,7 @@ export default function DemografiPage() {
             </div>
 
             {/* Summary Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3">
                 {KATEGORI_OPTIONS.map(kat => (
                     <div key={kat} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm transition-all hover:shadow-md hover:border-emerald-100 group">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] group-hover:text-emerald-500 transition-colors">{kat}</p>
